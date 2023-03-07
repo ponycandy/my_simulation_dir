@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/txt">
+        <file>config_trexec.txt</file>
+        <file>config_onnx.txt</file>
+    </qresource>
+</RCC>

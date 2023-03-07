@@ -1,0 +1,9 @@
+TEMPLATE = subdirs
+
+
+SUBDIRS += \
+    launcher  \
+    Animator  \
+    CollisionDetect \
+    Simulator \
+    JOY_card \
