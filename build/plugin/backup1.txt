@@ -1,0 +1,8 @@
+<plugins>
+                <plugin order="1" name="Animator" />
+                <plugin order="1" name="CollisionDetect" />
+	      <plugin order="1" name="Simulator" />
+	<plugin order="1" name="JOY_card" />
+<!--		<endplugin/>-->
+<pluginnum value="1"/>
+</plugins>
