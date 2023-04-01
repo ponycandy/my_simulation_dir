@@ -1,4 +1,4 @@
-
+﻿
 #ifndef TCPCOMMUNICATESERVICE_H
 #define TCPCOMMUNICATESERVICE_H
 
@@ -11,6 +11,8 @@ public:
     virtual void connectport()=0;
     virtual void disconnectport()=0;
     virtual void send(QByteArray data)=0;
+    virtual void send_decorated(QByteArray data,QString IP,int portnum)=0;
+    virtual void Bind_Slot(QObject *reciever, const char *method)=0;
     virtual Tcpcommunicateservice* cloneservice()=0;
 };
 #define Tcpcommunicateservice_iid "Tcpcommunicateservice"

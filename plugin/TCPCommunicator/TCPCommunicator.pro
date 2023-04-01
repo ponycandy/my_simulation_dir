@@ -16,13 +16,15 @@ INCLUDEPATH += ../../
 SOURCES += \
     TCPCommunicatorActivator.cpp \
     tcpclient.cpp \
-    tcpmanager.cpp
+    tcpmanager.cpp \
+    tcpserverstation.cpp
 
 
 
 HEADERS += \
     TCPCommunicatorActivator.h \
     tcpclient.h \
-    tcpmanager.h
+    tcpmanager.h \
+    tcpserverstation.h
 
 
