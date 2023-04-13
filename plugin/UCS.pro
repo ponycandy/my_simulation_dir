@@ -3,5 +3,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     launcher  \
-    TCPCommunicator \
-    test_bit201_communication_plugin   \
+    NMPC_TrajPlanning \
+    test_NMPC_Plugin \
+    Pendulem_rl_experinece
