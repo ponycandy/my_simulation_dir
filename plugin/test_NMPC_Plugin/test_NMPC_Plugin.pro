@@ -3,6 +3,8 @@ QT       += core gui testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += qt
 CONFIG += c++11
+INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
+LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
 
 TEMPLATE = lib
 DEFINES += TEST_NMPC_PLUGIN_LIBRARY
@@ -32,5 +34,7 @@ HEADERS += \
 
 FORMS += \
     control_widget.ui
+
+
 
 

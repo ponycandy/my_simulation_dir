@@ -1,8 +1,7 @@
 ﻿#include "tcpclient.h"
 #include "TCPCommunicatorActivator.h"
 #include "OSGIEVENT.h"
-#include "defines/bit201/CpyDefines.h"
-#include "FILE_manage/f_manager.h"
+
 TCPClient::TCPClient(QObject *parent) : QObject(parent),mclient(NULL)
 {
     mclient=new QTcpSocket;
@@ -60,34 +59,34 @@ void TCPClient::setport(QString port, QString ip)
 
 void TCPClient::send_decorated(QByteArray data, QString IP0, int port)
 {
-    BITDefine::NetHeadet headerfor;
-    headerfor.port=port;
-    headerfor.source_port=portnum;
-    headerfor.ipv4_phase_1= f_get_text_between(IP0,"",".").toUInt();
-    headerfor.ipv4_phase_2= f_get_text_between(IP0,".",".").toUInt();
+//    BITDefine::NetHeadet headerfor;
+//    headerfor.port=port;
+//    headerfor.source_port=portnum;
+//    headerfor.ipv4_phase_1= f_get_text_between(IP0,"",".").toUInt();
+//    headerfor.ipv4_phase_2= f_get_text_between(IP0,".",".").toUInt();
 
-    headerfor.ipv4_phase_3= f_get_text_between(IP0,".",".").toUInt();
+//    headerfor.ipv4_phase_3= f_get_text_between(IP0,".",".").toUInt();
 
-    headerfor.ipv4_phase_4= f_get_text_between(IP0,".","").toUInt();
+//    headerfor.ipv4_phase_4= f_get_text_between(IP0,".","").toUInt();
 
-    headerfor.source_ipv4_phase_1= f_get_text_between(IP,"",".").toUInt();
-    headerfor.source_ipv4_phase_2= f_get_text_between(IP,".",".").toUInt();
+//    headerfor.source_ipv4_phase_1= f_get_text_between(IP,"",".").toUInt();
+//    headerfor.source_ipv4_phase_2= f_get_text_between(IP,".",".").toUInt();
 
-    headerfor.source_ipv4_phase_3= f_get_text_between(IP,".",".").toUInt();
+//    headerfor.source_ipv4_phase_3= f_get_text_between(IP,".",".").toUInt();
 
-    headerfor.source_ipv4_phase_4= f_get_text_between(IP,".","").toUInt();
+//    headerfor.source_ipv4_phase_4= f_get_text_between(IP,".","").toUInt();
 
 
-    QByteArray data_to_send;
-    memcpy(data_to_send.data() + 0, (void *)&headerfor, sizeof (headerfor));
-    memcpy(data_to_send.data() + sizeof (headerfor),data.data()+0, data.size());
+//    QByteArray data_to_send;
+//    memcpy(data_to_send.data() + 0, (void *)&headerfor, sizeof (headerfor));
+//    memcpy(data_to_send.data() + sizeof (headerfor),data.data()+0, data.size());
 
-    if(mclient->state() == QAbstractSocket::ConnectedState)
-    {
-        //发送数据
-        mclient->write(data);
+//    if(mclient->state() == QAbstractSocket::ConnectedState)
+//    {
+//        //发送数据
+//        mclient->write(data);
 
-    }
+//    }
 }
 
 

@@ -5,7 +5,6 @@
 #include <QTcpSocket>
 #include <QObject>
 #include <service/TCPserverservice.h>
-#include <defines/bit201/CpyDefines.h>
 class TcpServerStation : public QObject,public TCPserverservice
 {
     Q_OBJECT

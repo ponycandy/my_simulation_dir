@@ -2,4 +2,4 @@ TEMPLATE = subdirs
 
 
 SUBDIRS += \
-    SQP_solver   \
+    Matrix_sparser   \

@@ -3,11 +3,13 @@
 
 #include <QObject>
 #include "service/NMPCservice.h"
-#include "include/NMPC/NMPC_ODE.h"
-#include "include/NMPC/NMPC_dynamic_Jacob.h"
+#include "service/TCPserverservice.h"
+
 #include "test_ode.h"
 #include "testode_jac.h"
 #include "control_widget.h"
+#include "service/CPYcoderservice.h"
+
 class main_exe : public QObject
 {
     Q_OBJECT
@@ -19,6 +21,8 @@ public:
     Control_Widget *m_widget;
     Eigen::MatrixXd initstate;
     Eigen::MatrixXd terminalstate;
+    TCPserverservice *m_service1;
+    CPYcoderservice *m_service2;
 
 signals:
 

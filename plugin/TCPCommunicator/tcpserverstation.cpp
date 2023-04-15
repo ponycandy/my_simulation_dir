@@ -1,6 +1,4 @@
 ﻿#include "tcpserverstation.h"
-#include "defines/bit201/CpyDefines.h"
-#include "FILE_manage/f_manager.h"
 TcpServerStation::TcpServerStation(QObject *parent) : QObject(parent)
 {
     server = new QTcpServer();
@@ -26,7 +24,7 @@ void TcpServerStation::disconnectport()
 
 void TcpServerStation::send(QByteArray data)
 {
-    mclient->write(data);
+    mclient->write(data);//发完后立刻出现异常，没有返回到主函数
 
 }
 
@@ -58,6 +56,7 @@ void TcpServerStation::tcprecieved()
 
 void TcpServerStation::server_New_Connect()
 {
+    qDebug()<<"connected! new socket in";
     mclient=server->nextPendingConnection();
     connect(mclient,&QTcpSocket::readyRead,this,&TcpServerStation::tcprecieved);
 

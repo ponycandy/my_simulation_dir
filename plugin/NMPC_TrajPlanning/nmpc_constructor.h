@@ -14,6 +14,8 @@
 #include "IpIpoptApplication.hpp"
 #include "IpSolveStatistics.hpp"
 #include "service/NMPCservice.h"
+#include "Matrix_sparser.h"
+typedef Eigen::SparseMatrix<double> Espmat;
 class NMPC_Problem;
 class NMPC_Constructor : public QObject,public NMPCservice
 {
@@ -64,6 +66,8 @@ public:
     QMap<mat_ij*,int> mat_value_trans;
     QMap<int,int> value_mat_trans_x;
     QMap<int,int> value_mat_trans_y;
+
+    Matrix_sparser *m_sparser;
     int state_num;//状态变量的维度
     int act_num;//控制变量的维度
     int state_num_plus_act_num;
@@ -91,7 +95,6 @@ public:
 
     Eigen::MatrixXd qx;
     Eigen::MatrixXd B;
-    Eigen::Triplet<double> *B_sparse;
     Eigen::MatrixXd D;
     Eigen::MatrixXd Combined_cons;
     Eigen::MatrixXd Dynamic_gx_part;
@@ -99,13 +102,23 @@ public:
     Eigen::MatrixXd jacobian2;
     Eigen::MatrixXd m_lower;
     Eigen::MatrixXd m_higher;
-
-    Eigen::MatrixXd gg;//gg=[zeros(12,4),eye(12)];
-    Eigen::MatrixXd gg1;//gg1=[zeros(12,4),-eye(12)];
+    Eigen::MatrixXd gg;
+    Eigen::MatrixXd gg1;
 
     Ipopt::SmartPtr<Ipopt::TNLP> m_problem_dash ;
     NMPC_Problem *m_problem;
 
+    Espmat s_qx;
+    Espmat s_B;
+    Espmat s_D;
+    Espmat s_Combined_cons;
+    Espmat s_Dynamic_gx_part;
+    Espmat s_jacobian;
+    Espmat s_jacobian2;
+    Espmat s_m_lower;
+    Espmat s_m_higher;
+    Espmat s_gg;
+    Espmat s_gg1;
 
 
 signals:

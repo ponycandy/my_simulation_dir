@@ -6,6 +6,7 @@
 //但是当前为了可读性和方便编写，暂时用的都是原型dense 矩阵
 NMPC_Constructor::NMPC_Constructor(QObject *parent) : QObject(parent)
 {
+    m_sparser=new Matrix_sparser;
     value_map_index_constrain_jac=0;
     control_bound_flag=0;
     m_problem=new NMPC_Problem;
@@ -46,26 +47,28 @@ void NMPC_Constructor::init_steptime(double time)
 
 void NMPC_Constructor::init_all_mat()
 {
-
+    Matrix_sparser a_sparser;
     int x_pos=0;
     int y_pos=0;
+    a_sparser.clearall();
+
+//qx是dense矩阵
     qx.resize(2*state_num*dec_num,1);
     qx.setZero();
+
+    //jac_mat是dense矩阵
     jac_mat.resize(state_num,state_num_plus_act_num);
     jac_mat.setZero();
+
+//Dynamic_gx_part是dense矩阵
     Dynamic_gx_part.resize(constrain_num_dynamics,1);
     Dynamic_gx_part.setZero();
+
+//Combined_cons是ense矩阵
     Combined_cons.resize(constrain_num_dynamics+state_num,1);
     Combined_cons.setZero();
-    B.resize(dec_num*state_num,2*dec_num*state_num);
-    B.setZero();
-    int base_x=0;
-    D.resize(state_num,state_num_plus_act_num*dec_num);
-    D.setZero();
-    for(int i=0;i<state_num;i++)
-    {
-        D(state_num-1-i,state_num_plus_act_num*dec_num-1-i)=1;
-    }
+    //B是sparse矩阵
+    a_sparser.setsize(2*dec_num*state_num,dec_num*state_num);
     for(int i=1;i<=dec_num;i++)
     {
         for(int j=1;j<=2;j++)
@@ -76,7 +79,7 @@ void NMPC_Constructor::init_all_mat()
                 {
                     x_pos=state_num*(i-1)+k;
                     y_pos=2*state_num*(i-1)+k;
-                    B(x_pos,y_pos)=1;
+                    a_sparser.fillin(x_pos,y_pos,1);
                 }
 
 
@@ -87,27 +90,57 @@ void NMPC_Constructor::init_all_mat()
                 {
                     x_pos=state_num*(i-1)+k;
                     y_pos=2*state_num*(i-1)+k+state_num;
-                    B(x_pos,y_pos)=1;
+                    a_sparser.fillin(x_pos,y_pos,1);
                 }
             }
         }
     }
-    //这次B应该是对的了
-    gg.resize(state_num,state_num_plus_act_num);gg.setZero();
-    gg1.resize(state_num,state_num_plus_act_num);gg1.setZero();
+    s_B=a_sparser.get_sparse_mat();
+    a_sparser.clearall();
+    //D是sparse矩阵
+    D.resize(state_num,state_num_plus_act_num*dec_num);D.setZero();
+    a_sparser.setsize(state_num_plus_act_num*dec_num,state_num);
+    for(int i=0;i<state_num;i++)
+    {
+        a_sparser.fillin(state_num-1-i,state_num_plus_act_num*dec_num-1-i,1);
+        D(state_num-1-i,state_num_plus_act_num*dec_num-1-i)=1;
+
+    }
+    s_D=a_sparser.get_sparse_mat();
+    a_sparser.clearall();
+    //gg都是sparse矩阵
+    gg1.resize(state_num,state_num_plus_act_num);
+    gg.resize(state_num,state_num_plus_act_num);
+    gg1.setZero();
+    gg.setZero();
+a_sparser.setsize(state_num_plus_act_num,state_num);
+    for(int k=0;k<state_num;k++)
+    {
+        x_pos=k;
+        y_pos=k+act_num;
+        a_sparser.fillin(x_pos,y_pos,-1);
+        gg1(x_pos,y_pos)=-1;
+    }
+    s_gg1=a_sparser.get_sparse_mat();
+    a_sparser.clearall();
+
 
     for(int k=0;k<state_num;k++)
     {
         x_pos=k;
         y_pos=k+act_num;
+        a_sparser.fillin(x_pos,y_pos,1);
         gg(x_pos,y_pos)=1;
-        gg1(x_pos,y_pos)=-1;
     }
+    s_gg=a_sparser.get_sparse_mat();
+    a_sparser.clearall();
     //初始化qx矩阵
-    //jacobian还没有初始化
+    //jacobian是sparse矩阵
+    a_sparser.setsize(dec_num*state_num_plus_act_num,2*state_num*dec_num);
     jacobian.resize(2*state_num*dec_num,dec_num*state_num_plus_act_num);
     jacobian.setZero();
-
+//jacobian2是sparse矩阵
+    a_sparser.setsize(dec_num*state_num_plus_act_num,state_num*(dec_num+1));
     jacobian2.resize(state_num*(dec_num+1),dec_num*state_num_plus_act_num);
     jacobian2.setZero();
     int start_x,start_y;
@@ -362,7 +395,7 @@ void NMPC_Constructor::calc_gx_dynamic(Ipopt::Number *g, const Ipopt::Number *x,
 {
     pack_nececssary(isnew,x);
     getqx();
-    Dynamic_gx_part=B*qx;
+    Dynamic_gx_part=s_B*qx; //这里是稀疏矩阵乘以非稀疏矩阵，得到的是什么？
     append_constrain(0);
     for(int i=0;i<constrain_num_dynamics+state_num;i++)//此处可能有bug,当增加constrain的时候，确保这个数值不能够变动
     {
@@ -446,14 +479,14 @@ void NMPC_Constructor::calc_dynamic_constrain_Jacobian()
     int x_total_size=0;
     int y_total_size=0;
     //测试用代码
-
+    Matrix_sparser newsparser;
+    newsparser.setsize(dec_num*state_num_plus_act_num,2*state_num*dec_num);
     for (int i=1;i<=2*dec_num;i++)
     {
         if (i<=2)
         {
-            jacobian.block(state_num*(i-1),0,state_num,state_num_plus_act_num)=
-                calc_single_jacobia(i);
 
+            newsparser.add_mat_block(calc_single_jacobia(i),state_num*(i-1),0);
             //            self_ode_jacob->jacobica(actMat,stateMat);
             //一个block的尺寸是state_num*state_num_plus_act_num
             //总共的block数目：2*dec_num
@@ -462,16 +495,18 @@ void NMPC_Constructor::calc_dynamic_constrain_Jacobian()
         {
             j=floor((i+0.1)/2); //+0.1防止程序偶尔出现的bug
             //上面可以近似为除以2向下取整
-            jacobian.block(state_num*(i-1),state_num_plus_act_num*(j-1),
-                           state_num,state_num_plus_act_num)=
-                calc_single_jacobia(i);
+
+            newsparser.add_mat_block(calc_single_jacobia(i),state_num*(i-1),state_num_plus_act_num*(j-1));
             //我们希望jacobica不需要再度对此时的步时进行判断,且一般不需要内置任何东西
         }
     }
+    s_jacobian=newsparser.get_sparse_mat();
+    newsparser.clearall();
     //这里还不太对，需要乘以B矩阵才是真实矩阵
     //所以，总共的非0entry数目为：2*dec_num*state_num*state_num_plus_act_num
     //下面B矩阵为1 1序列阵。
-    jacobian2<<B*jacobian,D;
+    Eigen::MatrixXd mid=s_B*s_jacobian;
+    jacobian2<<mid,D;
     //考虑到这里，进行重新计算：
 }
 
