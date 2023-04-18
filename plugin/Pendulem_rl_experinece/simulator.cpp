@@ -73,10 +73,10 @@ void Simulator::randonize_state()
 void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 {
     //  state的依次顺序是：x  dx  theta dtherta
-    double x=state_mat(0,0);
-    double dx=state_mat(1,0);
-    double theta=state_mat(2,0);
-    double dtheta=state_mat(3,0);
+    double x=state(0,0);
+    double dx=state(1,0);
+    double theta=state(2,0);
+    double dtheta=state(3,0);
 
     double F=act_mat(0,0);
 
@@ -108,10 +108,10 @@ void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
         theta=theta+2*3.1415926535;
     }
 
-    state_mat(0,0)=x;
-    state_mat(1,0)=dx;
-    state_mat(2,0)=theta;
-    state_mat(3,0)=dtheta;
+    state(0,0)=x;
+    state(1,0)=dx;
+    state(2,0)=theta;
+    state(3,0)=dtheta;
 
 
 }
