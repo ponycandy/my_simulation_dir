@@ -2,3 +2,8 @@ LIBS +=   -L$$PWD/Ipopt_Lib/ -llibipopt
 LIBS +=   -L$$PWD/Ipopt_Lib/ -llibcoinmumps
 LIBS +=   -L$$PWD/Ipopt_Lib/ -llibcoinmetis
 LIBS +=   -L$$PWD/Ipopt_Lib/ -llibcoinhsl
+
+libcoinhsl.lib
+libcoinmetis.lib
+libcoinmumps.lib
+libipopt.lib

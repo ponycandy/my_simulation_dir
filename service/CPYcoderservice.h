@@ -11,7 +11,7 @@ class CPYcoderservice
 public:
     virtual ~CPYcoderservice(){}
     virtual void sendMAT(Eigen::MatrixXd mat,Tcpcommunicateservice * usingservice)=0;
-    virtual void sendMAT(Eigen::MatrixXd mat,TCPserverservice * usingservice)=0;
+    virtual void sendMAT(Eigen::MatrixXd &mat,TCPserverservice * usingservice)=0;
 };
 #define CPYcoderservice_iid "CPYcoderservice"
 

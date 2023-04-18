@@ -42,7 +42,7 @@ void glpainter::setupUI()
 {
     layout = new QGridLayout;
     layout->addWidget(m_glwidget);
-    layout->setMargin(0);
+//    layout->setContentsMargins();
     m_widget->setLayout(layout);
 //    m_widget->show();
 }

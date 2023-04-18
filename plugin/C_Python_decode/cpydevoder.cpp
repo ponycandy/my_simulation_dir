@@ -88,7 +88,7 @@ void CPyDevoder::sendMAT(Eigen::MatrixXd mat,Tcpcommunicateservice * usingservic
     usingservice->send(sendingdata);
 }
 
-void CPyDevoder::sendMAT(Eigen::MatrixXd mat, TCPserverservice *usingservice)
+void CPyDevoder::sendMAT(Eigen::MatrixXd &mat, TCPserverservice *usingservice)
 {
     CPYDATA::mat_trans matsend;
     matsend.rows=mat.rows();
@@ -107,8 +107,7 @@ void CPyDevoder::sendMAT(Eigen::MatrixXd mat, TCPserverservice *usingservice)
 
     QByteArray sendingdata;//应用层到协议层
     execute(matsend,sendingdata);
-    9++666  QAEWWEQWQAAAAAAAAAS
-        +9-17                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       usingservice->send(sendingdata);
+    usingservice->send(sendingdata);
 }
 void CPyDevoder::execute( CPYDATA::mat_trans ptopic, QByteArray &sending_data)
 {

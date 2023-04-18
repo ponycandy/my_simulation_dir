@@ -23,8 +23,10 @@ public:
     Eigen::MatrixXd terminalstate;
     TCPserverservice *m_service1;
     CPYcoderservice *m_service2;
-
+    char m_preassigned_mat[1000];
+    void executesendmat(Eigen::MatrixXd mat);
 signals:
+    void setstate(Eigen::MatrixXd mat);
 
 public slots:
     void startsolve();

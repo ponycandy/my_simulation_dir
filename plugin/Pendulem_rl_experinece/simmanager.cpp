@@ -64,7 +64,8 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
         m_sim->state(1,0)=mat(1,0);
         m_sim->state(2,0)=mat(2,0);
         m_sim->state(3,0)=mat(3,0);
-
+        m_sim->sensor(m_sim->state);
+        m_sim->broad_cast(m_sim->state,m_sim->state,m_sim->sense_0);
         decoder->sendMAT(matreturn,m_TCP);
         return;
     }

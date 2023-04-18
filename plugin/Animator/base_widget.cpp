@@ -1,4 +1,4 @@
-
+﻿
 #include "base_widget.h"
 #include "ui_base_widget.h"
 #include "QWheelEvent"
@@ -17,7 +17,7 @@ base_widget::~base_widget()
 
 void base_widget::wheelEvent(QWheelEvent *event)
 {
-    if(event->delta() > 0)
+    if(event->angleDelta().y()>0)
     {
         m_painter->zoomin();
     }

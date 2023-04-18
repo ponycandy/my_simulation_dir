@@ -24,8 +24,12 @@ void TcpServerStation::disconnectport()
 
 void TcpServerStation::send(QByteArray data)
 {
-    mclient->write(data);//发完后立刻出现异常，没有返回到主函数
+    if(mclient->state() == QAbstractSocket::ConnectedState)
+    {
+        //发送数据
+        mclient->write(data);
 
+    }
 }
 
 void TcpServerStation::Bind_Slot(QObject *reciever, const char *method)
