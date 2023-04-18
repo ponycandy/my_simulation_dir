@@ -34,38 +34,33 @@ double Simulator::get_angle(double vx, double vy)
 void Simulator::init()
 
 {
-    I_0=1;
-    m_0=2;
-    l_0=3;
-    b_0=4;
-    M_0=10;
-    g_0=9.8;
+    m1=1;
+    m2=1;
+    l=1;
+    g=9.8;
     delta_t=30;
-    double mid1=-(I_0+m_0*l_0*l_0)*b_0/(I_0*(m_0+M_0)+M_0*m_0*l_0*l_0);
-    double mid2=(g_0*m_0*m_0*l_0*l_0)/(I_0*(m_0+M_0)+M_0*m_0*l_0*l_0);
-    double mid3=-(m_0*l_0*b_0)/(I_0*(m_0+M_0)+M_0*m_0*l_0*l_0);
-    double mid4=(I_0+m_0*l_0*l_0)/(I_0*(m_0+M_0)+M_0*m_0*l_0*l_0);
-    double mid5=m_0*l_0/(I_0*(m_0+M_0)+M_0*m_0*l_0*l_0);
+
+
     Amat.resize(4,4);
     Amat.setZero();
     Amat << 0.0, 1.0, 0.0, 0.0,
-            0.0,mid1, mid2, 0.0,
+        0.0,0.0, 0.0, 0.0,
 
-            0.0, 0.0, 0.0, 1.0,
-            0.0, mid3, mid2, 0.0;
+        0.0, 0.0, 0.0, 1.0,
+        0.0, 0.0, 0.0, 0.0;
     Bmat.resize(4,1);
     Bmat << 0.0,
-            mid4,
-            0.0,
-            mid5;
+        0.0,
+        0.0,
+        0.0;
     Cmat.resize(2,4);
     Cmat << 1.0,0.0,0.0,0.0,
-            0.0,0.0,1.0,0.0;
+        0.0,0.0,1.0,0.0;
     state.resize(4,1);
     state << 0.0,
-            0.0,
-            2.5,
-            0.0;
+        0.0,
+        2.5,
+        0.0;
     control_0.resize(1,1);
     control_0(0,0)=4;
     sense_0.resize(2,1);
@@ -77,35 +72,53 @@ void Simulator::randonize_state()
 }
 void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 {
+    //  state的依次顺序是：x  dx  theta dtherta
+    double x=state_mat(0,0);
+    double dx=state_mat(1,0);
+    double theta=state_mat(2,0);
+    double dtheta=state_mat(3,0);
 
-          double cosTheta = cos(state(2,0));
-          double sinTheta = sin(state(2,0));
+    double F=act_mat(0,0);
 
-          double temp = (control_0(0,0) + 5 * pow(state(3,0),2) * sinTheta) / 9;
-          double angularAccel = (g_0 * sinTheta - cosTheta * temp) / (
-              5 * (4.0 / 3.0 - (2.5 * pow(cosTheta, 2)) / 9));
-         double linearAccel = temp - (5 * angularAccel * cosTheta) / 9;
+    double cosTheta = cos(theta);
+    double sinTheta = sinTheta;
 
-          state(0,0) = state(0,0) + 0.001*delta_t * state(1,0);
-          state(1,0) = state(1,0) + 0.001*delta_t * linearAccel;
+    Eigen::MatrixXd dy;
+    dy.resize(4,1);
+    dy.setZero();
+    dy(2,0)=dtheta;
+    dy(3,0)=- (cosTheta*(l*m2*sinTheta*dtheta*dtheta + F))/(- l*m2*cosTheta*cosTheta + l*m1 + l*m2)
+               - (g*sinTheta*(m1 + m2))/(- l*m2*cosTheta*cosTheta + l*m1 + l*m2);
+    dy(0,0)=dx;
+    dy(1,0)=  (l*m2*sinTheta*dtheta*dtheta + F)/
+                   (- m2*cosTheta*cosTheta + m1 + m2) + (g*m2*cosTheta*sinTheta)/(- m2*cosTheta*cosTheta + m1 + m2);
 
-          state(2,0) = (
-              state(2,0) + 0.001*delta_t * state(3,0));
-          state(3,0) = (state(3,0)+ 0.001*delta_t * angularAccel);
-            if(state(2,0)>2*3.1415926535)
-            {
-                state(2,0)=state(2,0)-2*3.1415926535;
-            }
-            if(state(2,0)<-2*3.1415926535)
-            {
-                state(2,0)=state(2,0)+2*3.1415926535;
-            }
+
+    x = x + 0.001*delta_t * dy(0,0);//
+    dx = dx + 0.001*delta_t * dy(1,0);//
+
+    theta= theta + 0.001*delta_t * dy(2,0);
+    dtheta = dtheta + 0.001*delta_t * dy(3,0);
+    if(theta>2*3.1415926535)
+    {
+        theta=theta-2*3.1415926535;
+    }
+    if(theta<-2*3.1415926535)
+    {
+        theta=theta+2*3.1415926535;
+    }
+
+    state_mat(0,0)=x;
+    state_mat(1,0)=dx;
+    state_mat(2,0)=theta;
+    state_mat(3,0)=dtheta;
+
 
 }
 
 void Simulator::control(Eigen::MatrixXd sensor, Eigen::MatrixXd state_mat)
 {
-//    control_0(0,0)= -control_0(0,0);
+    //    control_0(0,0)= -control_0(0,0);
 }
 void Simulator::sensor(Eigen::MatrixXd state_mat)
 {

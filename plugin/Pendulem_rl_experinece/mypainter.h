@@ -25,6 +25,7 @@ public:
     double x_pos,omega,penlength,cartwidth,cartheight,pendwidth,vel,phi;
 private slots:
     void slot_update_state(QVector<double> state_array);
+    void setstate(Eigen::MatrixXd state);
 signals:
 
 };

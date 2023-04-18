@@ -18,7 +18,7 @@ simmanager::simmanager(QObject *parent) : QObject(parent)
     ODE_service=Pendulem_rl_experineceActivator::getService<SimDynamicsservice>("SimDynamicsservice");
     decoder=Pendulem_rl_experineceActivator::getService<CPYcoderservice>("CPYcoderservice");
     Pendulem_rl_experineceActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
-                                            ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
+                                                   ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
 
     setupEvent();
 
@@ -44,7 +44,7 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
 {
     if(mat.rows()==1)
     {
-//stepin
+        //stepin
         Eigen::MatrixXd matreturn;
         matreturn.resize(4,1);
         matreturn.setOnes();
@@ -56,7 +56,7 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
     }
     if(mat.rows()==4)
     {
-//setstate
+        //setstate
         Eigen::MatrixXd matreturn;
         matreturn.resize(1,1);
         matreturn.setOnes();
@@ -70,4 +70,3 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
     }
 
 }
-

@@ -22,9 +22,9 @@ void MYpainter::draw()
     m_animator->brush_painter->setBrush(obs_brush);
     QPolygonF poly;
     poly<<QPointF(x_pos+cartwidth/2,-cartheight/2)
-       <<QPointF(x_pos-cartwidth/2,-cartheight/2)
-      <<QPointF(x_pos-cartwidth/2,cartheight/2)
-     <<QPointF(x_pos+cartwidth/2,cartheight/2);
+         <<QPointF(x_pos-cartwidth/2,-cartheight/2)
+         <<QPointF(x_pos-cartwidth/2,cartheight/2)
+         <<QPointF(x_pos+cartwidth/2,cartheight/2);
     m_animator->draw_polygon(poly);
     m_animator->brush_painter->setBrush(agent_brush);
     m_animator->draw_square_oneside(x_pos,0,pendwidth,penlength,phi);
@@ -44,4 +44,11 @@ void MYpainter::slot_update_state(QVector<double> state_array)
     pendwidth=state_array[5];
     vel=state_array[6];
     phi=state_array[7];
+}
+
+void MYpainter::setstate(Eigen::MatrixXd state)
+{
+    x_pos=state(0,0);
+    phi=state(1,0);
+    draw();
 }

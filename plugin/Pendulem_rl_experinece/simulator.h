@@ -18,7 +18,7 @@ public:
     bool within_range(Eigen::MatrixXd state,single_obstacle *obs);
 
     void ode_function(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat) override;
-   void control(Eigen::MatrixXd sensor, Eigen::MatrixXd state_mat) override;
+    void control(Eigen::MatrixXd sensor, Eigen::MatrixXd state_mat) override;
     void sensor(Eigen::MatrixXd state_mat) override;
 
     void broad_cast(Eigen::MatrixXd state_mat, Eigen::MatrixXd act_mat, Eigen::MatrixXd sensor) override;
@@ -28,7 +28,7 @@ public:
     void update_obs();
     double get_angle(double vx,double vy);
 
-    double I_0,m_0,l_0,b_0,M_0,g_0,delta_t;
+    double I_0,m_0,l,b_0,M_0,g,delta_t,m1,m2;
 
     Eigen::MatrixXd Amat;
     Eigen::MatrixXd Bmat;
