@@ -78,7 +78,7 @@ void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
     double theta=state(2,0);
     double dtheta=state(3,0);
 
-    double F=act_mat(0,0);
+    double F=control_0(0,0);
 
     double cosTheta = cos(theta);
     double sinTheta = sinTheta;
