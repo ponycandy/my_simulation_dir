@@ -1,5 +1,6 @@
 ﻿#include "test_ode.h"
 #include "math.h"
+#include "state_file.h"
 test_ODE::test_ODE()
 {
     l=1;
@@ -15,20 +16,16 @@ Eigen::MatrixXd test_ODE::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd 
 
 
         double theta=state_mat(0,0);
-        double dtheta=state_mat(1,0);
+        double Dtheta=state_mat(1,0);
         double x=state_mat(2,0);
-        double dx=state_mat(3,0);
+        double Dx=state_mat(3,0);
         double F=act_mat(0,0);
-
+        double Eigen4[4];
         Eigen::MatrixXd dy;
         dy.resize(4,1);
         dy.setZero();
-        dy(0,0)=dtheta;
-        dy(1,0)=- (cos(theta)*(l*m2*sin(theta)*dtheta*dtheta + F))/(- l*m2*cos(theta)*cos(theta) + l*m1 + l*m2)
-                - (g*sin(theta)*(m1 + m2))/(- l*m2*cos(theta)*cos(theta) + l*m1 + l*m2);
-        dy(2,0)=dx;
-        dy(3,0)=  (l*m2*sin(theta)*dtheta*dtheta + F)/
-                (- m2*cos(theta)*cos(theta) + m1 + m2) + (g*m2*cos(theta)*sin(theta))/(- m2*cos(theta)*cos(theta) + m1 + m2);
+        state_file(Dtheta,Dx,F,g,l,m1,m2,theta,Eigen4);
+        dy=Eigen::Map<Eigen::MatrixXd>(Eigen4,4,1);
         return dy;
 
     //--------------four legged 问题

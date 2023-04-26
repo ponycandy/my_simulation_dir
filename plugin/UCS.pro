@@ -9,4 +9,6 @@ SUBDIRS += \
     Animator \
     Simulator \
     C_Python_decode \
-    TCPCommunicator
+    TCPCommunicator \
+    MPC_Tracking_Controller   \
+    test_MPC   \

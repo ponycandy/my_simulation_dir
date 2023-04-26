@@ -1,4 +1,4 @@
-#ifndef C_PYTHON_DECODE_H
+﻿#ifndef C_PYTHON_DECODE_H
 #define C_PYTHON_DECODE_H
 #ifndef QTPLUGIN_H
 #define QTPLUGIN_H
@@ -8,7 +8,7 @@
 #include "plugininterface.h"
 #include "service/eventservice.h"
 #include "cpydevoder.h"
-
+#include "decoder_manager.h"
 
 class C_Python_decodeActivator : public QObject,public PluginInterface
 {
@@ -52,7 +52,7 @@ public:
 private:
     static C_Python_decodeActivator *m_instance;
     static PluginContext *m_CONTEXT;
-    CPyDevoder *m_decode;
+    decoder_manager *m_manager;
 };
 
 #endif 

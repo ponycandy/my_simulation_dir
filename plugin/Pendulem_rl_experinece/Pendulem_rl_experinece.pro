@@ -20,7 +20,8 @@ SOURCES += \
     Pendulem_rl_experineceActivator.cpp \
     simmanager.cpp \
     simulator.cpp \
-    mypainter.cpp
+    mypainter.cpp \
+    state_file.cpp
 
 
 
@@ -28,6 +29,7 @@ HEADERS += \
     Pendulem_rl_experineceActivator.h \
     simmanager.h \
     simulator.h \
-    mypainter.h
+    mypainter.h \
+    state_file.h
 
 

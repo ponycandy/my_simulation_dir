@@ -22,6 +22,7 @@ signals:
 
 public slots:
     void matrecieved(Eigen::MatrixXd mat);
+    void requeststate(Eigen::MatrixXd mat);
 
 };
 

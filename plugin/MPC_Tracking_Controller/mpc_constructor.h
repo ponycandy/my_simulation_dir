@@ -49,18 +49,18 @@ public:
     Eigen::MatrixXd act_ref;
     Eigen::MatrixXd lowerBound;
     Eigen::MatrixXd upperBound;
-Eigen::MatrixXd Identity_A;
+    Eigen::MatrixXd Identity_A;
     Eigen::MatrixXd Identity_B;
 
-    Eigen::Matrix<double, 1, 1> Qx_ref;
+    Eigen::MatrixXd Qx_ref;
     Matrix_sparser *m_sparser;
 
 
-    Eigen::DiagonalMatrix<double,1> Q;
-    Eigen::DiagonalMatrix<double,1> R;
+    Eigen::DiagonalMatrix<double,Eigen::Dynamic> Q;
+    Eigen::DiagonalMatrix<double,Eigen::Dynamic> R;
     Eigen::VectorXd  gradient ;
-    Eigen::Matrix<double, 1, 1> xRef;
-    Eigen::Matrix<double, 1, 1> xinit;
+    Eigen::MatrixXd xRef;
+    Eigen::MatrixXd xinit;
     Eigen::MatrixXd dynamicMatrix;
     Eigen::MatrixXd controlMatrix;
     Eigen::SparseMatrix<double> constraintMatrix;

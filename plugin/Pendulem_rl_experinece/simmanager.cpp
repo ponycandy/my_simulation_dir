@@ -19,7 +19,6 @@ simmanager::simmanager(QObject *parent) : QObject(parent)
     decoder=Pendulem_rl_experineceActivator::getService<CPYcoderservice>("CPYcoderservice");
     Pendulem_rl_experineceActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
                                                    ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
-
     setupEvent();
 
     Anim_service->register_painter(paint);
@@ -69,5 +68,17 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
         decoder->sendMAT(matreturn,m_TCP);
         return;
     }
+    if(mat.rows()==2)
+    {
+        //getstate
+        Eigen::MatrixXd matreturn;
+        matreturn=m_sim->state;
+        decoder->sendMAT(matreturn,m_TCP);
+        return;
+    }
+}
+
+void simmanager::requeststate(Eigen::MatrixXd mat)
+{
 
 }

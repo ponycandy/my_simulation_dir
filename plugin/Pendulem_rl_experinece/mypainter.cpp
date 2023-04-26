@@ -27,7 +27,7 @@ void MYpainter::draw()
          <<QPointF(x_pos+cartwidth/2,cartheight/2);
     m_animator->draw_polygon(poly);
     m_animator->brush_painter->setBrush(agent_brush);
-    m_animator->draw_square_oneside(x_pos,0,pendwidth,penlength,phi+3.1415926535);
+    m_animator->draw_square_oneside(x_pos,0,pendwidth,penlength,-phi+3.1415926535);
 
 
 

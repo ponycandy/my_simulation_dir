@@ -19,12 +19,14 @@ INCLUDEPATH += ../../3rdlib
 
 SOURCES += \
     C_Python_decodeActivator.cpp \
-    cpydevoder.cpp
+    cpydevoder.cpp \
+    decoder_manager.cpp
 
 
 
 HEADERS += \
     C_Python_decodeActivator.h \
-    cpydevoder.h
+    cpydevoder.h \
+    decoder_manager.h
 
 

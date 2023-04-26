@@ -12,6 +12,8 @@ public:
     double m1;
     double m2;
     double g;
+
+
 };
 
 #endif // TESTODE_JAC_H

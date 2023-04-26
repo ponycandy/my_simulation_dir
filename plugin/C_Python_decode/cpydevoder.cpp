@@ -2,15 +2,9 @@
 #include "C_Python_decodeActivator.h"
 #include "OSGIEVENT.h"
 #include "defines/CpyDefines.h"
+
 CPyDevoder::CPyDevoder(QObject *parent) : QObject(parent)
 {
-    C_Python_decodeActivator::subscribeslot(this,SLOT(datarecieved(QByteArray))
-                                            ,OSGIEVENT::TCPHEXRECIEVED,Qt::QueuedConnection);
-    qRegisterMetaType<Eigen::MatrixXd>("Eigen::MatrixXd");
-    C_Python_decodeActivator::publishsignal(this,SIGNAL(matrecieved(Eigen::MatrixXd))
-                                            ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
-    m_service=C_Python_decodeActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
-    C_Python_decodeActivator::registerservice(this,"CPYcoderservice");
 
 }
 
@@ -66,6 +60,18 @@ Eigen::MatrixXd CPyDevoder::make_mat(CPYDATA::mat_trans &PTtopic)
     return targetmat;
 }
 
+void CPyDevoder::getmat(QByteArray data)
+{
+    datarecieved(data);
+}
+
+void CPyDevoder::Bind_Slot(QObject *reciever, const char *method)
+{
+    qRegisterMetaType<Eigen::MatrixXd>("Eigen::MatrixXd");
+
+    connect(this,SIGNAL(matrecieved(Eigen::MatrixXd)),reciever,method);
+}
+
 void CPyDevoder::sendMAT(Eigen::MatrixXd mat,Tcpcommunicateservice * usingservice)
 {
     CPYDATA::mat_trans matsend;
@@ -109,6 +115,8 @@ void CPyDevoder::sendMAT(Eigen::MatrixXd &mat, TCPserverservice *usingservice)
     execute(matsend,sendingdata);
     usingservice->send(sendingdata);
 }
+
+
 void CPyDevoder::execute( CPYDATA::mat_trans ptopic, QByteArray &sending_data)
 {
     const char* ptData = m_preassigned_mat;
@@ -144,6 +152,12 @@ void CPyDevoder::execute( CPYDATA::mat_trans ptopic, QByteArray &sending_data)
     }
 
     sending_data.setRawData(m_preassigned_mat,size);
+}
+
+CPYcoderservice *CPyDevoder::cloneservice()
+{
+    CPyDevoder *newservice=new CPyDevoder;
+    return newservice;
 }
 void CPyDevoder::datarecieved(QByteArray data)
 {

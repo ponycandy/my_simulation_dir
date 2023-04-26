@@ -21,7 +21,10 @@ SOURCES += \
     main_exe.cpp \
     test_NMPC_PluginActivator.cpp \
     test_ode.cpp \
-    testode_jac.cpp
+    testode_jac.cpp \
+    myfile.cpp \
+    state_file.cpp \
+    dynamic_function.cpp
 
 
 
@@ -30,10 +33,14 @@ HEADERS += \
     main_exe.h \
     test_NMPC_PluginActivator.h \
     test_ode.h \
-    testode_jac.h
+    testode_jac.h \
+    myfile.h \
+    state_file.h \
+    dynamic_function.h
 
 FORMS += \
-    control_widget.ui
+    control_widget.ui \
+
 
 
 
