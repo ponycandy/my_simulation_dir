@@ -37,7 +37,7 @@ void Simulator::init()
 
 {
     m1=1;
-    m2=1;
+    m2=0.1;
     l=1;
     g=9.8;
     delta_t=30;
@@ -59,7 +59,7 @@ void Simulator::init()
     Cmat << 0.0,0.0,1.0,0.0,
         1.0,0.0,0.0,0.0;
     state.resize(4,1);
-    state << 3.1415926535,
+    state << 0,
         0.0,
         0.0,
         0.0;

@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QtDebug>
+#include <QRegularExpression>
 inline QString f_FileOpen();   // 内联声明
 inline QString f_Filesavas();   // 内联声明
 inline QString f_Read_TXT(QString txtfilename);   // 内联声明
@@ -20,14 +21,14 @@ inline int f_get_line_length(QString mat,int linenum);
 QString f_FileOpen()                 //打开文件
 {
     qDebug()<<"open ";
-    QString fileName=QFileDialog::getOpenFileName(NULL,"openfile",QDir::currentPath(),NULL,NULL,NULL);
+    QString fileName=QFileDialog::getOpenFileName(NULL,"openfile",QDir::currentPath(),NULL,NULL);
     qDebug()<<fileName;
     return  fileName;
 }
 QString f_Filesavas()
 {
     qDebug()<<"saveas ";
-    QString fileName= QFileDialog::getSaveFileName(NULL,"save_as",QDir::currentPath(),NULL,NULL,NULL);
+    QString fileName= QFileDialog::getSaveFileName(NULL,"save_as",QDir::currentPath(),NULL,NULL);
     qDebug()<<fileName;
 
     return fileName;
@@ -73,7 +74,7 @@ QString f_Replacestring(QString origintexts,QString replacee,QString replacer)
     QString originText = origintexts;
     QString searchText = replacee;
     QString replaceText =replacer;
-    QString result = originText.replace(QRegExp(searchText), replaceText);
+    QString result = originText.replace(QRegularExpression(searchText), replaceText);
     return  result;
 }
 QString f_get_text_between(QString start,QString endtext,QString text)
