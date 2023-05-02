@@ -22,9 +22,9 @@ SOURCES += \
     test_NMPC_PluginActivator.cpp \
     test_ode.cpp \
     testode_jac.cpp \
-    myfile.cpp \
     state_file.cpp \
-    dynamic_function.cpp
+    dynamic_function.cpp \
+    jac_mat_file.cpp
 
 
 
@@ -34,9 +34,9 @@ HEADERS += \
     test_NMPC_PluginActivator.h \
     test_ode.h \
     testode_jac.h \
-    myfile.h \
     state_file.h \
-    dynamic_function.h
+    dynamic_function.h \
+    jac_mat_file.h
 
 FORMS += \
     control_widget.ui \

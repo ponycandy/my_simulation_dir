@@ -18,7 +18,13 @@ simmanager::simmanager(QObject *parent) : QObject(parent)
     ODE_service=pushingboxActivator::getService<SimDynamicsservice>("SimDynamicsservice");
     decoder=pushingboxActivator::getService<CPYcoderservice>("CPYcoderservice");
     pushingboxActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
-                                            ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
+                                       ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
+    pushingboxActivator::subscribeslot(this,SLOT(get_state_now())
+                                       ,OSGIEVENT::REQUEST_PUSHINGBOX_STATE_NOW,Qt::DirectConnection);
+    pushingboxActivator::publishsignal(this,SIGNAL(state_return(Eigen::MatrixXd))
+                                       ,OSGIEVENT::RETURN_PUSHINGBOX_STATE_NOW,Qt::DirectConnection);
+    pushingboxActivator::subscribeslot(this,SLOT(outer_stepin(Eigen::MatrixXd))
+                                       ,OSGIEVENT::ACTION_PUSHINGBOX,Qt::DirectConnection);
 
     setupEvent();
 
@@ -44,7 +50,7 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
 {
     if(mat.rows()==1)
     {
-//stepin
+        //stepin
         Eigen::MatrixXd matreturn;
         matreturn.resize(4,1);
         matreturn.setOnes();
@@ -56,7 +62,7 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
     }
     if(mat.rows()==2)
     {
-//setstate
+        //setstate
         Eigen::MatrixXd matreturn;
         matreturn.resize(1,1);
         matreturn.setOnes();
@@ -67,5 +73,25 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
         return;
     }
 
+}
+
+void simmanager::get_state_now()
+{
+    Eigen::MatrixXd matreturn;
+    matreturn.resize(4,1);
+    matreturn.setOnes();
+    matreturn=m_sim->state;
+    emit state_return(matreturn);
+}
+
+void simmanager::outer_stepin(Eigen::MatrixXd mat)
+{
+    m_sim->control_0(0,0)=mat(0,0);
+    ODE_service->step_in();
+    Eigen::MatrixXd matreturn;
+    matreturn.resize(4,1);
+    matreturn.setOnes();
+    matreturn=m_sim->state;
+    emit state_return(matreturn);
 }
 

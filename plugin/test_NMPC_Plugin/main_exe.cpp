@@ -13,7 +13,7 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     state_obs.resize(4,1);
     initstate<<0,0,0,1;
     terminalstate.resize(4,1);
-    terminalstate<<3.1415926535,0,3,0;
+    terminalstate<<3.1415926535,0,0,0;
 
 
     m_widget=new Control_Widget;
@@ -67,23 +67,15 @@ void main_exe::startsolve()
     Eigen::MatrixXd init_state;
     getstatemat.resize(2,1);
     init_state.resize(4,1);
-    init_state<<0.1,0,0,0;
+    init_state<<0,0,0,0;
     bool *isreal = new bool;
 
 
 
-    m_service3->set_reference(statemat,actmat,true);
+    m_service3->set_reference(statemat,actmat,false);
     while (true)
     {
-                QElapsedTimer et;
-                et.start();
-                m_service2->sendMAT(init_state,m_service1);
-                while(et.elapsed()<100)//ms
-                {
-                    QCoreApplication::processEvents();
-                }
-        for(int i=0;i<actmat.cols();i++)
-        {
+
             QElapsedTimer et;
             et.start();
             QElapsedTimer et2;
@@ -99,7 +91,7 @@ void main_exe::startsolve()
                 }
             }
             flag=0;
-            controlmat=m_service3->feed_Back_control(state_obs,isreal);
+//            controlmat=m_service3->feed_Back_control(state_obs,isreal);
             m_service2->sendMAT(controlmat,m_service1);
 
             while(et.elapsed()<30)//ms
@@ -108,7 +100,7 @@ void main_exe::startsolve()
             }
 
 
-        }
+
     }
 
 

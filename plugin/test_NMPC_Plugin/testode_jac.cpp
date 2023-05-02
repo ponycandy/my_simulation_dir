@@ -1,5 +1,5 @@
 ﻿#include "testode_jac.h"
-#include "myfile.h"
+#include "jac_mat_file.h""
 testODE_jac::testODE_jac()
 {
     l=1;
@@ -18,7 +18,7 @@ Eigen::MatrixXd testODE_jac::jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd s
     double dx=state_mat(3,0);
     double F=act_mat(0,0);
     double Eigen20[20];
-    myfile(dtheta,F,g,l,m1,m2,theta,Eigen20);
+    jac_mat_file(dtheta,F,g,l,m1,m2,theta,Eigen20);
     dydx.resize(4,5);
     dydx=Eigen::Map<Eigen::MatrixXd>(Eigen20,4,5);
     return dydx;

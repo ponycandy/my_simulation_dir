@@ -37,8 +37,8 @@ void Simulator::init()
 
 {
     m1=1;
-    m2=0.1;
-    l=1;
+    m2=2;
+    l=2;
     g=9.8;
     delta_t=30;
 

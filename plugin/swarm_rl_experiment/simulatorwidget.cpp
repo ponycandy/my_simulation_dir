@@ -8,8 +8,6 @@ simulatorWidget::simulatorWidget(QWidget *parent) :
     ui->setupUi(this);
     Vbox=new QVBoxLayout;
     this->setLayout(Vbox);
-//    this->ui
-//    HBox->addWidget()
 }
 
 simulatorWidget::~simulatorWidget()
