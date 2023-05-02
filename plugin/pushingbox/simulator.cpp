@@ -52,7 +52,7 @@ void Simulator::init()
     state.resize(2,1);
     state.setZero();
     state << 10.0,
-            5.0;
+            0.0;
     control_0.resize(1,1);
     control_0.setZero();
     control_0(0,0)=0.1;

@@ -117,7 +117,7 @@ void MPC_Constructor::init_all_mat()
     Q.setIdentity(state_num); //default configuration
     Q=Q*10;
     R.resize(act_num);
-    R.setZero(); //default configuration
+    R.setIdentity(act_num); //default configuration
     calc_weight();
     dynamicMatrix.resize(state_num,state_num);dynamicMatrix.setZero();
     controlMatrix.resize(state_num,act_num);controlMatrix.setZero();
@@ -448,26 +448,24 @@ bool MPC_Constructor::xref_move_toward()
     {
         Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)= last_control;
     }
-//    if(ref_count<dec_num)
-//    {
-//        for(int i=0;i<dec_num;i++)
-//        {
-//            Y_ref.block(i*state_num,0,state_num,1)=
-//                state_ref_all.block(0,pointer,state_num,1);
-//            if(pointer>=dec_num-1)
-//            {
+    if(ref_count<dec_num)
+    {
+        for(int i=0;i<dec_num;i++)
+        {
+            Y_ref.block(i*(state_num+act_num),0,state_num,1)=
+                state_ref_all.block(0,pointer,state_num,1);
+            if(pointer>=dec_num-1)
+            {
 
-//                Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)= last_control;
-//            }
-//            else
-//            {
-//                Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)= last_control;
-//                pointer+=1;
-//            }
-//        }
-//        ref_count++;
+            }
+            else
+            {
+                pointer+=1;
+            }
+        }
+        ref_count++;
 
-//    }
+    }
 //    else
 //    {
 

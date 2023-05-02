@@ -27,8 +27,13 @@ mainexe::mainexe(QObject *parent)
     Eigen::MatrixXd state;
     state.resize(2,20);
     state.setZero();
+    Eigen::MatrixXd Q;Q.resize(2,2);
+    Q<<10,0,0,2;
+    Eigen::MatrixXd R;R.resize(1,1);
+    R<<0.1;
 
     m_service2->set_reference(state,state,false);
+    m_service2->setWeightMatrices(Q,R);
     statenow.resize(2,1);
     statenow.setZero();
 }

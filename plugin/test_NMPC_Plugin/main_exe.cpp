@@ -11,7 +11,7 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
 {
     initstate.resize(4,1);
     state_obs.resize(4,1);
-    initstate<<0,0,0,1;
+    initstate<<0,0,0,0;
     terminalstate.resize(4,1);
     terminalstate<<3.1415926535,0,0,0;
 
@@ -33,24 +33,24 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     //必须要使用中间转接，这个属于固有问题
     Eigen::MatrixXd lowb;
     lowb.resize(1,1);
-    lowb<<-10;
+    lowb<<-100;
 
     Eigen::MatrixXd highb;
     highb.resize(1,1);
-    highb<<10;
+    highb<<100;
 
     m_service->set_control_bound(lowb,highb);
     m_service->registerODE(m_ode);
     m_service->registerODEJacob(m_Jac);
     m_service->init_state(initstate,terminalstate);
-    m_service->init_num(4,1,100);
+    m_service->init_num(4,1,40);
     m_service->init_steptime(0.03);//此处时间单位为秒
     //    startsolve();
 
     funtor=new dynamic_function;
     m_service3= test_NMPC_PluginActivator::getService<MPC_Trackerservice>("MPC_Trackerservice");
     m_service3->registerODE(funtor);
-    m_service3->init_num(4,1,100);
+    m_service3->init_num(4,1,40);
     m_service3->init_steptime(0.03);//此处时间单位为秒
 
 }
@@ -67,9 +67,13 @@ void main_exe::startsolve()
     Eigen::MatrixXd init_state;
     getstatemat.resize(2,1);
     init_state.resize(4,1);
+    actmat.setZero();
     init_state<<0,0,0,0;
     bool *isreal = new bool;
-
+    for(int i=0;i<30;i++)
+    {
+        statemat.block(0,i,4,1)<<3.1415926535,0,0,0;
+    }
 
 
     m_service3->set_reference(statemat,actmat,false);
@@ -91,7 +95,7 @@ void main_exe::startsolve()
                 }
             }
             flag=0;
-//            controlmat=m_service3->feed_Back_control(state_obs,isreal);
+            controlmat=m_service3->feed_Back_control(state_obs);
             m_service2->sendMAT(controlmat,m_service1);
 
             while(et.elapsed()<30)//ms
