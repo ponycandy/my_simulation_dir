@@ -43,38 +43,52 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     m_service->registerODE(m_ode);
     m_service->registerODEJacob(m_Jac);
     m_service->init_state(initstate,terminalstate);
-    m_service->init_num(4,1,40);
+    m_service->init_num(4,1,30);
     m_service->init_steptime(0.03);//此处时间单位为秒
     //    startsolve();
 
     funtor=new dynamic_function;
     m_service3= test_NMPC_PluginActivator::getService<MPC_Trackerservice>("MPC_Trackerservice");
     m_service3->registerODE(funtor);
-    m_service3->init_num(4,1,40);
+    m_service3->init_num(4,1,30);
     m_service3->init_steptime(0.03);//此处时间单位为秒
+    Eigen::MatrixXd Q;Q.resize(4,4);
+    Q<<1,0,0,0,
+        0,0.001,0,0,
+        0,0,0.001,0,
+        0,0,0,1;//瞬间超界
+    Eigen::MatrixXd R;R.resize(1,1);
+    R<<4;
+    m_service3->setWeightMatrices(Q,R);
+    Eigen::MatrixXd lower;lower.resize(1,1);lower<<-10;
+    Eigen::MatrixXd higher;higher.resize(1,1);higher<<10;
 
+    m_service3->set_control_bound(lower,higher);
 }
 
 
 
 void main_exe::startsolve()
 {
-    m_service->solve_problem();
-    Eigen::MatrixXd actmat=m_service->get_actMat();
-    Eigen::MatrixXd statemat=m_service->get_stateMat();
+//    m_service->solve_problem();
+//    Eigen::MatrixXd actmat=m_service->get_actMat();
+//    Eigen::MatrixXd statemat=m_service->get_stateMat();
+    Eigen::MatrixXd actmat;
+    Eigen::MatrixXd statemat;
     Eigen::MatrixXd controlmat;
     Eigen::MatrixXd getstatemat;
     Eigen::MatrixXd init_state;
     getstatemat.resize(2,1);
     init_state.resize(4,1);
-    actmat.setZero();
     init_state<<0,0,0,0;
     bool *isreal = new bool;
+    statemat.resize(4,30);
+    actmat.resize(1,30);
+    actmat.setZero();
     for(int i=0;i<30;i++)
     {
         statemat.block(0,i,4,1)<<3.1415926535,0,0,0;
     }
-
 
     m_service3->set_reference(statemat,actmat,false);
     while (true)

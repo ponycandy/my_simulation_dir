@@ -19,6 +19,7 @@ public:
     virtual void sensorfunction()=0;
     virtual void broadcastfunction()=0;
     virtual void controlfunction()=0;
+    virtual void fault_set(int option)=0;
     virtual SwarmAgent* clone_agent()=0;
     virtual Eigen::MatrixXd state_space_equation()=0;
     virtual ~SwarmAgent(){}

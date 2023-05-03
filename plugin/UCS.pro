@@ -10,4 +10,6 @@ SUBDIRS += \
     CollisionDetect \
     pushingbox \
     MPC_Tracking_Controller \
-    test_MPC_tracker
+    test_MPC_tracker \
+    test_NMPC_Plugin \
+    swarm_rl_experiment \

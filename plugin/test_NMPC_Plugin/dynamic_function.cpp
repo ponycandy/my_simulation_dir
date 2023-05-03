@@ -7,9 +7,9 @@ dynamic_function::dynamic_function(QObject *parent)
     : QObject{parent}
 {
     g=9.8;
-    l=1;
+    l=2;
     m1=1;
-    m2=1;
+    m2=2;
 }
 
 void dynamic_function::get_A_and_B(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat, Eigen::MatrixXd &A_mat, Eigen::MatrixXd &B_mat)
@@ -21,6 +21,8 @@ void dynamic_function::get_A_and_B(Eigen::MatrixXd act_mat, Eigen::MatrixXd stat
     double Dx=state_mat(3,0);
     double F=act_mat(0,0);
     double jacmat_array[20];
+
+
 
     Eigen::MatrixXd jac_mat;
     jac_mat_file(Dtheta,F,g,l,m1,m2,theta,jacmat_array);

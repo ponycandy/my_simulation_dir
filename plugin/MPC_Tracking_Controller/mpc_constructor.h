@@ -33,6 +33,7 @@ public:
     void fill_in_ABC();
     void calc_H_q_cons();
     Eigen::MatrixXd H_Qp;
+    int leanrflag=0;
     Eigen::MatrixXd f_Qp;
     Eigen::MatrixXd Y_ref;
     Eigen::MatrixXd init_x_u_ref;

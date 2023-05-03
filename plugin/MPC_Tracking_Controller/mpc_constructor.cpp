@@ -6,8 +6,10 @@
 MPC_Constructor::MPC_Constructor(QObject *parent)
 {
     solver=new OsqpEigen::Solver;
+    solver->settings()->setVerbosity(true);
     ref_count=0;
     ref_count_local=0;
+    leanrflag=0;
 }
 
 void MPC_Constructor::set_reference(Eigen::MatrixXd state, Eigen::MatrixXd action, bool use_action)
@@ -255,7 +257,7 @@ Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd state)
 {
     //从这里开始是控制了，开始构建！
 
-        xref_move_toward();
+    xref_move_toward();
     xinit=state;
     init_x_u_ref<<xinit,last_control;
     clear_ABC_list();
@@ -327,10 +329,9 @@ void MPC_Constructor::fill_in_ABC()
 
         C_m.resize(state_num+act_num,1);C_m.setZero();
         C_m.block(0,0,state_num,1) = d_state-dynamicMatrix_temp*current_state-controlMatrix_temp*u_eq;
-
         current_state=current_state+d_state*steptime;
         X_eq_list.insert(i+1,current_state);
-        Eigen::MatrixXd A_m;
+        Eigen::MatrixXd A_m;//A不能进行sparse化，否则会导致后面的计算出现问题
         Eigen::MatrixXd B_m;
         A_m.resize(state_num+act_num,state_num+act_num);A_m.setZero();
         B_m.resize(state_num+act_num,act_num);B_m.setZero();
@@ -422,6 +423,19 @@ void MPC_Constructor::set_control_bound(Eigen::MatrixXd lower, Eigen::MatrixXd h
 {
     lower_u=lower;
     high_u=higher;
+    int counter=0;
+    int length1=dec_num*act_num;
+    for(int ii=0;ii<dec_num;ii++)
+    {
+        lowerBound.block(counter,0,act_num,1)=lower_deltau;
+        upperBound.block(counter,0,act_num,1)=high_deltau;
+
+        lowerBound.block(counter+length1,0,act_num,1)=lower_u-last_control;
+        upperBound.block(counter+length1,0,act_num,1)=high_u-last_control;
+
+        counter+=act_num;
+    }
+
 }
 
 void MPC_Constructor::set_delta_control_bound(Eigen::MatrixXd lower, Eigen::MatrixXd higher)
@@ -466,10 +480,10 @@ bool MPC_Constructor::xref_move_toward()
         ref_count++;
 
     }
-//    else
-//    {
+    //    else
+    //    {
 
-//    }
+    //    }
     return true;
 }
 

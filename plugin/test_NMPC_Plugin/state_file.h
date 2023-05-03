@@ -1,4 +1,4 @@
-//
+﻿//
 // File: state_file.h
 //
 // MATLAB Coder version            : 5.2
@@ -9,7 +9,6 @@
 #define STATE_FILE_H
 
 // Include Files
-#include "rtwtypes.h"
 #include <cstddef>
 #include <cstdlib>
 

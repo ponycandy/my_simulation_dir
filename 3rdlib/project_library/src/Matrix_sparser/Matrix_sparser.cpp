@@ -67,10 +67,28 @@ void Matrix_sparser::add_mat_block(Eigen::MatrixXd mat, int start_x, int start_y
     {
         for(int j=0;j<mat.cols();j++)
         {
- tripletList.push_back(
+            tripletList.push_back(
                 Eigen::Triplet<double>(start_x+i,start_y+j,mat(i,j)));
         }
     }
+}
+
+Eigen::SparseMatrix<double> Matrix_sparser::make_dense_sparse(Eigen::MatrixXd mat)
+{
+    clearall();
+    setsize(mat.cols(),mat.rows());
+    for(int i=0;i<mat.rows();i++)
+    {
+        for(int j=0;j<mat.cols();j++)
+        {
+            if(mat(i,j) !=0)
+            {
+                tripletList.push_back(
+                    Eigen::Triplet<double>(i,j,mat(i,j)));
+            }
+        }
+    }
+    return get_sparse_mat();
 }
 
 void Matrix_sparser::setsize(int width, int height)

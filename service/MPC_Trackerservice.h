@@ -13,7 +13,7 @@ public:
     virtual void registerODE(MPC_ODE *odefunction)=0;
     virtual void set_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher)=0;
     virtual void set_delta_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher)=0;
-    virtual Eigen::MatrixXd feed_Back_control(Eigen::MatrixXd state,bool *is_end)=0;
+    virtual Eigen::MatrixXd feed_Back_control(Eigen::MatrixXd state)=0;
     virtual void init_num(int statenum, int actnum, int decisionnum) =0;
     virtual void set_state_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher)=0;
     virtual void setWeightMatrices(Eigen::MatrixXd Q, Eigen::MatrixXd R)=0;

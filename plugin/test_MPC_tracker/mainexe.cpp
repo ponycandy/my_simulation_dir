@@ -4,6 +4,8 @@
 #include "include/OSGIEVENT.h"
 #include "QCoreApplication"
 #include "QElapsedTimer"
+#include <chrono>   //计算时间
+
 
 mainexe::mainexe(QObject *parent)
     : QObject{parent}
@@ -28,9 +30,9 @@ mainexe::mainexe(QObject *parent)
     state.resize(2,20);
     state.setZero();
     Eigen::MatrixXd Q;Q.resize(2,2);
-    Q<<10,0,0,2;
+    Q<<10,0,0,0.5;
     Eigen::MatrixXd R;R.resize(1,1);
-    R<<0.1;
+    R<<1;
 
     m_service2->set_reference(state,state,false);
     m_service2->setWeightMatrices(Q,R);
@@ -51,7 +53,19 @@ void mainexe::solve()
     while(true)
     {   QElapsedTimer et;
         et.start();
+        //        using namespace ;
+
+        auto starttime = std::chrono::system_clock::now();
+
+
         control=m_service2->feed_Back_control(statenow);
+        std::chrono::duration<double> diff = std::chrono::system_clock::now()- starttime;
+        qDebug() << "所耗时间为：" << diff.count() << "s" ;
+        //控制周期约5ms，满足要求，但是可以看到
+        //在矩阵运算中消耗的时间大概是20~30倍的求解器时间
+        //这个求解器的速度是真的快
+        //考虑到矩阵有进一步sparse的空间，还可以优化矩阵的乘法
+        //在这里我们就不追求这个极致了，目前已经完全够用
         emit outer_stepin(control);
         while(et.elapsed()<30)//ms
         {

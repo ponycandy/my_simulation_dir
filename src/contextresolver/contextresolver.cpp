@@ -114,6 +114,7 @@ void ContextResolver::tryconnection_slot(QString eventname,QObject *sender,const
         {
             QObject::connect(sender,signal,it.value()->qobjk,it.value()->functorname,it.value()->Type);
             ++it;
+            qDebug()<<eventname +"connected! ";
         }
     }
 }
@@ -128,6 +129,7 @@ void ContextResolver::tryconnection_sig(QString eventname, QObject *reciever, co
         {
             QObject::connect(it.value()->qobjk,it.value()->functorname,reciever,slot,it.value()->Type);
             ++it;
+             qDebug()<<eventname +"connected! ";
         }
     }
 }
