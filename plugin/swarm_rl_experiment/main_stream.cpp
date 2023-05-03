@@ -39,7 +39,7 @@ main_stream::main_stream(QObject *parent) : QObject(parent)
     m_widget->show();
     anim->start_animate();
     dysim=swarmsim->get_simer();
-    //    dysim->set_step_in_mode(1);
+    dysim->set_step_in_mode(1);
     swarmsim->startsim();
 }
 
@@ -92,13 +92,16 @@ void main_stream::calc_reward()
 {
     rp=0;
     rf=0;
+    rpf=0;
     for(int i=0;i<=2;i++)
     {
         Eigen::MatrixXd mid_state=tempstate.block(i,0,1,3)-ref_mat.block(i,0,1,3);
-        Eigen::MatrixXd mid_state_f=agentgroup.value(i)->state_vector.transpose()-ref_mat.block(i,0,1,3);
-        Eigen::MatrixXd act_mid=agentgroup.value(i)->act_vector;
-        rp+=(mid_state*Q_mat*mid_state.transpose()+act_mid.transpose()*Q_mat*act_mid)(0,0);
-        rf+=(mid_state_f*Q_mat*mid_state_f.transpose()+act_mid.transpose()*Q_mat*act_mid)(0,0);
+        SwarmAgent *agent=agentgroup.value(i+1);
+        Eigen::MatrixXd state_vector_trans=agent->state_vector.transpose();
+        Eigen::MatrixXd mid_state_f=state_vector_trans-ref_mat.block(i,0,1,3);
+        Eigen::MatrixXd act_mid=agent->act_vector;
+        rp+=(mid_state*Q_mat*mid_state.transpose()+act_mid.transpose()*R_mat*act_mid)(0,0);
+        rf+=(mid_state_f*Q_mat*mid_state_f.transpose()+act_mid.transpose()*R_mat*act_mid)(0,0);
     }
     rpf=abs(rp-rf);
     rp=-rp;
@@ -134,15 +137,17 @@ void main_stream::matrecieved(Eigen::MatrixXd mat)
         matreturn.resize(3,9);
         matreturn.setZero();
 
-
+        iter = agentgroup.cbegin();
         for (int i=0;i<=2;i++)
         {
-            matreturn(0,3*i)=iter.value()->state_vector(i,0)-ref_mat(i,0);
-            matreturn(0,3*i+1)=iter.value()->state_vector(i,1)-ref_mat(i,1);
-            matreturn(0,3*i+2)=iter.value()->state_vector(i,2)-ref_mat(i,2);
+            matreturn(0,3*i)=iter.value()->state_vector(0,0)-ref_mat(i,0);
+            matreturn(0,3*i+1)=iter.value()->state_vector(1,0)-ref_mat(i,1);
+            matreturn(0,3*i+2)=iter.value()->state_vector(2,0)-ref_mat(i,2);
+            iter++;
         }
         //assign healthy lines
         i=0;
+        iter = agentgroup.cbegin();
         while (iter != agentgroup.cend())
         {
             matreturn(1,3*i)=iter.value()->state_vector(0,0)-ref_mat(i,0);
@@ -155,7 +160,9 @@ void main_stream::matrecieved(Eigen::MatrixXd mat)
         }
         //assign false lines
         calc_reward();
-        matreturn(2,2)=rp;matreturn(2,5)=rf;matreturn(2,8)=rpf;
+        matreturn(2,2)=rp;
+        matreturn(2,5)=rf;//这里放终止条件,当误差过大的时候使用
+        matreturn(2,8)=rpf;
         //奖励混合比例由python决定
         //calc reward
         decoder->sendMAT(matreturn,TCPsoc);//返回3*9矩阵
@@ -182,7 +189,7 @@ void main_stream::matrecieved(Eigen::MatrixXd mat)
         {
             for(int j=0;j<=2;j++)
             {
-                tempstate(i,j)=agentgroup.value(i)->state_vector(j,0);
+                tempstate(i,j)=agentgroup.value(i+1)->state_vector(j,0);
             }
         }
         decoder->sendMAT(tempstate,TCPsoc);//返回3*9矩阵

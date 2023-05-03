@@ -8,7 +8,7 @@ SUBDIRS += \
     Simulator \
     C_Python_decode \
     CollisionDetect \
-    pushingbox \
+    SwarmSimulator \
     MPC_Tracking_Controller \
     test_MPC_tracker \
     test_NMPC_Plugin \
