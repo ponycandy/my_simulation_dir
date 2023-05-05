@@ -6,7 +6,7 @@
 MPC_Constructor::MPC_Constructor(QObject *parent)
 {
     solver=new OsqpEigen::Solver;
-    solver->settings()->setVerbosity(true);
+    solver->settings()->setVerbosity(false);
     ref_count=0;
     ref_count_local=0;
     leanrflag=0;
@@ -43,7 +43,7 @@ void MPC_Constructor::init_steptime(double time)
 
 void MPC_Constructor::init_all_mat()
 {
-
+    steptime=0.03;
     Matrix_sparser A_cons_sparser;
     A_cons_sparser.setsize(dec_num*act_num,2*dec_num*act_num);
     Matrix_sparser   s_HQp_sparser;
@@ -90,6 +90,8 @@ void MPC_Constructor::init_all_mat()
     init_x_u_ref.setZero();
     last_control.resize(act_num,1);
     last_control.setZero();
+    last_control.setOnes();
+    last_control=0.01*last_control;
     H_obs.resize(state_num+act_num,state_num+act_num);
     H_obs.setIdentity();
     Matrix_sparser s_H_OBS_sparser;s_H_OBS_sparser.setsize(state_num+act_num,state_num+act_num);
@@ -100,8 +102,6 @@ void MPC_Constructor::init_all_mat()
 
     }
     s_H_OBS=s_H_OBS_sparser.get_sparse_mat();
-    last_control.resize(act_num,1);
-    last_control.setZero();
     Qx_ref.resize(state_num,1);
     lower_deltau.resize(act_num,1);
     lower_deltau.setZero();
@@ -170,6 +170,9 @@ MPC_Trackerservice *MPC_Constructor::clone_service()
 
 void MPC_Constructor::calc_predict()
 {
+    //神奇的是，我这个控制器
+    //尽管还是有漏洞
+    //竟然还是要比学弟的控制器性能更好......
     Matrix_sparser PHI_sparse;PHI_sparse.setsize(state_num+act_num,dec_num*(state_num+act_num));
     Matrix_sparser THETA_sparse; THETA_sparse.setsize(dec_num*(state_num+act_num),dec_num*(state_num+act_num));
     Matrix_sparser B_b_sparse;B_b_sparse.setsize(dec_num*(act_num),dec_num*(state_num+act_num));
@@ -182,7 +185,7 @@ void MPC_Constructor::calc_predict()
     {
         if (i >= 2)
         {
-            temp_A = temp_A*A_m_list.value(i);
+            temp_A = A_m_list.value(i)*temp_A;
         }
         //        PHI_sparse.add_mat_block( s_H_OBS*temp_A,(state_num+act_num)*(i-1),0);
         //总是设置s_H_OBS为单位矩阵，大部分情况下我们不做这一次乘法
@@ -291,6 +294,9 @@ Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd state)
     {
         // get the controller input
         QPSolution = solver->getSolution();
+
+        qDebug()<<"deltavalue is  "<<QPSolution(0,0);
+        qDebug()<<"objective is "<<solver->getObjValue();
         last_control=last_control+QPSolution.block(0, 0, act_num, 1);
         return last_control;
     }
@@ -358,10 +364,11 @@ void MPC_Constructor::calc_H_q_cons()
     Eigen::MatrixXd s_Qtemp=s_Q;
     Eigen::MatrixXd s_Rtemp=s_R;
     Eigen::MatrixXd s_PHItemp=s_PHI;
+    Eigen::MatrixXd s_C_ctemp=s_C_c;
 
     H_Qp = s_B_b.transpose()*s_THETA.transpose()*s_Q*s_THETA*s_B_b + s_R;//计算有问题
     Eigen::MatrixXd E = s_PHI*init_x_u_ref+ s_THETA*s_C_c -Y_ref;//Y_ref:纵向堆叠的状态列向量
-    f_Qp = E.transpose()*s_Q*s_THETA*s_B_b;
+    f_Qp =2* E.transpose()*s_Q*s_THETA*s_B_b;
     Matrix_sparser HQP_sparser;
     s_HQp=HQP_sparser.make_dense_sparse(H_Qp);
 }
@@ -380,7 +387,7 @@ Eigen::MatrixXd MPC_Constructor::Tandemride_A_list(int start, int end)
         if(iterationhead.contains(start))
         {
             multiA=iterationhead.value(start);
-            multiA=multiA*A_m_list.value(end);
+            multiA=A_m_list.value(end)*multiA;
             iterationhead.insert(start,multiA);
             return multiA;
         }

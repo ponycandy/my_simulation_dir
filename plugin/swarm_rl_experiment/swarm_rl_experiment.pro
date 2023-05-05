@@ -25,7 +25,8 @@ SOURCES += \
     simulatorwidget.cpp \
     swarm_rl_experimentActivator.cpp \
     main_stream.cpp \
-    vehicle.cpp
+    vehicle.cpp \
+    mypainter.cpp
 
 
 
@@ -33,7 +34,8 @@ HEADERS += \
     simulatorwidget.h \
     swarm_rl_experimentActivator.h \
     main_stream.h \
-    vehicle.h
+    vehicle.h \
+    mypainter.h
 
 FORMS += \
     simulatorwidget.ui

@@ -3,12 +3,9 @@
 <plugin order="1" name="C_Python_decode" />
 <plugin order="1" name="Animator" />
 <plugin order="1" name="Simulator" />
-<plugin order="1" name="CollisionDetect" />
-<plugin order="1" name="SwarmSimulator" />
 
-
-
-<plugin order="1" name="swarm_rl_experiment" />
+<plugin order="1" name="MPC_Tracking_Controller" />
+                <plugin order="1" name="test_MPC_nonlinear_tracking" />
 
 <!--		<endplugin/>-->
 <pluginnum value="1"/>

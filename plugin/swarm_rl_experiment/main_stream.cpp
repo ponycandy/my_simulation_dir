@@ -10,6 +10,8 @@ main_stream::main_stream(QObject *parent) : QObject(parent)
 {
     singleone=new vehicle;
     widgetm=new simulatorWidget;
+    m_paint=new MYpainter;
+
     coef_r1=0.5;
     coef_r2=0.5;
     ref_mat.resize(3,3);
@@ -34,6 +36,7 @@ main_stream::main_stream(QObject *parent) : QObject(parent)
     swarmsim->init_plant(30,0,singleone);
     agentgroup=swarmsim->getagentgroup();
     Animateservice *anim=swarmsim->getwidgetoperator();
+    anim->register_painter(m_paint);
     QWidget *m_widget=anim->getwidget();
     m_widget->resize(1200,800);
     m_widget->show();
@@ -175,8 +178,8 @@ void main_stream::matrecieved(Eigen::MatrixXd mat)
     {
         //change agentgroup state and control!!
         Eigen::MatrixXd matreturn;
-        matreturn.resize(1,1);
-        matreturn<<0;
+        matreturn.resize(3,9);
+        matreturn.setZero();
         QMap<int, SwarmAgent *>::const_iterator iter = agentgroup.cbegin();
         int i=0;
         while (iter != agentgroup.cend())
@@ -189,10 +192,13 @@ void main_stream::matrecieved(Eigen::MatrixXd mat)
         {
             for(int j=0;j<=2;j++)
             {
+
                 tempstate(i,j)=agentgroup.value(i+1)->state_vector(j,0);
+                matreturn(1,3*i+j)=tempstate(i,j);
+
             }
         }
-        decoder->sendMAT(tempstate,TCPsoc);//返回3*9矩阵
+        decoder->sendMAT(matreturn,TCPsoc);//返回3*9矩阵
     }
 
 }

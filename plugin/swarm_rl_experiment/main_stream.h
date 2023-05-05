@@ -10,6 +10,7 @@
 #include "service/Tcpcommunicateservice.h"
 #include "service/CPYcoderservice.h"
 #include <QTimer>
+#include <mypainter.h>
 class main_stream : public QObject
 {
     Q_OBJECT
@@ -17,6 +18,8 @@ public:
     explicit main_stream(QObject *parent = nullptr);
     void init_ref();
     vehicle *singleone;
+    MYpainter *m_paint;
+    Animateservice *Anim_service_0;
     simulatorWidget *widgetm;
      QTimer *   a_test_timer;
      SimDynamicsservice *dysim;
