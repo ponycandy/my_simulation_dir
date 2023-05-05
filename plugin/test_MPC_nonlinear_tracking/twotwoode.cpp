@@ -8,7 +8,7 @@ twotwoode::twotwoode(QObject *parent)
     state.setZero();
     control_0.resize(1,1);
     control_0.setZero();
-    state<<1;
+    state<<0;
     control_0<<0;
 
 }
@@ -31,7 +31,7 @@ Eigen::MatrixXd twotwoode::stepin()
 void twotwoode::get_A_and_B(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat, Eigen::MatrixXd &A_mat, Eigen::MatrixXd &B_mat)
 {
     A_mat<<0;
-    B_mat<<act_mat(0,0)*act_mat(0,0);
+    B_mat<<3*act_mat(0,0)*act_mat(0,0);
 }
 
 

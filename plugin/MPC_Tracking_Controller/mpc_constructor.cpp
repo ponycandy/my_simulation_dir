@@ -334,7 +334,7 @@ void MPC_Constructor::fill_in_ABC()
         Eigen::MatrixXd C_m;
 
         C_m.resize(state_num+act_num,1);C_m.setZero();
-        C_m.block(0,0,state_num,1) = d_state-dynamicMatrix_temp*current_state-controlMatrix_temp*u_eq;
+        C_m.block(0,0,state_num,1) = (d_state-dynamicMatrix_temp*current_state-controlMatrix_temp*u_eq)*steptime;
         current_state=current_state+d_state*steptime;
         X_eq_list.insert(i+1,current_state);
         Eigen::MatrixXd A_m;//A不能进行sparse化，否则会导致后面的计算出现问题

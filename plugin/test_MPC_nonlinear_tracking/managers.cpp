@@ -8,22 +8,23 @@ managers::managers(QObject *parent)
     odef=new twotwoode;
     mpc=test_MPC_nonlinear_trackingActivator::getService<MPC_Trackerservice>("MPC_Trackerservice");
     mpc->registerODE(odef);
-    mpc->init_num(1,1,12);
+    mpc->init_num(1,1,40);
     Eigen::MatrixXd ref,act;
-    ref.resize(1,12);
-    ref.setZero();
-    act.resize(1,12);
+    ref.resize(1,40);
+    ref.setOnes();
+    ref=3*ref;
+    act.resize(1,40);
     act.setZero();
     mpc->set_reference(ref,act,false);
     ref.resize(1,1);
     ref<<-10;
     act=-ref;
-//    mpc->set_control_bound(ref,act);
+    mpc->set_control_bound(ref,act);
     Eigen::MatrixXd statenow=odef->state;
     Eigen::MatrixXd Q;Q.resize(1,1);
     Q<<1;
     Eigen::MatrixXd R=Q;
-    R<<1;//R不能够设置为0，否则问题会不稳定
+    R<<0.5;//R不能够设置为0，否则问题会不稳定
     //就算是线性问题，也高度依赖参数的调整
     mpc->setWeightMatrices(Q,R);
     while(true)
