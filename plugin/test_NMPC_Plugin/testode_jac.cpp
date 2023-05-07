@@ -2,9 +2,9 @@
 #include "jac_mat_file.h""
 testODE_jac::testODE_jac()
 {
-    l=1;
+    l=2;
     m1=1;
-    m2=1;
+    m2=2;
     g=9.8;
 }
 

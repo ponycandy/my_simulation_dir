@@ -23,6 +23,7 @@ public:
     void set_reference(Eigen::MatrixXd state,Eigen::MatrixXd action,bool use_action) override;
     void init_steptime(double time) override;
     void init_all_mat();
+    int total_predict_length;
     MPC_Trackerservice* clone_service() override;
     void     calc_predict();
     void calc_weight();

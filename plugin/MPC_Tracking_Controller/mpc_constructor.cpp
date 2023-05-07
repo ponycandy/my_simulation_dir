@@ -17,11 +17,26 @@ void MPC_Constructor::set_reference(Eigen::MatrixXd state, Eigen::MatrixXd actio
     act_ref_all=action;
     if(use_action==true)
     {
+        total_predict_length=state.cols();
+//        total_predict_length=state.cols()+1;//最后面补一个平衡态参考
+//        state_ref_all.resize(state_num,total_predict_length);
+//        state_ref_all<<state,state.block(0,state.cols()-1,state_num,1);
         state_ref_all=state;
+//        Eigen::MatrixXd Equblieum;
+//        Equblieum.resize(act_num,1);
+//        Equblieum.setZero();
+//        act_ref_all.resize(act_num,total_predict_length);
+//        act_ref_all<<action,Equblieum;
         act_ref_all=action;
+        last_control=action.block(0,0,act_num,1);
+        //提供一个设置平衡态的接口，一般来说都设置为0
+        //考虑以下的可变性：如果reference中提供平衡态的
+        //控制量，上面的矩阵就需要可变
+        //但是考虑到当前暂时没有这种生成轨迹的方式，暂时默认使用平衡态....
     }
     else
     {
+        total_predict_length=state.cols();
         state_ref_all=state;
         for(int i=0;i<dec_num;i++)
         {
@@ -91,7 +106,6 @@ void MPC_Constructor::init_all_mat()
     last_control.resize(act_num,1);
     last_control.setZero();
     last_control.setOnes();
-    last_control=0.01*last_control;
     H_obs.resize(state_num+act_num,state_num+act_num);
     H_obs.setIdentity();
     Matrix_sparser s_H_OBS_sparser;s_H_OBS_sparser.setsize(state_num+act_num,state_num+act_num);
@@ -457,25 +471,71 @@ bool MPC_Constructor::xref_move_toward()
 {
     //这里的移动规则是，不断平移所有的参考状态（不包括控制状态）
     //一般来说，在终点阈值以后，参考轨迹均为最后一个点
+    //一个重大的bug：实际上线性化预测高度依赖于
+    //act_ref，所以，如果是纯NMPC预测的轨迹
+    //如果不带有维持平衡点处所需的reference_act
+    //那么，最后一个last_control会大的可怕
+    //进而可能造成无法维持重点状态
+    //所以，在setreference的时候，务必在后面补一个平衡态的actref....
+    //state_ref也务必补一个平衡态的ref
 
+    //另一个可行的方法是
+    //当ref_count+dec_num>=total_predict_length的时候
+    //也就是开始载入非reference部分的时候
+    //更改优化问题的尺寸，不再进行全序列优化
+    //也不太行，最大的困难是确定平衡态的尺寸和位置
+    //或许可以在邻近终点的时候减小预测步长
     int pointer=ref_count;
-    for(int i=0;i<dec_num;i++)
+//    if(ref_count+dec_num>=total_predict_length)
+//    {
+//        qDebug()<<1;
+//    }
+    if(ref_count<total_predict_length)
     {
-        act_ref.block(0,i,act_num,1)=
-            last_control;
+        int pointer_1=pointer;
+        last_control=act_ref_all.block(0,pointer,act_num,1);
+        for(int i=0;i<dec_num;i++)
+        {
 
+            if(pointer_1>=total_predict_length-1)
+            {
+                act_ref.block(0,i,act_num,1)=
+                    act_ref_all.block(0,pointer_1,act_num,1);
+//                act_ref.block(0,i,act_num,1)<<0;
+            }
+            else
+            {
+                act_ref.block(0,i,act_num,1)=
+                    act_ref_all.block(0,pointer_1,act_num,1);
+                pointer_1+=1;
+            }
+        }
+    }
+    else
+    {
+        for(int i=0;i<dec_num;i++)
+        {
+            //所以轨迹规划必须包含一部分平衡的轨迹
+          //  不然就要后面补....
+            act_ref.block(0,i,act_num,1)=
+                last_control;
+//            act_ref.block(0,i,act_num,1)<<0;
+        }
     }
     for(int i=0;i<dec_num;i++)
     {
-        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)= last_control;
+        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
+           = act_ref.block(0,i,act_num,1);
     }
-    if(ref_count<dec_num)
+    if(ref_count<total_predict_length)
     {
         for(int i=0;i<dec_num;i++)
         {
             Y_ref.block(i*(state_num+act_num),0,state_num,1)=
                 state_ref_all.block(0,pointer,state_num,1);
-            if(pointer>=dec_num-1)
+//            Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
+//                = act_ref_all.block(0,pointer,act_num,1);
+            if(pointer>=total_predict_length-1)
             {
 
             }

@@ -8,7 +8,7 @@ twotwoode::twotwoode(QObject *parent)
     state.setZero();
     control_0.resize(1,1);
     control_0.setZero();
-    state<<0;
+    state<<5;
     control_0<<0;
 
 }

@@ -33,17 +33,18 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     //必须要使用中间转接，这个属于固有问题
     Eigen::MatrixXd lowb;
     lowb.resize(1,1);
-    lowb<<-100;
+    lowb<<-20;
 
     Eigen::MatrixXd highb;
     highb.resize(1,1);
-    highb<<100;
+    highb<<20;
 
     m_service->set_control_bound(lowb,highb);
     m_service->registerODE(m_ode);
+
     m_service->registerODEJacob(m_Jac);
     m_service->init_state(initstate,terminalstate);
-    m_service->init_num(4,1,30);
+    m_service->init_num(4,1,300);
     m_service->init_steptime(0.03);//此处时间单位为秒
     //    startsolve();
 
@@ -53,15 +54,16 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     m_service3->init_num(4,1,30);
     m_service3->init_steptime(0.03);//此处时间单位为秒
     Eigen::MatrixXd Q;Q.resize(4,4);
-    Q<<1,0,0,0,
-        0,0.001,0,0,
-        0,0,0.001,0,
-        0,0,0,1;//瞬间超界
+    Q<<3,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0;//不稳定基本只在终点参考耗尽的时候出现
+    //并且算法稳定性的确高度依赖调参
     Eigen::MatrixXd R;R.resize(1,1);
-    R<<4;
+    R<<0;
     m_service3->setWeightMatrices(Q,R);
-    Eigen::MatrixXd lower;lower.resize(1,1);lower<<-10;
-    Eigen::MatrixXd higher;higher.resize(1,1);higher<<10;
+    Eigen::MatrixXd lower;lower.resize(1,1);lower<<-100;
+    Eigen::MatrixXd higher;higher.resize(1,1);higher<<100;
 
     m_service3->set_control_bound(lower,higher);
 }
@@ -70,54 +72,74 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
 
 void main_exe::startsolve()
 {
-//    m_service->solve_problem();
-//    Eigen::MatrixXd actmat=m_service->get_actMat();
-//    Eigen::MatrixXd statemat=m_service->get_stateMat();
-    Eigen::MatrixXd actmat;
-    Eigen::MatrixXd statemat;
+    m_service->solve_problem();
+    Eigen::MatrixXd actmat=m_service->get_actMat();
+    Eigen::MatrixXd statemat=m_service->get_stateMat();
+//    Eigen::MatrixXd actmat_stack_last_one;Eigen::MatrixXd pinghengdian;
+//    actmat_stack_last_one.resize(1,101);pinghengdian.resize(1,1);pinghengdian.setZero();
+//    actmat_stack_last_one<<actmat,pinghengdian;
     Eigen::MatrixXd controlmat;
     Eigen::MatrixXd getstatemat;
     Eigen::MatrixXd init_state;
     getstatemat.resize(2,1);
     init_state.resize(4,1);
     init_state<<0,0,0,0;
-    bool *isreal = new bool;
-    statemat.resize(4,30);
-    actmat.resize(1,30);
-    actmat.setZero();
-    for(int i=0;i<30;i++)
-    {
-        statemat.block(0,i,4,1)<<3.1415926535,0,0,0;
-    }
+    //    statemat.resize(4,30);
+    //    actmat.resize(1,30);
+    //    actmat.setZero();
+    //    for(int i=0;i<30;i++)
+    //    {
+    //        statemat.block(0,i,4,1)<<3.1415926535,0,0,0;
+    //    }
 
-    m_service3->set_reference(statemat,actmat,false);
+    m_service3->set_reference(statemat,actmat,true);
+    int i=0;
     while (true)
     {
 
-            QElapsedTimer et;
-            et.start();
-            QElapsedTimer et2;
-            et2.start();
-            flag=0;
-            m_service2->sendMAT(getstatemat,m_service1);
-            while(et2.elapsed()<100)//ms
+        QElapsedTimer et;
+        et.start();
+        QElapsedTimer et2;
+        et2.start();
+        flag=0;
+        m_service2->sendMAT(getstatemat,m_service1);
+        while(et2.elapsed()<15)//ms
+        {
+            QCoreApplication::processEvents();
+            if(flag==1)
             {
-                QCoreApplication::processEvents();
-                if(flag==1)
-                {
-                    break;
-                }
+                break;
             }
-            flag=0;
-            controlmat=m_service3->feed_Back_control(state_obs);
-            m_service2->sendMAT(controlmat,m_service1);
+        }
+        flag=0;
+        i++;
+        controlmat=m_service3->feed_Back_control(state_obs);
+        //        controlmat=actmat.block(0,i++,1,1);
+        m_service2->sendMAT(controlmat,m_service1);
 
-            while(et.elapsed()<30)//ms
-            {
-                QCoreApplication::processEvents();
-            }
-
-
+        while(et.elapsed()<15)//ms
+        {
+            QCoreApplication::processEvents();
+        }
+        if(i>99)
+        {
+            i=0;
+            //            Eigen::MatrixXd stateset;
+            //            for(int j=0;j<100;j++)
+            //            {
+            //                stateset=statemat.block(0,j,4,1);
+            //                m_service2->sendMAT(stateset,m_service1);
+            //                QElapsedTimer etx;
+            //                etx.start();
+            //                while(etx.elapsed()<30)//ms
+            //                {
+            //                    QCoreApplication::processEvents();
+            //                }
+            //            }
+            //            stateset.setZero();
+            //            m_service2->sendMAT(stateset,m_service1);
+            //        }
+        }
 
     }
 

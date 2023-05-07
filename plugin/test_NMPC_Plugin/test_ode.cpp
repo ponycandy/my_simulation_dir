@@ -3,9 +3,9 @@
 #include "state_file.h"
 test_ODE::test_ODE()
 {
-    l=1;
+    l=2;
     m1=1;
-    m2=1;
+    m2=2;
     g=9.8;
 }
 
