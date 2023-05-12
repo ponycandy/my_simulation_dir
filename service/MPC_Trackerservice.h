@@ -18,6 +18,8 @@ public:
     virtual void set_state_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher)=0;
     virtual void setWeightMatrices(Eigen::MatrixXd Q, Eigen::MatrixXd R)=0;
     virtual void set_reference(Eigen::MatrixXd state,Eigen::MatrixXd action,bool use_action)=0;
+    virtual void set_ref_target(Eigen::MatrixXd state)=0;
+
 };
 #define MPC_Trackerservice_iid "MPC_Trackerservice"
 

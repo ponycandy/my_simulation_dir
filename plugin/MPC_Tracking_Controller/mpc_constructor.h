@@ -20,10 +20,12 @@ class MPC_Constructor : public QObject,public MPC_Trackerservice
 public:
     explicit
         MPC_Constructor(QObject *parent = nullptr);
+    void set_ref_target(Eigen::MatrixXd state);
     void set_reference(Eigen::MatrixXd state,Eigen::MatrixXd action,bool use_action) override;
     void init_steptime(double time) override;
     void init_all_mat();
     int total_predict_length;
+    bool ifuseaction;
     MPC_Trackerservice* clone_service() override;
     void     calc_predict();
     void calc_weight();
@@ -37,6 +39,7 @@ public:
     int leanrflag=0;
     Eigen::MatrixXd f_Qp;
     Eigen::MatrixXd Y_ref;
+     Eigen::MatrixXd last_mv_seqc;
     Eigen::MatrixXd init_x_u_ref;
     Eigen::MatrixXd dynamicMatrix_temp;
     Eigen::MatrixXd controlMatrix_temp;

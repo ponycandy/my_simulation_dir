@@ -12,21 +12,33 @@ MPC_Constructor::MPC_Constructor(QObject *parent)
     leanrflag=0;
 }
 
+void MPC_Constructor::set_ref_target(Eigen::MatrixXd state)
+{
+    Eigen::MatrixXd realstate;
+    realstate.resize(state_num,dec_num);
+    for(int i=0;i<dec_num;i++)
+    {
+        realstate.block(0,i,state_num,1)=state;
+    }
+    set_reference(realstate,realstate,false);
+}
+
 void MPC_Constructor::set_reference(Eigen::MatrixXd state, Eigen::MatrixXd action, bool use_action)
 {
     act_ref_all=action;
+    ifuseaction=use_action;
     if(use_action==true)
     {
         total_predict_length=state.cols();
-//        total_predict_length=state.cols()+1;//最后面补一个平衡态参考
-//        state_ref_all.resize(state_num,total_predict_length);
-//        state_ref_all<<state,state.block(0,state.cols()-1,state_num,1);
+        //        total_predict_length=state.cols()+1;//最后面补一个平衡态参考
+        //        state_ref_all.resize(state_num,total_predict_length);
+        //        state_ref_all<<state,state.block(0,state.cols()-1,state_num,1);
         state_ref_all=state;
-//        Eigen::MatrixXd Equblieum;
-//        Equblieum.resize(act_num,1);
-//        Equblieum.setZero();
-//        act_ref_all.resize(act_num,total_predict_length);
-//        act_ref_all<<action,Equblieum;
+        //        Eigen::MatrixXd Equblieum;
+        //        Equblieum.resize(act_num,1);
+        //        Equblieum.setZero();
+        //        act_ref_all.resize(act_num,total_predict_length);
+        //        act_ref_all<<action,Equblieum;
         act_ref_all=action;
         last_control=action.block(0,0,act_num,1);
         //提供一个设置平衡态的接口，一般来说都设置为0
@@ -105,7 +117,6 @@ void MPC_Constructor::init_all_mat()
     init_x_u_ref.setZero();
     last_control.resize(act_num,1);
     last_control.setZero();
-    last_control.setOnes();
     H_obs.resize(state_num+act_num,state_num+act_num);
     H_obs.setIdentity();
     Matrix_sparser s_H_OBS_sparser;s_H_OBS_sparser.setsize(state_num+act_num,state_num+act_num);
@@ -308,10 +319,20 @@ Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd state)
     {
         // get the controller input
         QPSolution = solver->getSolution();
-
-        qDebug()<<"deltavalue is  "<<QPSolution(0,0);
-        qDebug()<<"objective is "<<solver->getObjValue();
         last_control=last_control+QPSolution.block(0, 0, act_num, 1);
+
+        last_mv_seqc.block(0,0,act_num,1)=last_control
+        + QPSolution.block(1*act_num, 0, act_num, 1);//已经添加过的！
+        for(int i=1;i<dec_num-1;i++)
+        {
+            last_mv_seqc.block(0,i,act_num,1)=
+                last_mv_seqc.block(0,i-1,act_num,1)+
+                QPSolution.block(i*act_num+act_num, 0, act_num, 1);
+        }
+        last_mv_seqc.block(0,dec_num-1,act_num,1)=
+            last_mv_seqc.block(0,dec_num-2,act_num,1);
+
+
         return last_control;
     }
     else
@@ -486,46 +507,61 @@ bool MPC_Constructor::xref_move_toward()
     //也不太行，最大的困难是确定平衡态的尺寸和位置
     //或许可以在邻近终点的时候减小预测步长
     int pointer=ref_count;
-//    if(ref_count+dec_num>=total_predict_length)
-//    {
-//        qDebug()<<1;
-//    }
-    if(ref_count<total_predict_length)
+    //    if(ref_count+dec_num>=total_predict_length)
+    //    {
+    //        qDebug()<<1;
+    //    }
+    if(ifuseaction)
     {
-        int pointer_1=pointer;
-        last_control=act_ref_all.block(0,pointer,act_num,1);
-        for(int i=0;i<dec_num;i++)
+        if(ref_count<total_predict_length)
         {
-
-            if(pointer_1>=total_predict_length-1)
+            int pointer_1=pointer;
+            if(ifuseaction)
             {
-                act_ref.block(0,i,act_num,1)=
-                    act_ref_all.block(0,pointer_1,act_num,1);
-//                act_ref.block(0,i,act_num,1)<<0;
+                last_control=act_ref_all.block(0,pointer,act_num,1);
             }
-            else
+
+            for(int i=0;i<dec_num;i++)
             {
+
+                if(pointer_1>=total_predict_length-1)
+                {
+                    act_ref.block(0,i,act_num,1)=
+                        act_ref_all.block(0,pointer_1,act_num,1);
+                    //                act_ref.block(0,i,act_num,1)<<0;
+                }
+                else
+                {
+                    act_ref.block(0,i,act_num,1)=
+                        act_ref_all.block(0,pointer_1,act_num,1);
+                    pointer_1+=1;
+                }
+            }
+        }
+        else
+        {
+            for(int i=0;i<dec_num;i++)
+            {
+                //所以轨迹规划必须包含一部分平衡的轨迹
+                //  不然就要后面补....
                 act_ref.block(0,i,act_num,1)=
-                    act_ref_all.block(0,pointer_1,act_num,1);
-                pointer_1+=1;
+                    last_control;
+                //            act_ref.block(0,i,act_num,1)<<0;
             }
         }
     }
     else
     {
-        for(int i=0;i<dec_num;i++)
-        {
-            //所以轨迹规划必须包含一部分平衡的轨迹
-          //  不然就要后面补....
-            act_ref.block(0,i,act_num,1)=
-                last_control;
-//            act_ref.block(0,i,act_num,1)<<0;
-        }
+        act_ref=last_mv_seqc;
     }
+
+
+
     for(int i=0;i<dec_num;i++)
     {
-        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
-           = act_ref.block(0,i,act_num,1);
+//        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
+//            = act_ref.block(0,i,act_num,1);
+        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)<<0;
     }
     if(ref_count<total_predict_length)
     {
@@ -533,8 +569,8 @@ bool MPC_Constructor::xref_move_toward()
         {
             Y_ref.block(i*(state_num+act_num),0,state_num,1)=
                 state_ref_all.block(0,pointer,state_num,1);
-//            Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
-//                = act_ref_all.block(0,pointer,act_num,1);
+            //            Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
+            //                = act_ref_all.block(0,pointer,act_num,1);
             if(pointer>=total_predict_length-1)
             {
 
@@ -586,7 +622,8 @@ void MPC_Constructor::init_num(int statenum, int actnum, int decisionnum)
     act_num=actnum;
     dec_num=decisionnum;
 
-
+    last_mv_seqc.resize(act_num,dec_num);
+    last_mv_seqc.setZero();
     init_all_mat();
 
     solver->data()->setNumberOfVariables(act_num*dec_num);

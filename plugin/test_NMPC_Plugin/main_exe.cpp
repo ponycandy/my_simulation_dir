@@ -11,6 +11,7 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
 {
     initstate.resize(4,1);
     state_obs.resize(4,1);
+    state_obs<<3.1415926535,0,0,0;
     initstate<<0,0,0,0;
     terminalstate.resize(4,1);
     terminalstate<<3.1415926535,0,0,0;
@@ -54,45 +55,55 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     m_service3->init_num(4,1,30);
     m_service3->init_steptime(0.03);//此处时间单位为秒
     Eigen::MatrixXd Q;Q.resize(4,4);
-    Q<<3,0,0,0,
+    Q<<1,0,0,0,
         0,0,0,0,
-        0,0,0,0,
+        0,0,0.5,0,
         0,0,0,0;//不稳定基本只在终点参考耗尽的时候出现
     //并且算法稳定性的确高度依赖调参
     Eigen::MatrixXd R;R.resize(1,1);
-    R<<0;
+    R<<1;
     m_service3->setWeightMatrices(Q,R);
     Eigen::MatrixXd lower;lower.resize(1,1);lower<<-100;
     Eigen::MatrixXd higher;higher.resize(1,1);higher<<100;
 
     m_service3->set_control_bound(lower,higher);
+
+
 }
 
 
 
 void main_exe::startsolve()
 {
-    m_service->solve_problem();
-    Eigen::MatrixXd actmat=m_service->get_actMat();
-    Eigen::MatrixXd statemat=m_service->get_stateMat();
-//    Eigen::MatrixXd actmat_stack_last_one;Eigen::MatrixXd pinghengdian;
-//    actmat_stack_last_one.resize(1,101);pinghengdian.resize(1,1);pinghengdian.setZero();
-//    actmat_stack_last_one<<actmat,pinghengdian;
+    //    m_service->solve_problem();
+    //    Eigen::MatrixXd actmat=m_service->get_actMat();
+    //    Eigen::MatrixXd statemat=m_service->get_stateMat();
+    Eigen::MatrixXd statemat;
     Eigen::MatrixXd controlmat;
     Eigen::MatrixXd getstatemat;
     Eigen::MatrixXd init_state;
     getstatemat.resize(2,1);
     init_state.resize(4,1);
     init_state<<0,0,0,0;
-    //    statemat.resize(4,30);
-    //    actmat.resize(1,30);
-    //    actmat.setZero();
-    //    for(int i=0;i<30;i++)
-    //    {
-    //        statemat.block(0,i,4,1)<<3.1415926535,0,0,0;
-    //    }
+    statemat.resize(4,1);
 
-    m_service3->set_reference(statemat,actmat,true);
+
+    statemat<<3.1415926535,0,0,0;
+
+//    Eigen::MatrixXd stateset;
+//    stateset.resize(4,1);
+//    stateset<<3.1415926535,0,0,0;
+
+//    m_service2->sendMAT(stateset,m_service1);
+//    QElapsedTimer et;
+//    et.start();
+//    while(et.elapsed()<100)//ms
+//    {
+//        QCoreApplication::processEvents();
+//    }
+    //    m_service3->set_reference(statemat,actmat,false);
+
+    m_service3->set_ref_target(statemat);
     int i=0;
     while (true)
     {
@@ -103,7 +114,7 @@ void main_exe::startsolve()
         et2.start();
         flag=0;
         m_service2->sendMAT(getstatemat,m_service1);
-        while(et2.elapsed()<15)//ms
+        while(et2.elapsed()<30)//ms
         {
             QCoreApplication::processEvents();
             if(flag==1)
@@ -113,7 +124,12 @@ void main_exe::startsolve()
         }
         flag=0;
         i++;
+        if(state_obs.rows()!=4)
+        {
+            qDebug()<<"not renewed!";
+        }
         controlmat=m_service3->feed_Back_control(state_obs);
+
         //        controlmat=actmat.block(0,i++,1,1);
         m_service2->sendMAT(controlmat,m_service1);
 
