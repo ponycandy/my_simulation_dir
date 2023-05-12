@@ -59,7 +59,7 @@ void Simulator::init()
     Cmat << 0.0,0.0,1.0,0.0,
         1.0,0.0,0.0,0.0;
     state.resize(4,1);
-    state << 3.1415926535,
+    state << 0,
         0.0,
         0.0,
         0.0;

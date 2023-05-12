@@ -526,9 +526,10 @@ bool MPC_Constructor::xref_move_toward()
 
                 if(pointer_1>=total_predict_length-1)
                 {
+//                    act_ref.block(0,i,act_num,1)=
+//                        act_ref_all.block(0,pointer_1,act_num,1);
                     act_ref.block(0,i,act_num,1)=
-                        act_ref_all.block(0,pointer_1,act_num,1);
-                    //                act_ref.block(0,i,act_num,1)<<0;
+                        last_mv_seqc.block(0,i,act_num,1);
                 }
                 else
                 {
