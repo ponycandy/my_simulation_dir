@@ -8,6 +8,8 @@ vehicle::vehicle():SwarmAgent()
     collision_r=2.5;
     heading_angle=0;
     falseflag=0;
+    refpos.resize(3,1);
+    refpos.setZero();
 }
 
 

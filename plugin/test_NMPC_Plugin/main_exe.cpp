@@ -57,11 +57,11 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     Eigen::MatrixXd Q;Q.resize(4,4);
     Q<<1,0,0,0,
         0,0,0,0,
-        0,0,0.1,0,
+        0,0,0,0,
         0,0,0,0;//不稳定基本只在终点参考耗尽的时候出现
     //并且算法稳定性的确高度依赖调参
     Eigen::MatrixXd R;R.resize(1,1);
-    R<<0;
+    R<<1;
     m_service3->setWeightMatrices(Q,R);
     Eigen::MatrixXd lower;lower.resize(1,1);lower<<-200;
     Eigen::MatrixXd higher;higher.resize(1,1);higher<<200;

@@ -303,9 +303,9 @@ Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd state)
 
     solver->updateHessianMatrix(s_HQp);//H_Qp需要稀疏化
     solver->updateGradient(f_Qp.transpose());
-
-    solver->updateLowerBound(lowerBound);
     solver->updateUpperBound(upperBound);
+    solver->updateLowerBound(lowerBound);
+
 
     // instantiate the solver
 

@@ -17,8 +17,11 @@ class main_stream : public QObject
 public:
     explicit main_stream(QObject *parent = nullptr);
     void init_ref();
+    void get_control();
     vehicle *singleone;
     MYpainter *m_paint;
+    Eigen::MatrixXd ref_act_matrix;
+    int agentnum;
     Animateservice *Anim_service_0;
     simulatorWidget *widgetm;
      QTimer *   a_test_timer;
@@ -33,7 +36,8 @@ public:
      QMap<int, SwarmAgent *> agentgroup;
      void healthy_plant_stepin();
      void calc_reward();
-     double coef_r1;double rp;
+     void calc_ref_act();
+     double coef_r1;double rp;double raction;
      double coef_r2;double rpf;double rf;
 signals:
 public slots:

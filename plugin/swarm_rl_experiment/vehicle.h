@@ -13,6 +13,7 @@ public:
     void fault_set(int option) override;
     SwarmAgent* clone_agent() override;
     Eigen::MatrixXd state_space_equation() override;
+    Eigen::MatrixXd refpos;
     int falseflag=0;
 };
 
