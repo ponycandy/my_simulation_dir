@@ -16,6 +16,7 @@
 #include "service/NMPCservice.h"
 #include "Matrix_sparser.h"
 typedef Eigen::SparseMatrix<double> Espmat;
+
 class NMPC_Problem;
 class NMPC_Constructor : public QObject,public NMPCservice
 {

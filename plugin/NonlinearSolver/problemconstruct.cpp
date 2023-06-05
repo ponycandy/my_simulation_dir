@@ -5,8 +5,6 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
 {
     use_internal_dynamics=false;
     set_Terminal=false;
-    //    m_cons=new Dynamics_Constrain_Set;
-    //    m_vars=new Dynamics_varaible_Set;
     ipopt.SetOption("linear_solver", "mumps");
     ipopt.SetOption("jacobian_approximation", "exact");
 }

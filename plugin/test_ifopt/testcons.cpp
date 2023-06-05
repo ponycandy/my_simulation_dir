@@ -10,7 +10,7 @@ void testCons::counts()
 
 ifopt::Component::VectorXd testCons::GetValues() const
 {
-    member=0;
+
     VectorXd g(GetRows());
     Eigen::Vector2d x = GetVariables()->GetComponent("var_set1")->GetValues();
     g(0) = std::pow(x(0),2) + x(1);

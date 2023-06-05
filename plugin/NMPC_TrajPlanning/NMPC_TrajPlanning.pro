@@ -17,11 +17,7 @@ INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 
 
-INCLUDEPATH+=../../3rdlib/Ipopt
-LIBS +=   -L../../3rdlib/Ipopt/ipoptlib/ -llibcoinmumps
-LIBS +=   -L../../3rdlib/Ipopt/ipoptlib/ -llibcoinmetis
-LIBS +=   -L../../3rdlib/Ipopt/ipoptlib/ -llibcoinhsl
-LIBS +=   -L../../3rdlib/Ipopt/ipoptlib/ -llibipopt
+
 
 
 

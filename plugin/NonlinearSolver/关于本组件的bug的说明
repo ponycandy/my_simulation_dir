@@ -1,0 +1,13 @@
+﻿本组件很有可能在运行的时候找不到mkl的库
+所以，务必手动添加Mkl库
+具体的来说，dumpbin查看ifopt_ipopt.dll的依赖，然后将动态库粘贴过来!
+以及，这个依赖的依赖以及递推的所有子依赖的依赖全部粘过来
+最后一句话很重要....
+具体的来说，包括以下DLL:
+mkl_avx2.2.dll
+mkl_core.2.dll
+mkl_def.2.dll
+mkl_intel_thread.2.dll
+libiomp5md.dll
+ifopt_ipopt.dll
+

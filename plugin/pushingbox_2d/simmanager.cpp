@@ -42,14 +42,14 @@ void simmanager::setupEvent()
 
 void simmanager::matrecieved(Eigen::MatrixXd mat)
 {
-    if(mat.rows()==1)
+    if(mat.rows()==2)
     {
 //stepin 输入1 * 2矩阵
         Eigen::MatrixXd matreturn;
         matreturn.resize(4,1);
         matreturn.setOnes();
         m_sim->control_0(0,0)=mat(0,0);
-         m_sim->control_0(1,0)=mat(0,1);
+         m_sim->control_0(1,0)=mat(1,0);
         ODE_service->step_in();
         matreturn=m_sim->state;
         decoder->sendMAT(matreturn,m_TCP);
