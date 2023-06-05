@@ -2,12 +2,13 @@
 #define SOLVERMANAGER_H
 
 #include <QObject>
-#include <ifopt/ifopt_lib/ifopt/ipopt_solver.h>
+#include <problemconstruct.h>
 class solverManager : public QObject
 {
     Q_OBJECT
 public:
     explicit solverManager(QObject *parent = nullptr);
+    ProblemConstruct *m_problem;
 
 signals:
 
