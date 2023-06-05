@@ -8,6 +8,9 @@ Dynamics_Constrain_Set::Dynamics_Constrain_Set(int constrain_nums):
     set_terminal_point=false;
     control_bound_flag=false;
     cons_num=constrain_nums;
+
+
+
 }
 
 void Dynamics_Constrain_Set::set_cons_num(int statenum, int actnum, int decisionnum)
@@ -159,13 +162,40 @@ void Dynamics_Constrain_Set::init_all_mat()
 
     //    SparseMatrix<double> mat(rows,cols);
 
+    D.resize(state_num,state_num_plus_act_num*dec_num);D.setZero();
     a_sparser.setsize(state_num_plus_act_num*dec_num,state_num);
     for(int i=0;i<state_num;i++)
     {
         a_sparser.fillin(state_num-1-i,state_num_plus_act_num*dec_num-1-i,1);
+        D(state_num-1-i,state_num_plus_act_num*dec_num-1-i)=1;
 
     }
     s_D=a_sparser.get_sparse_mat();
+    a_sparser.clearall();
+
+
+    gg1.resize(state_num,state_num_plus_act_num);
+    gg.resize(state_num,state_num_plus_act_num);
+    gg1.setZero();
+    gg.setZero();
+    a_sparser.setsize(state_num_plus_act_num,state_num);
+    for(int k=0;k<state_num;k++)
+    {
+        x_pos=k;
+        y_pos=k+act_num;
+        a_sparser.fillin(x_pos,y_pos,-1);
+        gg1(x_pos,y_pos)=-1;
+    }
+    a_sparser.clearall();
+
+
+    for(int k=0;k<state_num;k++)
+    {
+        x_pos=k;
+        y_pos=k+act_num;
+        a_sparser.fillin(x_pos,y_pos,1);
+        gg(x_pos,y_pos)=1;
+    }
     a_sparser.clearall();
 
 
@@ -230,10 +260,26 @@ void Dynamics_Constrain_Set::FillJacobianBlock(std::string var_set, Jacobian &ja
     if (var_set == "action_state_set1")
     {
         VectorXd x = GetVariables()->GetComponent("action_state_set1")->GetValues();
-
+        Matrix_sparser a_sparser;
         pack_variable(x);
         calc_dynamic_constrain_Jacobian();
-        jac_block=jacobian2;
+//        jac_block=a_sparser.make_dense_sparse(jacobian2.transpose());
+//这里矩阵无需转置，其定义是和我们一致的（参照ifopt的例子）
+        //问题是，这里是不能够直接copy整个对象的，而必须单独赋值
+        int upper_rows=0;
+        int lower_rows=0;
+        double value_now=0;
+        for (int k=0; k<jacobian2.outerSize(); ++k)
+        {
+            for (Eigen::SparseMatrix<double>::InnerIterator it(jacobian2,k); it; ++it)
+            {
+                upper_rows=it.row();
+                lower_rows=it.col();
+                value_now=it.value();
+//                fillin(it.row(),it.col(),it.value());//不确定这里要不要减1
+                jac_block.coeffRef(upper_rows,lower_rows)=value_now;
+            }
+        }
 
     }
 
@@ -249,14 +295,9 @@ void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
     int y_total_size=0;
     //测试用代码
     Matrix_sparser newsparser;
-    if(set_terminal_point)
-    {
-        newsparser.setsize(dec_num*state_num_plus_act_num,2*state_num*dec_num+state_num);
-    }
-    else
-    {
-        newsparser.setsize(dec_num*state_num_plus_act_num,2*state_num*dec_num);
-    }
+
+    newsparser.setsize(dec_num*state_num_plus_act_num,2*state_num*dec_num);
+
 
     for (int i=1;i<=2*dec_num;i++)
     {
@@ -297,7 +338,7 @@ void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
     }
     else
     {
-        //        jacobian2=mid;
+//                jacobian2=mid;
     }
 
     //考虑到这里，进行重新计算：
@@ -305,8 +346,8 @@ void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
 
 void Dynamics_Constrain_Set::init_state(Eigen::MatrixXd initstate, Eigen::MatrixXd terminalstate)
 {
-        initState=initstate;
-        TerminalState=terminalstate;
+    initState=initstate;
+    TerminalState=terminalstate;
 
 }
 
@@ -343,4 +384,27 @@ Eigen::MatrixXd Dynamics_Constrain_Set::calc_single_jacobia(int timestep) const
             return jac_mat;
         }
     }
+}
+
+void Dynamics_Constrain_Set::set_use_terminal(bool istrue)
+{
+    set_terminal_point=istrue;
+//    if(set_terminal_point==true)
+//    {
+//        jacobian2.resize(state_num*(dec_num+1),dec_num*state_num_plus_act_num);
+//        jacobian2.setZero();
+//        int start_x,start_y;
+//        for(int i=0;i<state_num;i++)
+//        {
+//            start_x=state_num*(dec_num+1)-i -1;
+//            start_y=state_num_plus_act_num*dec_num-i -1;
+
+//            jacobian2(start_x,start_y)=1;
+//        }
+//    }
+//    else
+//    {
+//        jacobian2.resize(state_num*(dec_num),dec_num*state_num_plus_act_num);
+//        jacobian2.setZero();
+//    }
 }

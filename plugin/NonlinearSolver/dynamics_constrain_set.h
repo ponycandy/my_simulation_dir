@@ -36,6 +36,7 @@ public:
     void calc_dynamic_constrain_Jacobian() const;
     void init_state(Eigen::MatrixXd initstate, Eigen::MatrixXd terminalstate);
     Eigen::MatrixXd calc_single_jacobia(int timestep) const;
+    void set_use_terminal(bool istrue);
     bool set_terminal_point;
     bool control_bound_flag;
     mutable  Eigen::MatrixXd act_array;//控制量向量，尺寸为：act_num*1

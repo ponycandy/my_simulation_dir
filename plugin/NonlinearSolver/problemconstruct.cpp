@@ -11,12 +11,14 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)
 {
-    m_cons->registerODE(odefunction);
+    selfodefunction=odefunction;
+//    m_cons->registerODE(odefunction);
 }
 
 void ProblemConstruct::registerODEJacob(NMPC_Dynamic_Jacob *Dynamic_Jacob)
 {
-    m_cons->self_ode_jacob=Dynamic_Jacob;
+    selfDynamic_Jacob=Dynamic_Jacob;
+//    m_cons->self_ode_jacob=Dynamic_Jacob;
 }
 
 void ProblemConstruct::register_constrain(NMPC_Extra_Constrain *constrain)
@@ -35,37 +37,26 @@ void ProblemConstruct::init_num(int statenum, int actnum, int decisionnum)
     constrain_num=dec_num*statenum;
     constrain_num_dynamics=constrain_num;
     total_varaible_num=state_num_plus_act_num*dec_num;
-    if(set_Terminal==true)
-    {
-        m_cons=new Dynamics_Constrain_Set(constrain_num+state_num);
-        m_cons->set_cons_num(statenum,actnum,decisionnum);
-        m_cons->set_terminal_point=true;
-        m_vars=new Dynamics_varaible_Set(total_varaible_num);
-        m_vars->set_cons_num(statenum,actnum,decisionnum);
-    }
-    else
-    {
-        m_cons=new Dynamics_Constrain_Set(constrain_num);
-        m_cons->set_cons_num(statenum,actnum,decisionnum);
-        m_cons->set_terminal_point=false;
-        m_vars=new Dynamics_varaible_Set(total_varaible_num);
-        m_vars->set_cons_num(statenum,actnum,decisionnum);
-    }
+
 }
 
 void ProblemConstruct::init_all_x(int method, Eigen::MatrixXd input)
 {
-    m_vars->SetVariables(input);
+    m_vars->SetVariables(input);//这里保留
+    //如果没有调用，将以0开始
+    //如果调用了，也不会从头开始构建问题
+    //可以说是比较节省cpu的一种做法
 }
 
 void ProblemConstruct::init_state(Eigen::MatrixXd initstate, Eigen::MatrixXd terminalstate)
 {
-    m_cons->init_state(initstate,terminalstate);
+    init_state_p=initstate;
+    terminal_state_p=terminalstate;
 }
 
 void ProblemConstruct::init_steptime(double time)
 {
-    m_cons->steptime=time;
+    steptime=time;
 }
 
 void ProblemConstruct::setuseterminal(bool strue)
@@ -75,13 +66,37 @@ void ProblemConstruct::setuseterminal(bool strue)
 
 void ProblemConstruct::constructNLP()
 {
-    if(m_cons->set_terminal_point==true)
+    if(use_internal_dynamics==true)
     {
+
+        if(set_Terminal==true)
+        {
+            m_cons=new Dynamics_Constrain_Set(constrain_num+state_num);
+            m_cons->set_cons_num(state_num,act_num,dec_num);
+            m_cons->set_use_terminal(true);
+            m_vars=new Dynamics_varaible_Set(total_varaible_num);
+            m_vars->set_cons_num(state_num,act_num,dec_num);
+        }
+        else
+        {
+            m_cons=new Dynamics_Constrain_Set(constrain_num);
+            m_cons->set_cons_num(state_num,act_num,dec_num);
+            m_cons->set_use_terminal(false);
+            m_vars=new Dynamics_varaible_Set(total_varaible_num);
+            m_vars->set_cons_num(state_num,act_num,dec_num);
+        }
+        m_cons->initState=init_state_p;
+        m_cons->TerminalState=terminal_state_p;
+        m_cons->steptime=steptime;
+        m_cons->registerODE(selfodefunction);
+        m_cons->self_ode_jacob=selfDynamic_Jacob;
+        m_vars->set_control_bound(selflower,selfhigher);
         std::shared_ptr<ifopt::Component> variableptr(m_vars);
         std::shared_ptr<ifopt::ConstraintSet> consptr(m_cons);
 //        std::shared_ptr<ifopt::ConstraintSet> costptr(mcost);
         nlp.AddVariableSet  (variableptr);
         nlp.AddConstraintSet(consptr);
+//        nlp.PrintCurrent();
         //        nlp.AddCostSet      (std::make_shared<ExCost>());
     }
     else
@@ -118,7 +133,9 @@ Eigen::MatrixXd ProblemConstruct::get_stateMat()
 
 void ProblemConstruct::set_control_bound(Eigen::MatrixXd lower, Eigen::MatrixXd higher)
 {
-    m_vars->set_control_bound(lower,higher);
+    selflower=lower;
+    selfhigher=higher;
+
 }
 
 void ProblemConstruct::Use_BuildIn_Dynamics_Cons(bool istrue)

@@ -28,16 +28,18 @@ public:
     void set_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;
 
     void Use_BuildIn_Dynamics_Cons(bool istrue) override;
-//首先考虑不使用内建动力学约束的情况
+    //首先考虑不使用内建动力学约束的情况
     //此时接口与ifort完全一致
     void AddVariableSet(ifopt::Component::Ptr variable_set) override;
     void AddConstraintSet(ifopt::ConstraintSet::Ptr constraint_set) override;
     void AddCostSet(ifopt::ConstraintSet::Ptr cost_set) override;
-//第三部分接口，我们考虑使用自动梯度求解器进行梯度计算
+    //第三部分接口，我们考虑使用自动梯度求解器进行梯度计算
     //这部分再说，现在比较难实现
 
     //掠过
     Dynamics_Constrain_Set *m_cons;
+    NMPC_ODE *selfodefunction;
+    NMPC_Dynamic_Jacob *selfDynamic_Jacob;
     Dynamics_varaible_Set *m_vars;
     ifopt::IpoptSolver ipopt;
     ifopt::Problem nlp;
@@ -56,6 +58,10 @@ public:
     int dec_num;//从轨迹开始到结束的总步长
     double steptime; //单位时间步长，典型为30ms
 
+    Eigen::MatrixXd init_state_p;
+    Eigen::MatrixXd terminal_state_p;
+    Eigen::MatrixXd selflower;
+    Eigen::MatrixXd selfhigher;
 signals:
 
 };
