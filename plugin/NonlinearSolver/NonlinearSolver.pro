@@ -1,7 +1,6 @@
 QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-include($$PWD/mkl_Fortrn_dependency.pri)
 include($$PWD/Ifopt_dependency.pri)
 
 CONFIG += c++17

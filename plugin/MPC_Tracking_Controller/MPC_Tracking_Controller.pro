@@ -2,7 +2,9 @@ QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include($$PWD/osqp_eigen_dependency.pri)
-CONFIG += c++11
+CONFIG += c++17
+QMAKE_CXXFLAGS += /arch:AVX
+QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
 LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser

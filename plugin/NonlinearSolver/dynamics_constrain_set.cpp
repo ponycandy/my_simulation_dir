@@ -44,9 +44,10 @@ ifopt::Component::VectorXd Dynamics_Constrain_Set::GetValues() const
     getqx();
     Dynamic_gx_part=s_B*qx; //这里是稀疏矩阵乘以非稀疏矩阵，得到的是dense矩阵
     //下面这两条默认用来处理终点约束的，看情况加，默认不加
+    append_constrain();
     if(set_terminal_point==true)
     {
-        //        append_constrain();
+
         for(int i=0;i<constrain_num_dynamics+state_num;i++)
         {
             g(i)=Combined_cons(i,0);
@@ -98,14 +99,14 @@ void Dynamics_Constrain_Set::getqx() const
 void Dynamics_Constrain_Set::append_constrain()  const
 {
     Combined_cons.setZero();
-    if(set_terminal_point)
-    {
-        Combined_cons<<Dynamic_gx_part,stateMat.block(0,dec_num-1,state_num,1)-TerminalState;
-    }
-    else
-    {
-        Combined_cons<<Dynamic_gx_part;
-    }
+    //    if(set_terminal_point)
+    //    {
+    Combined_cons<<Dynamic_gx_part,stateMat.block(0,dec_num-1,state_num,1)-TerminalState;
+    //    }
+    //    else
+    //    {
+    //        Combined_cons<<Dynamic_gx_part;
+    //    }
 }
 
 void Dynamics_Constrain_Set::init_all_mat()
@@ -263,8 +264,8 @@ void Dynamics_Constrain_Set::FillJacobianBlock(std::string var_set, Jacobian &ja
         Matrix_sparser a_sparser;
         pack_variable(x);
         calc_dynamic_constrain_Jacobian();
-//        jac_block=a_sparser.make_dense_sparse(jacobian2.transpose());
-//这里矩阵无需转置，其定义是和我们一致的（参照ifopt的例子）
+        //        jac_block=a_sparser.make_dense_sparse(jacobian2.transpose());
+        //这里矩阵无需转置，其定义是和我们一致的（参照ifopt的例子）
         //问题是，这里是不能够直接copy整个对象的，而必须单独赋值
         int upper_rows=0;
         int lower_rows=0;
@@ -276,7 +277,7 @@ void Dynamics_Constrain_Set::FillJacobianBlock(std::string var_set, Jacobian &ja
                 upper_rows=it.row();
                 lower_rows=it.col();
                 value_now=it.value();
-//                fillin(it.row(),it.col(),it.value());//不确定这里要不要减1
+                //                fillin(it.row(),it.col(),it.value());//不确定这里要不要减1
                 jac_block.coeffRef(upper_rows,lower_rows)=value_now;
             }
         }
@@ -338,7 +339,7 @@ void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
     }
     else
     {
-//                jacobian2=mid;
+        //                jacobian2=mid;
     }
 
     //考虑到这里，进行重新计算：
@@ -389,22 +390,22 @@ Eigen::MatrixXd Dynamics_Constrain_Set::calc_single_jacobia(int timestep) const
 void Dynamics_Constrain_Set::set_use_terminal(bool istrue)
 {
     set_terminal_point=istrue;
-//    if(set_terminal_point==true)
-//    {
-//        jacobian2.resize(state_num*(dec_num+1),dec_num*state_num_plus_act_num);
-//        jacobian2.setZero();
-//        int start_x,start_y;
-//        for(int i=0;i<state_num;i++)
-//        {
-//            start_x=state_num*(dec_num+1)-i -1;
-//            start_y=state_num_plus_act_num*dec_num-i -1;
+    //    if(set_terminal_point==true)
+    //    {
+    //        jacobian2.resize(state_num*(dec_num+1),dec_num*state_num_plus_act_num);
+    //        jacobian2.setZero();
+    //        int start_x,start_y;
+    //        for(int i=0;i<state_num;i++)
+    //        {
+    //            start_x=state_num*(dec_num+1)-i -1;
+    //            start_y=state_num_plus_act_num*dec_num-i -1;
 
-//            jacobian2(start_x,start_y)=1;
-//        }
-//    }
-//    else
-//    {
-//        jacobian2.resize(state_num*(dec_num),dec_num*state_num_plus_act_num);
-//        jacobian2.setZero();
-//    }
+    //            jacobian2(start_x,start_y)=1;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        jacobian2.resize(state_num*(dec_num),dec_num*state_num_plus_act_num);
+    //        jacobian2.setZero();
+    //    }
 }

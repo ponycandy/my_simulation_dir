@@ -5,9 +5,10 @@
 <plugin order="1" name="Simulator" />
 
 <plugin order="1" name="MPC_Tracking_Controller" />
-<plugin order="1" name="NMPC_TrajPlanning" />
-<plugin order="1" name="test_NMPC_Plugin" />
+<plugin order="1" name="NonlinearSolver" />
+<plugin order="1" name="testNonlinearSOlver" />
 <plugin order="1" name="Pendulem_rl_experinece" />
+
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
 </plugins>

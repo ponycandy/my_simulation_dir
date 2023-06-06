@@ -48,6 +48,11 @@ ifopt::Component::VectorXd Dynamics_varaible_Set::GetValues() const
 ifopt::Component::VecBound Dynamics_varaible_Set::GetBounds() const
 {
     ifopt::Component::VecBound bounds(GetRows());
+    for(int k=0;k<total_varaible_num;k++)
+    {
+        bounds.at(k)=ifopt::NoBound;
+    }
+
     int coord=0;
     if(control_bound_flag==true)
     {

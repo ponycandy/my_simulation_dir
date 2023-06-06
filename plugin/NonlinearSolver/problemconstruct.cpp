@@ -7,6 +7,8 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     set_Terminal=false;
     ipopt.SetOption("linear_solver", "mumps");
     ipopt.SetOption("jacobian_approximation", "exact");
+//    ipopt.SetOption("tol",0.0001);
+    ipopt.SetOption("linear_solver","ma57");
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)
@@ -93,10 +95,9 @@ void ProblemConstruct::constructNLP()
         m_vars->set_control_bound(selflower,selfhigher);
         std::shared_ptr<ifopt::Component> variableptr(m_vars);
         std::shared_ptr<ifopt::ConstraintSet> consptr(m_cons);
-//        std::shared_ptr<ifopt::ConstraintSet> costptr(mcost);
         nlp.AddVariableSet  (variableptr);
         nlp.AddConstraintSet(consptr);
-//        nlp.PrintCurrent();
+        nlp.PrintCurrent();
         //        nlp.AddCostSet      (std::make_shared<ExCost>());
     }
     else
@@ -114,7 +115,8 @@ NonlinearSolverservice *ProblemConstruct::clone_service()
 Eigen::VectorXd ProblemConstruct::solve_problem()
 {
     ipopt.Solve(nlp);
-    solutions = nlp.GetOptVariables()->GetValues();
+    Eigen::VectorXd x=nlp.GetOptVariables()->GetValues();
+    solutions = x;
     return solutions;
 }
 
