@@ -97,13 +97,7 @@ void ProblemConstruct::constructNLP()
         std::shared_ptr<ifopt::ConstraintSet> consptr(m_cons);
         nlp.AddVariableSet  (variableptr);
         nlp.AddConstraintSet(consptr);
-
-        TerminalSet *newset=new TerminalSet;
-        std::shared_ptr<ifopt::ConstraintSet> consptr1(newset);
-
-//        nlp.AddConstraintSet(consptr1);
         nlp.PrintCurrent();
-        //        nlp.AddCostSet      (std::make_shared<ExCost>());
     }
     else
     {
@@ -120,8 +114,7 @@ NonlinearSolverservice *ProblemConstruct::clone_service()
 Eigen::VectorXd ProblemConstruct::solve_problem()
 {
     ipopt.Solve(nlp);
-    Eigen::VectorXd x=nlp.GetOptVariables()->GetValues();
-    solutions = x;
+    solutions=nlp.GetOptVariables()->GetValues();
     return solutions;
 }
 

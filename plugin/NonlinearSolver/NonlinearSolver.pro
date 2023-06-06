@@ -33,8 +33,7 @@ SOURCES += \
         problemconstruct.cpp \
     dynamics_constrain_set.cpp \
     dynamics_cost_set.cpp \
-    dynamics_varaible_set.cpp \
-    terminalset.cpp \
+    dynamics_varaible_set.cpp
 
 
 
@@ -46,9 +45,7 @@ HEADERS += \
     problemconstruct.h \
     dynamics_constrain_set.h \
     dynamics_cost_set.h \
-    dynamics_varaible_set.h \
-    terminalset.h
-
+    dynamics_varaible_set.h
 DISTFILES += \
     关于本组件的bug的说明
 
