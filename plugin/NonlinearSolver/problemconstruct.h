@@ -23,6 +23,8 @@ public:
     void constructNLP() override;
     NonlinearSolverservice * clone_service() override;
     Eigen::VectorXd solve_problem() override;
+    Eigen::VectorXd solve_problem(QString name) override;
+    void start_crack() override;
     Eigen::MatrixXd get_actMat() override;
     Eigen::MatrixXd get_stateMat() override;
     void set_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;

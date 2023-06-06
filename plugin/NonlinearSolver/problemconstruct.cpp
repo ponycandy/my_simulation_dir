@@ -114,19 +114,32 @@ NonlinearSolverservice *ProblemConstruct::clone_service()
 Eigen::VectorXd ProblemConstruct::solve_problem()
 {
     ipopt.Solve(nlp);
-    solutions=nlp.GetOptVariables()->GetValues();
+    solutions=nlp.GetOptVariables()->GetComponent("action_state_set1")->GetValues();
     return solutions;
+}
+
+Eigen::VectorXd ProblemConstruct::solve_problem(QString name)
+{
+    solutions=nlp.GetOptVariables()->GetComponent(name.toStdString())->GetValues();
+    return solutions;
+}
+
+void ProblemConstruct::start_crack()
+{
+    ipopt.Solve(nlp);
 }
 
 Eigen::MatrixXd ProblemConstruct::get_actMat()
 {
     //使用者自行负责判断能否调用这个函数
+    solutions=nlp.GetOptVariables()->GetComponent("action_state_set1")->GetValues();
     m_cons->pack_variable(solutions);
     return m_cons->actMat;
 }
 
 Eigen::MatrixXd ProblemConstruct::get_stateMat()
 {
+    solutions=nlp.GetOptVariables()->GetComponent("action_state_set1")->GetValues();
     m_cons->pack_variable(solutions);
     return m_cons->stateMat;
 }

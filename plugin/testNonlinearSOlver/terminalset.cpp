@@ -11,7 +11,7 @@ ifopt::Component::VectorXd TerminalSet::GetValues() const
     target<<3.1415926535,0,0,0;
     VectorXd g(GetRows());//获取约束的个数，也就是行数
     VectorXd x = GetVariables()->GetComponent("action_state_set1")->GetValues();
-    int totalsize=x.cols();
+    int totalsize=x.rows();
     for(int i=0;i<=3;i++)
     {
         g(3-i)=x(totalsize-1-i)-target(3-i);
@@ -37,7 +37,7 @@ void TerminalSet::FillJacobianBlock(std::string var_set, Jacobian &jac_block) co
     {
         for(int i=0;i<=3;i++)
         {
-            jac_block.coeffRef(i,i)=1;
+            jac_block.coeffRef(i,i+500-4)=1;
         }
     }
 
