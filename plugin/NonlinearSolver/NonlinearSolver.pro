@@ -34,6 +34,7 @@ SOURCES += \
     dynamics_constrain_set.cpp \
     dynamics_cost_set.cpp \
     dynamics_varaible_set.cpp \
+    terminalset.cpp \
 
 
 
@@ -46,6 +47,7 @@ HEADERS += \
     dynamics_constrain_set.h \
     dynamics_cost_set.h \
     dynamics_varaible_set.h \
+    terminalset.h
 
 DISTFILES += \
     关于本组件的bug的说明

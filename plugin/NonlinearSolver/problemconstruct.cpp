@@ -1,5 +1,5 @@
 ﻿#include "problemconstruct.h"
-
+#include "terminalset.h"
 ProblemConstruct::ProblemConstruct(QObject *parent)
     : QObject{parent}
 {
@@ -7,20 +7,20 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     set_Terminal=false;
     ipopt.SetOption("linear_solver", "mumps");
     ipopt.SetOption("jacobian_approximation", "exact");
-//    ipopt.SetOption("tol",0.0001);
+    //    ipopt.SetOption("tol",0.0001);
     ipopt.SetOption("linear_solver","ma57");
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)
 {
     selfodefunction=odefunction;
-//    m_cons->registerODE(odefunction);
+    //    m_cons->registerODE(odefunction);
 }
 
 void ProblemConstruct::registerODEJacob(NMPC_Dynamic_Jacob *Dynamic_Jacob)
 {
     selfDynamic_Jacob=Dynamic_Jacob;
-//    m_cons->self_ode_jacob=Dynamic_Jacob;
+    //    m_cons->self_ode_jacob=Dynamic_Jacob;
 }
 
 void ProblemConstruct::register_constrain(NMPC_Extra_Constrain *constrain)
@@ -97,6 +97,11 @@ void ProblemConstruct::constructNLP()
         std::shared_ptr<ifopt::ConstraintSet> consptr(m_cons);
         nlp.AddVariableSet  (variableptr);
         nlp.AddConstraintSet(consptr);
+
+        TerminalSet *newset=new TerminalSet;
+        std::shared_ptr<ifopt::ConstraintSet> consptr1(newset);
+
+//        nlp.AddConstraintSet(consptr1);
         nlp.PrintCurrent();
         //        nlp.AddCostSet      (std::make_shared<ExCost>());
     }
