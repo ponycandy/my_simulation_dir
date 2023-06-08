@@ -37,11 +37,11 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
     //必须要使用中间转接，这个属于固有问题
     Eigen::MatrixXd lowb;
     lowb.resize(1,1);
-    lowb<<-100;
+    lowb<<-30;
 
     Eigen::MatrixXd highb;
     highb.resize(1,1);
-    highb<<100;
+    highb<<30;
 
     m_service->set_control_bound(lowb,highb);
     m_service->registerODE(m_ode);

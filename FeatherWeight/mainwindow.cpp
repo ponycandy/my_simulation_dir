@@ -492,4 +492,10 @@ void MainWindow::on_pushButton_11_clicked()
     depend_plugin_name_pro_str=targetext;
     file.close();
     ui->label_5->setText("done!");
+
+
+    bool ok = QFile::copy("../3rdlib/project_library/bin/"+dependency_name+".dll"
+                           ,"../build/"+dependency_name+".dll");
+
+
 }

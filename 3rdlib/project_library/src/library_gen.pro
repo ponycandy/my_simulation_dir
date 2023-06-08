@@ -6,3 +6,4 @@ SUBDIRS += \
     ClosePoint \
     SwarmAgent \
     SwarmObstacle \
+    xmlcore
