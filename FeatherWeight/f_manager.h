@@ -14,18 +14,28 @@ inline QString f_get_text_between(QString start,QString endtext,QString text);
 inline QString f_Open_directory(QString directory_base);
 inline QString f_insert_a_line(QString origintext,int linenum,QString insertedtext);
 
+#include <QRegularExpressionValidator>
 
 QString f_FileOpen()                 //打开文件
 {
     qDebug()<<"open ";
-    QString fileName=QFileDialog::getOpenFileName(NULL,"openfile",QDir::currentPath(),NULL,NULL,NULL);
+
+    QString fileName=    QFileDialog::getOpenFileName(NULL,
+                                                    QObject::tr("Open File"),
+                                                    QDir::currentPath(),
+                                                    NULL);
     qDebug()<<fileName;
     return  fileName;
 }
 QString f_Filesavas()
 {
     qDebug()<<"saveas ";
-    QString fileName= QFileDialog::getSaveFileName(NULL,"save_as",QDir::currentPath(),NULL,NULL,NULL);
+
+
+    QString fileName=    QFileDialog::getSaveFileName(NULL,
+                                                    QObject::tr("Save File"),
+                                                    QDir::currentPath(),
+                                                    NULL);
     qDebug()<<fileName;
 
     return fileName;
@@ -71,7 +81,8 @@ QString f_Replacestring(QString origintexts,QString replacee,QString replacer)
     QString originText = origintexts;
     QString searchText = replacee;
     QString replaceText =replacer;
-    QString result = originText.replace(QRegExp(searchText), replaceText);
+    QString result = originText.replace(
+        QRegularExpression(searchText), replaceText);
     return  result;
 }
 QString f_get_text_between(QString start,QString endtext,QString text)

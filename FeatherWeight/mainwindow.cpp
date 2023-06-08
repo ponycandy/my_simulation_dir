@@ -169,7 +169,8 @@ QString MainWindow::editcpp(QString str,QString A)
     QString originText = str;
     QString searchText = "pluginname";
     QString replaceText =A;
-    QString result = originText.replace(QRegExp(searchText), replaceText);
+    QString result = originText.replace(
+        QRegularExpression(searchText), replaceText);
     return  result;
 }
 QString MainWindow::editall(QString str,QString origin,QString target)
@@ -177,7 +178,8 @@ QString MainWindow::editall(QString str,QString origin,QString target)
     QString originText = str;
     QString searchText = origin;
     QString replaceText =target;
-    QString result = originText.replace(QRegExp(searchText), replaceText);
+    QString result = originText.replace(
+        QRegularExpression(searchText), replaceText);
     return  result;
 }
 
