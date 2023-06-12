@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/readme">
+        <file>参数说明.PNG</file>
+    </qresource>
+</RCC>
