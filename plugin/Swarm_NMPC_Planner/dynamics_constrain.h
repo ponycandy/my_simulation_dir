@@ -18,7 +18,9 @@ public:
     void init_num(int state_num,int agent_num,int dec_num,int pointnum,double step) const ;
     VecBound GetBounds() const override;
     void Fill_dynamics_Jacob(Jacobian &jac);
-    void Calc_f_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN);
+    void Fill_dynamics_action(Jacobian &jac);
+    void Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN,int agentindex);
+    void Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN);
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
     void FillinG(Eigen::VectorXd &g);
     void Copy_Dense_2_Sparse(Jacobian &jac_block,Eigen::MatrixXd mat,int startx,int starty);
@@ -31,6 +33,7 @@ public:
     mutable int dims;
     mutable int pointnum;
     mutable int decnum;
+    mutable int current_agent;
     mutable double steptime;
     mutable QVector<PolyParams> m_polys;
     mutable QVector<Eigen::MatrixXd> ActMats;

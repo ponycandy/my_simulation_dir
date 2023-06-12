@@ -22,9 +22,7 @@ ifopt::Component::VectorXd Dynamics_Constrain::GetValues() const
         var_name="spline_p_set_of_"+QString::number(i);
         m_polys[i].packvariable(GetVariables()->GetComponent(var_name)->GetValues());
     }
-    packvariable_states_set(
-        GetVariables()->GetComponent("state_vars")->GetValues(),
-        states,decnum );
+    packvariable_states_set(GetVariables()->GetComponent("state_vars")->GetValues(),states,decnum );
     formactmat();
     FillinG(g);
     return g;
@@ -37,7 +35,7 @@ void Dynamics_Constrain::init_num(int state_num, int agent_num, int dec_num, int
     for(int j=0;j<agent_num;j++)
     {
         PolyParams single_poly;
-        single_poly.initilization(2,dec_num,pointnum,steptime);
+        single_poly.initilization();
         m_polys.insert(j,single_poly);
     }
 }
@@ -68,8 +66,7 @@ void Dynamics_Constrain::Fill_dynamics_Jacob(Jacobian &jac)
     {
         if(i>0)
         {
-        self_jacobian->get_A_and_B(actMat.block(0,i,2,1)
-        ,states.block(0,i,statenum,1),A_mat,B_mat);
+        self_jacobian->get_A_and_B(actMat.block(0,i,actnum,1),states.block(0,i,statenum,1),A_mat,B_mat);
 
         Calc_a_2_pt(dadpt,states.block(0,i,statenum,1),i);
 
@@ -80,16 +77,47 @@ void Dynamics_Constrain::Fill_dynamics_Jacob(Jacobian &jac)
         }
         else
         {
-        self_jacobian->get_A_and_B(actMat.block(0,i,2,1)
-                                   ,initstates_of_animals,A_mat,B_mat);
-
-
+        self_jacobian->get_A_and_B(actMat.block(0,i,actnum,1),initstates_of_animals,A_mat,B_mat);
         mat_sparse->Copy_Mat_2_Sparse_block(jac,Identi,0,0,statenum,statenum);
         }
     }
 }
 
-void Dynamics_Constrain::Calc_f_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN)
+void Dynamics_Constrain::Fill_dynamics_action(Jacobian &jac)
+{
+    PolyParams set=m_polys[current_agent];
+    Jac_Group group;
+    single_jacob jac0;
+    Eigen::MatrixXd A_mat;
+    Eigen::MatrixXd B_mat;
+    Eigen::MatrixXd dadpi;
+    for(int i=0;i<decnum;i++)
+    {
+        self_jacobian->get_A_and_B(actMat.block(0,i,2,1)
+                                   ,states.block(0,i,statenum,1),A_mat,B_mat);
+
+        jac0.relative_2_dec=i;
+        Calc_a_2_pi(dadpi,states.block(0,i,2,1),i,current_agent);
+        jac0.jacobian=-steptime*B_mat*dadpi;
+        group[0]=jac0;
+        set.FillinJacobian(jac,group);
+// 我想我们需要三级，乃至多级的雅可比矩阵计算！雅可比的级数
+//也需要可变
+    }
+}
+
+void Dynamics_Constrain::Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt, int decN, int agentindex)
+{
+    Eigen::MatrixXd eye_2;
+    Eigen::MatrixXd dfdpi;
+    Eigen::MatrixXd pi=ActMats[agentindex].block(0,decN,2,1);
+    dfdpi(0,0)=2*(pi(0,0)-pt(0,0));//1*2矩阵
+    dfdpi(0,1)=2*(pi(1,0)-pt(1,0));
+    double fnorm=dec_2_coef_map[agentindex][decN];
+    mat=-eye_2*coef_K/fnorm+(pt-)*coef/(-fnorm*fnorm)*dfdpi;
+}
+
+void Dynamics_Constrain::Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN)
 {
     Eigen::MatrixXd eye_2;
     Eigen::MatrixXd dfdpt;
@@ -98,9 +126,8 @@ void Dynamics_Constrain::Calc_f_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,i
     {
         f_norm=dec_2_coef_map[j][dec];
         Eigen::MatrixXd pi=ActMats[j][decN];
-        dfdpt=2*(pt-pi);
-        mat+=(eye_2*coef_K/f_norm+
-                (pi-pt)*(coef_K/(f_norm*f_norm))*dfdpt;
+        dfdpt=2*(pt-pi);//1*2矩阵
+        mat+=(eye_2*coef_K/f_norm+(pi-pt)*(coef_K/(f_norm*f_norm))*dfdpt;
     }
 }
 
@@ -110,9 +137,7 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
     //赋值给jac_block
     if (var_set == "state_vars")
     {
-        packvariable_states_set(
-            GetVariables()->GetComponent("state_vars")->GetValues(),
-            states,decnum );
+        packvariable_states_set(GetVariables()->GetComponent("state_vars")->GetValues(),states,decnum );
         formactmat();
         Fill_dynamics_Jacob(jac_block);
     }
@@ -120,21 +145,10 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
     {
         QString var_name;
         var_name="spline_p_set_of_"+QString::number(j);
-        Eigen::MatrixXd dfdstate;
-        dfdstate<<0,0,
-            0,0,
-            steptime*consta,0,
-            0,steptime*consta;
-        Eigen::MatrixXd jacob;
         if (var_set == var_name)
         {
-            PolyParams set=m_polys.value(j);
-            double currenttime=0;
-            Eigen::MatrixXd jac_mat_block;
-            for(int i=0;i<decnum;i++)
-            {
-                set.Calc_Jacobian_Iterative(i*steptime,jac_block,dfdstate,i);
-            }
+            m_polys[j].packvariable(GetVariables()->GetComponent(var_name)->GetValues());
+            Fill_dynamics_action(jac_block);
             break;
         }
 
@@ -147,16 +161,11 @@ void Dynamics_Constrain::FillinG(Eigen::VectorXd &g)
     {
         if(i==0)
         {
-            Combined_cons.block(0,0,statenum,1)=states.block(0,0,statenum,1)-
-                                                     initstates_of_animals-steptime*
-                                                                                 self_ode->ode_function(actMat.block(0,0,actnum,1),initstates_of_animals);
+            Combined_cons.block(0,0,statenum,1)=states.block(0,0,statenum,1)-initstates_of_animals-steptime*self_ode->ode_function(actMat.block(0,0,actnum,1),initstates_of_animals);
         }
         else
         {
-            Combined_cons.block(statenum*i,0,statenum,1)=states.block(0,i,statenum,1)-
-                                                                states.block(0,i-1,statenum,1)-steptime*
-                                                                                                          self_ode->ode_function(actMat.block(0,i,actnum,1),states.block(0,i-1,statenum,1));
-
+            Combined_cons.block(statenum*i,0,statenum,1)=states.block(0,i,statenum,1)-states.block(0,i-1,statenum,1)-steptime*self_ode->ode_function(actMat.block(0,i,actnum,1),states.block(0,i-1,statenum,1));
         }
     }
     for(int i=0;i<constrainnum;i++)
@@ -165,26 +174,8 @@ void Dynamics_Constrain::FillinG(Eigen::VectorXd &g)
     }
 }
 
-void Dynamics_Constrain::Copy_Dense_2_Sparse(Jacobian &jac_block, Eigen::MatrixXd mat, int startrow, int startcol)
-{
-    int rows=mat.rows();
-    int cols=mat.cols();
-    for(int i=0;i<rows;i++)
-    {
-        for(int j=0;j<cols;j++)
-        {
-            if( mat(i,j)!=0)
-            {
-                jac_block.coeffRef(rows+startrow,cols+startcol) = mat(i,j);
-            }
-        }
-    }
-}
-
 void Dynamics_Constrain::formactmat()
 {
-
-
     for(int i=0;i<agentnum;i++)
     {
         m_polys.value(i).Get_Poly_Value_Mat(ActMats[i]);
@@ -206,8 +197,4 @@ void Dynamics_Constrain::formactmat()
             dec_2_coef_map[j][i]=norm_2_sqrt;
         }
     }
-
-
-
-    actMat=consta*actMat;
 }
