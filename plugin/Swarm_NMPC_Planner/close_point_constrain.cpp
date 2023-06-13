@@ -18,11 +18,9 @@ ifopt::Component::VectorXd close_point_constrain::GetValues() const
     VectorXd g(GetRows());
     PolyParams posset;
     int i=self_agent_order;
-    posset=m_polys(i);
+    posset=m_polys[i];
     var_name="spline_p_set_of_"+QString::number(i);
-    packvariable_pos_set(
-        GetVariables()->GetComponent(var_name)->GetValues(),
-        posset ,pointnum);
+    packvariable_pos_set(GetVariables()->GetComponent("action_state_set1")->GetValues(),posset ,pointnum);
     m_polys.value(i)=posset;
     formactmat();
     FillinG(g);

@@ -5,7 +5,7 @@ Dynamics_of_Animals::Dynamics_of_Animals()
 
 }
 
-Espmat Dynamics_of_Animals::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
+Eigen::MatrixXd Dynamics_of_Animals::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 {
 
     Eigen::MatrixXd dy;
