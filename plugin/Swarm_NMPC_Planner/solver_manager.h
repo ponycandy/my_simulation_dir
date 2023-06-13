@@ -11,7 +11,9 @@ public:
     int dims;
     int pointnum;
     int dec_num;
+    int statenum;
     double steptime;
+    int agentnum;
 };
 
 #endif // SOLVER_MANAGER_H
