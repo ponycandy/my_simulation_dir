@@ -4,8 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include($$PWD/Ifopt_dependency.pri)
 CONFIG += c++17
 
-INCLUDEPATH += ../../3rdlib/project_library/src/PolyParams
-LIBS += -L../../3rdlib/project_library/bin -lPolyParams
+
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
 LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
 INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
@@ -31,7 +30,8 @@ SOURCES += \
     problem_wrapup.cpp \
     solver_manager.cpp \
     splinevariable.cpp \
-    state_variable.cpp
+    state_variable.cpp \
+    PolyParams.cpp
 
 
 
@@ -45,7 +45,8 @@ HEADERS += \
     solver_manager.h \
     splinevariable.h \
     state_variable.h \
-    var_packer.h
+    var_packer.h \
+    PolyParams.h
 
 
 

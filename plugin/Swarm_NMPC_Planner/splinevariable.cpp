@@ -6,7 +6,7 @@ SplineVariable::SplineVariable(int num, std::string &varname):VariableSet(num,va
 {
     var_num=num;
     variable.resize(var_num,1);
-    variable.setZero();
+    variable.setOnes();
     QString configfiename="./config/Polys/constrainParams.xml";
     xmlCore xml_reader(configfiename.toStdString());
     xml_reader.xmlRead("pointnum",pointnum);
