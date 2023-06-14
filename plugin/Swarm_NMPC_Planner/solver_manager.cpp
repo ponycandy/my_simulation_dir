@@ -20,6 +20,8 @@ solver_manager::solver_manager()
     xml_reader.xmlRead("pointnum",pointnum);
     xml_reader.xmlRead("step_time",steptime);
     xml_reader.xmlRead("agentnum",agentnum);
+    xml_reader.xmlRead("statenum",statenum);
+
 
     m_service=Swarm_NMPC_PlannerActivator::getService<NonlinearSolverservice>("NonlinearSolverservice");
     m_service->Use_BuildIn_Dynamics_Cons(false);
@@ -49,7 +51,7 @@ solver_manager::solver_manager()
     std::string statevarname="state_value";
     stateVar=new State_Variable(statenum*dec_num,statevarname);
     std::shared_ptr<ifopt::VariableSet> statevarptr(stateVar);
-    m_service->AddConstraintSet(statevarptr);
+    m_service->AddVariableSet(statevarptr);
     //添加动力学约束
     Dynamics_Constrain *Dcons;
     Dcons=new Dynamics_Constrain(statenum*dec_num);

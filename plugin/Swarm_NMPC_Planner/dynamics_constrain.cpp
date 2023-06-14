@@ -2,15 +2,50 @@
 #include "var_packer.h"
 #include "QString"
 #include "Matrix_sparser.h"
+#include "jacobian_state.h"
 Dynamics_Constrain::Dynamics_Constrain(int num):ConstraintSet(num,"Dynamics_Constrain")
 {
-    QString configfiename="./config/Polys/ProblemParams.xml";
+    QString configfiename="./config/Polys/constrainParams.xml";
     xmlCore xml_reader(configfiename.toStdString());
     xml_reader.xmlRead("dim",dims);
     xml_reader.xmlRead("steps",decnum);
     xml_reader.xmlRead("pointnum",pointnum);
     xml_reader.xmlRead("step_time",steptime);
     xml_reader.xmlRead("agentnum",agentnum);
+    xml_reader.xmlRead("statenum",statenum);
+    xml_reader.xmlRead("actnum",actnum);
+    xml_reader.xmlRead("Coef",coef_K);
+
+
+    constrainnum=num;
+    init_num(statenum,agentnum,decnum,pointnum,steptime);
+    self_jacobian=new Jacobian_state;
+    actMat.resize(actnum,decnum);
+    actMat.setZero();
+    states.resize(statenum,decnum);
+    A_mat.resize(statenum,statenum);
+    B_mat.resize(statenum,actnum);
+    current_agent=0;
+    Eigen::MatrixXd actmats_i;
+    actmats_i.resize(2,decnum);
+    actmats_i.setZero();
+    dec_2_coef_map.resize(agentnum,decnum);
+    dec_2_coef_map.setOnes();
+    for(int i=0;i<agentnum;i++)
+    {
+        ActMats.insert(i,actmats_i);
+    }
+
+    for(int j=0;j<agentnum;j++)
+    {
+        for(int i=0;i<decnum;i++)
+        {
+            dec_2_coef_map(j,i)=1;
+        }
+    }
+
+
+
 }
 
 ifopt::Component::VectorXd Dynamics_Constrain::GetValues() const
@@ -46,6 +81,7 @@ void Dynamics_Constrain::init_num(int state_num, int agent_num, int dec_num, int
 ifopt::Component::VecBound Dynamics_Constrain::GetBounds() const
 {
     VecBound b(GetRows());
+
     for(int i=1;i<=constrainnum;i++)
     {
         b.at(i-1)=ifopt::Bounds(0.0, 0.0);
@@ -71,7 +107,7 @@ void Dynamics_Constrain::Fill_dynamics_Jacob(Jacobian &jac) const
             self_jacobian->get_A_and_B(actMat.block(0,i,actnum,1),states.block(0,i,statenum,1),A_mat,B_mat);
             Eigen::MatrixXd mid=states.block(0,i,statenum,1);
             Calc_a_2_pt(dadpt,mid,i);
-
+            A_mat.block(2,0,2,2)=mid;
             mat_sparse.Copy_Mat_2_Sparse_block(jac,Identi,statenum*i,statenum*(i),statenum,statenum);
             dfd1=-Identi-steptime*A_mat+steptime*B_mat*dadpt;
             mat_sparse.Copy_Mat_2_Sparse_block(jac,dfd1,statenum*i,statenum*(i-1),statenum,statenum);
@@ -90,13 +126,11 @@ void Dynamics_Constrain::Fill_dynamics_action(Jacobian &jac) const
     PolyParams set=m_polys[current_agent];
     Jac_Group group;
     single_jacob jac0;
-    Eigen::MatrixXd A_mat;
-    Eigen::MatrixXd B_mat;
+    group.init(1);
     Eigen::MatrixXd dadpi;
     for(int i=0;i<decnum;i++)
     {
-        self_jacobian->get_A_and_B(actMat.block(0,i,2,1)
-                                   ,states.block(0,i,statenum,1),A_mat,B_mat);
+        self_jacobian->get_A_and_B(actMat.block(0,i,2,1),states.block(0,i,statenum,1),A_mat,B_mat);
 
         jac0.relative_2_dec=i;
         Eigen::MatrixXd mid=states.block(0,i,2,1);
@@ -108,17 +142,20 @@ void Dynamics_Constrain::Fill_dynamics_action(Jacobian &jac) const
         //也需要可变
     }
 
+
 }
 
 void Dynamics_Constrain::Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt, int decN, int agentindex) const
 {
     Eigen::MatrixXd eye_2;
-    Eigen::MatrixXd dfdpi;
+    eye_2.resize(2,2);
+    eye_2<<1,0,0,1;
+    Eigen::MatrixXd dfdpi;dfdpi.resize(1,2);
     Eigen::MatrixXd pi=ActMats[agentindex].block(0,decN,2,1);
     dfdpi(0,0)=2*(pi(0,0)-pt(0,0));//1*2矩阵
     dfdpi(0,1)=2*(pi(1,0)-pt(1,0));
-    double fnorm=dec_2_coef_map[agentindex][decN];
-    mat=-eye_2*coef_K/fnorm+(pt-pi)*coef_K/(-fnorm*fnorm)*dfdpi;
+    double fnorm=dec_2_coef_map(agentindex,decN);
+    mat=-eye_2*coef_K/fnorm+(pt-pi)*coef_K/(-fnorm*fnorm)*dfdpi;//2*2矩阵
 }
 
 void Dynamics_Constrain::Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN) const
@@ -128,7 +165,7 @@ void Dynamics_Constrain::Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,i
     double f_norm;
     for(int j=0;j<agentnum;j++)
     {
-        f_norm=dec_2_coef_map[j][decN];
+        f_norm=dec_2_coef_map(j,decN);
         Eigen::MatrixXd pi=ActMats[j].block(0,decN,2,1);
         dfdpt=2*(pt-pi);//1*2矩阵
         mat+=(eye_2*coef_K/f_norm)+(pi-pt)*(coef_K/(f_norm*f_norm))*dfdpt;
@@ -152,9 +189,14 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
         var_name="spline_p_set_of_"+QString::number(j);
         if (var_set == var_name.toStdString())
         {
+//            Eigen::VectorXd x=GetVariables()->GetComponent("state_vars")->GetValues();
+//            packvariable_states_set(x,states,decnum );
+//            formactmat();
             Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
             m_polys[j].packvariable(x);
+            current_agent=j;
             Fill_dynamics_action(jac_block);
+            m_polys[j].clearconstrainindex();
             break;
         }
 
@@ -167,11 +209,11 @@ void Dynamics_Constrain::FillinG(Eigen::VectorXd &g) const
     {
         if(i==0)
         {
-            Combined_cons.block(0,0,statenum,1)=states.block(0,0,statenum,1)-initstates_of_animals-steptime*self_ode->ode_function(actMat.block(0,0,actnum,1),initstates_of_animals);
+            Combined_cons.block(0,0,statenum,1)=states.block(0,0,statenum,1)-initstates_of_animals-steptime*self_jacobian->ode_function(actMat.block(0,0,actnum,1),initstates_of_animals);
         }
         else
         {
-            Combined_cons.block(statenum*i,0,statenum,1)=states.block(0,i,statenum,1)-states.block(0,i-1,statenum,1)-steptime*self_ode->ode_function(actMat.block(0,i,actnum,1),states.block(0,i-1,statenum,1));
+            Combined_cons.block(statenum*i,0,statenum,1)=states.block(0,i,statenum,1)-states.block(0,i-1,statenum,1)-steptime*self_jacobian->ode_function(actMat.block(0,i,actnum,1),states.block(0,i-1,statenum,1));
         }
     }
     for(int i=0;i<constrainnum;i++)
@@ -200,7 +242,7 @@ void Dynamics_Constrain::formactmat() const
             mid_1=states.block(0,i,2,1)-single_mat.block(0,i,2,1);
             norm_2_sqrt=mid_1(0,0)*mid_1(0,0)+mid_1(1,0)*mid_1(1,0);
             actMat.block(0,i,2,1)+=((coef_K*mid_1)/norm_2_sqrt);
-            dec_2_coef_map[j][i]=norm_2_sqrt;
+            dec_2_coef_map(j,i)=norm_2_sqrt;
         }
     }
 }

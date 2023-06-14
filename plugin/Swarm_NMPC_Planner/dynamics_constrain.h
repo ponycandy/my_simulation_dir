@@ -39,9 +39,11 @@ public:
     mutable QVector<Eigen::MatrixXd> ActMats;
     mutable Eigen::MatrixXd states;
     mutable QMap<double,int> time_2_phase_map;
-    mutable QVector<QMap<int ,double>> dec_2_coef_map;
+    mutable Eigen::MatrixXd dec_2_coef_map;
     mutable Eigen::MatrixXd actMat;
     mutable Eigen::MatrixXd Combined_cons;
+    mutable Eigen::MatrixXd A_mat;
+    mutable Eigen::MatrixXd B_mat;//4*2矩阵
 
 
     mutable Eigen::MatrixXd initstates_of_animals;

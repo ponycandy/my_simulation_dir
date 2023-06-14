@@ -5,12 +5,13 @@
 State_Variable::State_Variable(int num, std::string &varname):VariableSet(num,varname)
 {
     total_varaible_num=num;
+    variable.resize(total_varaible_num,1);
+    variable.setZero();
 }
 
 void State_Variable::SetVariables(const VectorXd &x)
 {
     variable=x;
-
 }
 
 ifopt::Component::VectorXd State_Variable::GetValues() const
