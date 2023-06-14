@@ -192,21 +192,21 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
         formactmat();
         Fill_dynamics_Jacob(jac_block);
     }
-    for(int j=0;j<agentnum;j++)
-    {
-        QString var_name;
-        var_name="spline_p_set_of_"+QString::number(j);
-        if (var_set == var_name.toStdString())
-        {
-            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-            m_polys[j].packvariable(x);
-            current_agent=j;
-            Fill_dynamics_action(jac_block);
-            m_polys[j].clearconstrainindex();
-            break;
-        }
+//    for(int j=0;j<agentnum;j++)
+//    {
+//        QString var_name;
+//        var_name="spline_p_set_of_"+QString::number(j);
+//        if (var_set == var_name.toStdString())
+//        {
+//            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+//            m_polys[j].packvariable(x);
+//            current_agent=j;
+//            Fill_dynamics_action(jac_block);
+//            m_polys[j].clearconstrainindex();
+//            break;
+//        }
 
-    }
+//    }
 }
 
 void Dynamics_Constrain::FillinG(Eigen::VectorXd &g) const
