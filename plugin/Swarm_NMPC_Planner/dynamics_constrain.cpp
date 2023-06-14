@@ -131,6 +131,7 @@ void Dynamics_Constrain::Fill_dynamics_action(Jacobian &jac) const
     single_jacob jac0;
     group.init(1);
     Eigen::MatrixXd dadpi;
+    dadpi.resize(2,2);
     for(int i=0;i<decnum;i++)
     {
         self_jacobian->get_A_and_B(actMat.block(0,i,2,1),states.block(0,i,statenum,1),A_mat,B_mat);
@@ -154,7 +155,8 @@ void Dynamics_Constrain::Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt, 
     Eigen::MatrixXd eye_2;
     eye_2.resize(2,2);
     eye_2<<1,0,0,1;
-    Eigen::MatrixXd dfdpi;dfdpi.resize(1,2);
+    Eigen::MatrixXd dfdpi;
+    dfdpi.resize(1,2);
     Eigen::MatrixXd pi=ActMats[agentindex].block(0,decN,2,1);
     dfdpi(0,0)=2*(pi(0,0)-pt(0,0));//1*2矩阵
     dfdpi(0,1)=2*(pi(1,0)-pt(1,0));
@@ -185,28 +187,27 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
 {
     //下面的矩阵实际上无需反复求算，可以在初始化的时候搞定然后
     //赋值给jac_block
-    if (var_set == "state_value")
+    //    if (var_set == "state_value")
+    //    {
+    //        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
+    //        packvariable_states_set(x,states,decnum );
+    //        formactmat();
+    //        Fill_dynamics_Jacob(jac_block);
+    //    }
+    for(int j=0;j<agentnum;j++)
     {
-        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
-        packvariable_states_set(x,states,decnum );
-        formactmat();
-        Fill_dynamics_Jacob(jac_block);
+        QString var_name;
+        var_name="spline_p_set_of_"+QString::number(j);
+        if (var_set == var_name.toStdString())
+        {
+            current_agent=j;
+            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+            m_polys[current_agent].packvariable(x);
+            Fill_dynamics_action(jac_block);
+            m_polys[current_agent].clearconstrainindex();
+            break;
+        }
     }
-//    for(int j=0;j<agentnum;j++)
-//    {
-//        QString var_name;
-//        var_name="spline_p_set_of_"+QString::number(j);
-//        if (var_set == var_name.toStdString())
-//        {
-//            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-//            m_polys[j].packvariable(x);
-//            current_agent=j;
-//            Fill_dynamics_action(jac_block);
-//            m_polys[j].clearconstrainindex();
-//            break;
-//        }
-
-//    }
 }
 
 void Dynamics_Constrain::FillinG(Eigen::VectorXd &g) const
