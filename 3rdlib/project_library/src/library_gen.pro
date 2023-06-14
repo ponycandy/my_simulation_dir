@@ -6,4 +6,5 @@ SUBDIRS += \
     ClosePoint \
     SwarmAgent \
     SwarmObstacle \
-    xmlcore
+    xmlcore \
+    PolyParams   \

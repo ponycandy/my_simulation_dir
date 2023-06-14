@@ -12,6 +12,7 @@ public:
     Eigen::SparseMatrix<double> stack_vertical_blok(Eigen::SparseMatrix<double> mat_upper,Eigen::SparseMatrix<double> mat_low);
     void add_mat_block_vertical(Eigen::MatrixXd mat);
     void add_mat_block(Eigen::MatrixXd mat,int start_x,int start_y);
+    void Copy_Mat_2_Sparse_block(Eigen::SparseMatrix<double, Eigen::RowMajor> &sparse,Eigen::MatrixXd &mat,int start_row,int start_col,int mat_rows,int mat_cols);
      Eigen::SparseMatrix<double>   make_dense_sparse(Eigen::MatrixXd mat);
     void setsize(int width,int height);
     Eigen::SparseMatrix<double> get_sparse_mat();

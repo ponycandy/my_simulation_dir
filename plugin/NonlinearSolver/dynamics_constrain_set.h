@@ -42,7 +42,7 @@ public:
     mutable  Eigen::MatrixXd act_array;//控制量向量，尺寸为：act_num*1
     mutable  Eigen::MatrixXd state_array;//状态量向量，尺寸为：state_num*1
     mutable  Eigen::MatrixXd jac_mat;
-    NMPC_Dynamic_Jacob *self_ode_jacob;
+
     int cons_num;
     int state_num;//状态变量的维度
     int act_num;//控制变量的维度
@@ -69,7 +69,7 @@ public:
     mutable  Espmat s_D;
 
     NMPC_ODE *self_ode;
-
+NMPC_Dynamic_Jacob *self_ode_jacob;
 
     mutable  Eigen::MatrixXd jacobian;
 

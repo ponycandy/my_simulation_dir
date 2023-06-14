@@ -2,5 +2,5 @@ TEMPLATE = subdirs
 
 
 SUBDIRS += \
-    NonlinearSolver \
+    launcher \
     Swarm_NMPC_Planner   \

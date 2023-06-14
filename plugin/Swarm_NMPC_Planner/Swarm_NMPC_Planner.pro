@@ -31,7 +31,7 @@ SOURCES += \
     solver_manager.cpp \
     splinevariable.cpp \
     state_variable.cpp \
-    PolyParams.cpp
+    testpolyparams.cpp \
 
 
 
@@ -45,9 +45,8 @@ HEADERS += \
     solver_manager.h \
     splinevariable.h \
     state_variable.h \
+    testpolyparams.h \
     var_packer.h \
-    PolyParams.h
-
 
 
 

@@ -1,6 +1,7 @@
-#include "xmlcore.h"
+﻿#include "xmlcore.h"
 
-QString xmlCore::xmlRead(std::string cName)
+QString xmlCore::
+    xmlRead(std::string cName)
 {
     QString qName = QString(QString::fromLocal8Bit(cName.c_str()));
 

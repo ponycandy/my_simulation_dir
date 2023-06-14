@@ -73,6 +73,17 @@ void Matrix_sparser::add_mat_block(Eigen::MatrixXd mat, int start_x, int start_y
     }
 }
 
+void Matrix_sparser::Copy_Mat_2_Sparse_block(Eigen::SparseMatrix<double, Eigen::RowMajor> &sparse, Eigen::MatrixXd &mat, int start_row, int start_col, int mat_rows, int mat_cols)
+{
+    for(int i=0;i<mat_rows;i++)
+    {
+        for(int j=0;j<mat_cols;j++)
+        {
+            sparse.coeffRef(start_row+i,start_col+j)+=mat(i,j);
+        }
+    }
+}
+
 Eigen::SparseMatrix<double> Matrix_sparser::make_dense_sparse(Eigen::MatrixXd mat)
 {
     clearall();
