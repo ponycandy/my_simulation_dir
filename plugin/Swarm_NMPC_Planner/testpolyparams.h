@@ -17,6 +17,9 @@ public:
     mutable int miniRadius;
     mutable double steptime;
     mutable int agentnum;
+    mutable int endindex;
+    mutable int startindex;
+
     mutable PolyParams *m_poly;
     mutable int constrainIndex;
     mutable Eigen::MatrixXd actmat;

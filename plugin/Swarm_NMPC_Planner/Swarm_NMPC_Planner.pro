@@ -1,5 +1,6 @@
 QT       += core gui testlib xml
 
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include($$PWD/Ifopt_dependency.pri)
 CONFIG += c++17
@@ -32,6 +33,7 @@ SOURCES += \
     splinevariable.cpp \
     state_variable.cpp \
     testpolyparams.cpp \
+    PolyParams.cpp
 
 
 
@@ -47,6 +49,11 @@ HEADERS += \
     state_variable.h \
     testpolyparams.h \
     var_packer.h \
+    PolyParams.h
+
+
+
+
 
 
 

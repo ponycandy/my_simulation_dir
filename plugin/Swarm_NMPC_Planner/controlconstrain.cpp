@@ -16,7 +16,7 @@ ControlConstrain::ControlConstrain(int num,std::string &name):ConstraintSet(num,
 
 
 
-    constrainIndex=num-1;
+    constrainIndex=pointNum;
 }
 
 ifopt::Component::VectorXd ControlConstrain::GetValues() const
@@ -40,7 +40,10 @@ ifopt::Component::VecBound ControlConstrain::GetBounds() const
         b.at(i-1)=ifopt::BoundSmallerZero;
     }
     b.at(constrainIndex)=ifopt::BoundZero;
-
+    for(int i=0;i<pointNum;i++)
+    {
+        b.at(constrainIndex+i+1)=ifopt::BoundGreaterZero;
+    }
     return b;
 }
 
@@ -71,6 +74,7 @@ void ControlConstrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bloc
             //这样可以稍微增加index管理的便利度
             //时间约束
             jac_block.coeffRef(constrainIndex,setx.lasting_time_index)+=1;
+            jac_block.coeffRef(constrainIndex+i+1,setx.lasting_time_index)=1;
         }
         jac_block.makeCompressed();
     }
@@ -91,9 +95,9 @@ void ControlConstrain::FillinG(Eigen::VectorXd &g) const
         m_poly->Get_pos_and_derivative_set(i,x_y,1);
         g(i)=pow(x_x.x0-x_x.x1,2)+pow(x_y.x0-x_y.x1,2)-miniRadius*miniRadius;
         total_T+=x_x.lasting_time;
+        g(constrainIndex+i+1)=x_x.lasting_time;
     }
     //时间约束:
     g(constrainIndex)=total_T-dec_num*steptime;
     //据此填写jacob矩阵
-
 }
