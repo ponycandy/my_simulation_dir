@@ -40,7 +40,7 @@ solver_manager::solver_manager()
 
         QString ControlconsnameQ="ControlCons_of_"+QString::number(i);
         std::string Controlconsname=ControlconsnameQ.toStdString();
-        ControlConstrain *control_0=new ControlConstrain(1+pointnum,Controlconsname);
+        ControlConstrain *control_0=new ControlConstrain(1+2*pointnum,Controlconsname);
         control_0->current_agent_num=i;
         std::shared_ptr<ifopt::ConstraintSet> consptr(control_0);
         m_service->AddConstraintSet(consptr);

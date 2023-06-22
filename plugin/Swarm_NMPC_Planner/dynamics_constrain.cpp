@@ -187,27 +187,27 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
 {
     //下面的矩阵实际上无需反复求算，可以在初始化的时候搞定然后
     //赋值给jac_block
-    //    if (var_set == "state_value")
-    //    {
-    //        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
-    //        packvariable_states_set(x,states,decnum );
-    //        formactmat();
-    //        Fill_dynamics_Jacob(jac_block);
-    //    }
-    for(int j=0;j<agentnum;j++)
+    if (var_set == "state_value")
     {
-        QString var_name;
-        var_name="spline_p_set_of_"+QString::number(j);
-        if (var_set == var_name.toStdString())
-        {
-            current_agent=j;
-            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-            m_polys[current_agent].packvariable(x);
-            Fill_dynamics_action(jac_block);
-            m_polys[current_agent].clearconstrainindex();
-            break;
-        }
+        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
+        packvariable_states_set(x,states,decnum );
+        formactmat();
+        Fill_dynamics_Jacob(jac_block);
     }
+//    for(int j=0;j<agentnum;j++)
+//    {
+//        QString var_name;
+//        var_name="spline_p_set_of_"+QString::number(j);
+//        if (var_set == var_name.toStdString())
+//        {
+//            current_agent=j;
+//            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+//            m_polys[current_agent].packvariable(x);
+//            Fill_dynamics_action(jac_block);
+//            m_polys[current_agent].clearconstrainindex();
+//            break;
+//        }
+//    }
 }
 
 void Dynamics_Constrain::FillinG(Eigen::VectorXd &g) const
