@@ -7,6 +7,7 @@
 //每个polyparams对象含有N组变量
 //N为三次曲线的维度
 #include <xmlcore.h>
+#include <Matrix_sparser.h>
 PolyParams::PolyParams()
 {
     configfiename="./config/Polys/constrainParams.xml";
@@ -168,7 +169,7 @@ void PolyParams::Init_Curve_Params()
     }
 }
 
-void PolyParams::Get_Single_Jacobian_form_2(double currenttime, Eigen::MatrixXd &jacmat)
+void PolyParams::Get_Single_Jacobian_form_2(double currenttime, Eigen::MatrixXd &jacmat, LastintTimeDerivative &timederive)
 {
     //此处的矩阵是曲线value按照以下排列方式求导：
     //x0dx0y0dy0Tx1dx1y1dy1
@@ -190,14 +191,14 @@ void PolyParams::Get_Single_Jacobian_form_2(double currenttime, Eigen::MatrixXd 
         Get_Single_derivative(currenttime,dm,
                               a2x0, a2x1,
                               a2dx0,a2dx1,
-                              a2T);
+                              a2T,timederive.derve_value[dm]);
         jacmat(dm,2*dm)=a2x0;
         jacmat(dm,2*dm+1)=a2dx0;
         jacmat(dm,2*dims+1+2*dm)=a2x1;
         jacmat(dm,2*dims+1+2*dm+1)=a2dx1;
         jacmat(dm,dim_T1)=a2T;
     }
-    //最后一个T似乎并用不上
+    //下面填充额外的时间导数序列
 }
 
 
@@ -218,7 +219,7 @@ void PolyParams::Get_Single_Value(double currenttime, double &value, int dim)
 }
 
 void PolyParams::Get_Single_derivative(double currenttime,
-                                       int dim, double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T)
+                                       int dim, double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T, single_dim &a_dim)
 {
     int phase=time_2_phase_map.value(currenttime);
     pos_and_derivative set;
@@ -238,6 +239,7 @@ void PolyParams::Get_Single_derivative(double currenttime,
 
     double Tl=set.lasting_time;
     //动作求解有问题，使用的时间不是相对0时间，而是总时间
+    //下面为对当前phase的所有导数,这个没有问题
     double dAdt_1=T0*T0/(Tl*Tl)*(6*(x0-x1)/Tl+2*dx0+dx1);
     double dAdt_2=-T0*T0*T0/(Tl*Tl*Tl)*(6*(x0-x1)/Tl+2*dx0+2*dx1);
     a2T=dAdt_1+dAdt_2;
@@ -245,7 +247,18 @@ void PolyParams::Get_Single_derivative(double currenttime,
     a2dx0=T0-2*T0*T0/Tl+T0*T0*T0/(Tl*Tl);
     a2x1=3*pow((T0/Tl),2)-2*pow((T0/Tl),3);
     a2dx1=-T0*T0/Tl+T0*T0*T0/(Tl*Tl);
-
+    //下面为对之前所有phase对应延续时间的导数
+    //考虑到解耦，放在其它位置实现
+    a_dim.dim_now=dim;
+    a_dim.phase_now=phase;
+    double dxdTi=0;
+    double fi=0;
+    for(int i=0;i<phase;i++)
+    {
+        fi=1;
+        a_dim.derivevalue.insert(i,-a1*fi-2*a2*fi*T0-3*a3*fi*T0*T0);
+        //实质上就是在目标位置上的导数
+    }
 }
 
 void PolyParams::FillinJacobian(Eigen::SparseMatrix<double, Eigen::RowMajor> &jacmat_2_go, Jac_Group &First_derive)
@@ -253,12 +266,37 @@ void PolyParams::FillinJacobian(Eigen::SparseMatrix<double, Eigen::RowMajor> &ja
     int dec=0;
 
     Eigen::MatrixXd midmat;
+    Eigen::MatrixXd midmat_Ti;
+    Eigen::MatrixXd T_mat;
+    T_mat.resize(dims,1);
+    T_mat.setZero();
+    LastintTimeDerivative timederive;
+    timederive.init(dims);
+
+    Matrix_sparser m_sparse;
+    int rows=0;
     for(int i=0;i<First_derive.total_Jac_num;i++)
     {
         dec=First_derive.jac_sets[i].relative_2_dec;
-        Get_Single_Jacobian_form_2(dec*steptime, local_mat_2_params);
+        timederive.phaseNow=time_2_phase_map.value(dec*steptime);
+        Get_Single_Jacobian_form_2(dec*steptime, local_mat_2_params,timederive);
         midmat=First_derive.jac_sets[i].jacobian*local_mat_2_params;
+        rows=midmat.rows();
         Copy_Dense_2_Jac(jacmat_2_go,midmat,dec);
+        //下面填充额外的导数序列
+        //导数序列照样需要乘法
+        for(int j=0;j<timederive.phaseNow;j++)
+        {
+            for(int k=0;k<dims;k++)
+            {
+                T_mat(k,0)=timederive.derve_value[k].derivevalue[j];
+            }
+            midmat_Ti=First_derive.jac_sets[i].jacobian*T_mat;
+            //计算Ti对应所在时间的列为：(phase+1)*unit_length-1
+            m_sparse.Copy_Mat_2_Sparse_block(jacmat_2_go,midmat_Ti,(constrainIndex-1)*rows,(j+1)*unit_length-1,rows,1);
+
+        }
+        timederive.clear();
     }
     constrainIndex+=1;
 }
@@ -340,4 +378,16 @@ void PolyParams::FillinJacobian_complete(Eigen::SparseMatrix<double, Eigen::RowM
 {
     constrainIndex=1;
     jacmat_2_go.makeCompressed();
+}
+
+double PolyParams::dxdti_calc(double phase_now, double i_phase)
+{
+    if(phase_now>i_phase)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }

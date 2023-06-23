@@ -13,6 +13,12 @@ struct PointInfo
     int point_derivative_index;
 
 };
+struct single_dim
+{
+    int phase_now;
+    int dim_now;
+    QVector<double_t> derivevalue;
+};
 struct pos_and_derivative
 {
     int total_phase_num;
@@ -50,7 +56,29 @@ struct Jac_Group
     }
 
 };
+struct LastintTimeDerivative
+{
+    int dims;
+    int phaseNow;
+    QVector<single_dim> derve_value;
+    void init(int dm_num)
+    {
+        dims=dm_num;
+        for(int i=0;i<dims;i++)
+        {
+            single_dim newdim;
+            derve_value.insert(i,newdim);
+        }
+    }
+    void clear()
+    {
+        QVector<single_dim> pNullvec;
+        derve_value.clear();
+        derve_value.swap(pNullvec);
+        init(dims);
+    }
 
+};
 
 
 class  PolyParams
@@ -62,16 +90,17 @@ public:
     void Get_Poly_Value_Mat(Eigen::MatrixXd &Polymat);
     void Copy_Dense_2_Jac(Eigen::SparseMatrix<double, Eigen::RowMajor> &jac_block, Eigen::MatrixXd &mat, int decN);
     void Init_Curve_Params();
-    void Get_Single_Jacobian_form_2(double currenttime,Eigen::MatrixXd &jacmat);
+    void Get_Single_Jacobian_form_2(double currenttime,Eigen::MatrixXd &jacmat,LastintTimeDerivative &timederive);
     void Get_pos_and_derivative_set(int phase,pos_and_derivative &set, int dim);
     void Get_Single_Value(double currenttime,double &value,int dim);
     void Get_Single_derivative(double currenttime,int dim,
-                               double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T);
+                               double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T,single_dim &a_dim);
     void FillinJacobian(Eigen::SparseMatrix<double, Eigen::RowMajor> &jacmat_2_go,
                         Jac_Group &First_derive);
     void packvariable(Eigen::VectorXd &x);
     void clearconstrainindex();
     void FillinJacobian_complete(Eigen::SparseMatrix<double, Eigen::RowMajor> &jacmat_2_go);
+    double dxdti_calc(double phase_now,double i_phase);
     //输入第一个为整个jacobian，第二个为第一级的导数群，
     //最终，所有的一级导数会被填充到目标雅可比矩阵中
     int dims;
