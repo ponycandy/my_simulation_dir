@@ -9,7 +9,7 @@ Eigen::MatrixXd Jacobian_state::ode_function(Eigen::MatrixXd act_mat, Eigen::Mat
 {
     Eigen::MatrixXd dstate;
     dstate.resize(4,1);
-    dstate<<0,0,act_mat(0,0),act_mat(1,0);
+    dstate<<state_mat(2,0),state_mat(3,0),act_mat(0,0),act_mat(1,0);
     return dstate;
 }
 
