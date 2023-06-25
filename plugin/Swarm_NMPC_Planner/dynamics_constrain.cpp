@@ -16,7 +16,7 @@ Dynamics_Constrain::Dynamics_Constrain(int num):ConstraintSet(num,"Dynamics_Cons
     xml_reader.xmlRead("actnum",actnum);
     xml_reader.xmlRead("Coef",coef_K);
     initstates_of_animals.resize(statenum,1);
-    initstates_of_animals<<4,4,0,0;
+    initstates_of_animals<<400,400,0,0;
 
 
     constrainnum=num;

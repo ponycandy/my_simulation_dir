@@ -60,36 +60,36 @@ void PolyParams::rearrange()
     pos_and_derivative first_epoch=x_set.value(0);
     //按照绝对值进行分类
     double current_time=0;
-    double phase_time_summup=abs(first_epoch.lasting_time);
-    double phase_time_summup_signed=first_epoch.lasting_time;
-    time_2_summuptime_map.insert(0,0);
+    double phase_time_summup=0;
     int phase=0;
+    double phase_time_summup_signed=0;
+    for(int i=0;i<point_num;i++)
+    {
+        time_2_summuptime_map.insert(i,phase_time_summup_signed);
+        phase_time_summup_signed+=x_set.value(i).lasting_time;
+    }
     for(int i=0;i<dec_num;i++)
     {
-
-        if(phase<point_num-1)
+        phase=0;
+        phase_time_summup=abs(x_set.value(0).lasting_time);
+        current_time=steptime*i;
+        for(int j=0;j<point_num;j++)
         {
             if(current_time<phase_time_summup)
             {
                 time_2_phase_map.insert(current_time,phase);
-                current_time+=steptime;
+                break;
             }
             else
             {
                 phase+=1;
-                time_2_summuptime_map.insert(phase,phase_time_summup_signed);
-                first_epoch=x_set.value(phase);
-                phase_time_summup+=abs(first_epoch.lasting_time);
-                phase_time_summup_signed+=first_epoch.lasting_time;
-                time_2_phase_map.insert(current_time,phase);
-                current_time+=steptime;
+                phase_time_summup+=abs(x_set.value(phase).lasting_time);
+                if(phase==point_num-1)
+                {
+                    time_2_phase_map.insert(current_time,phase);
+                    break;
+                }
             }
-        }
-        else
-        {
-            phase=point_num-1;
-            time_2_phase_map.insert(current_time,phase);
-            current_time+=steptime;
         }
     }
     //    qDebug()<<"max phase is:"<<phase;

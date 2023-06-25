@@ -6,7 +6,7 @@ State_Variable::State_Variable(int num, std::string &varname):VariableSet(num,va
 {
     total_varaible_num=num;
     variable.resize(total_varaible_num,1);
-    variable.setZero();
+    variable.setOnes();
 }
 
 void State_Variable::SetVariables(const VectorXd &x)
