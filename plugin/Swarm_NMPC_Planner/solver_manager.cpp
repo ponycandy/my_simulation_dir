@@ -61,4 +61,5 @@ solver_manager::solver_manager()
 
     m_service->start_crack();
     Eigen::VectorXd x=m_service->solve_problem("spline_p_set_of_0");
+    std::cout<<x<<std::endl;
 }

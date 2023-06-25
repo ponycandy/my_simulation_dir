@@ -7,6 +7,7 @@ SplineVariable::SplineVariable(int num, std::string &varname):VariableSet(num,va
     var_num=num;
     variable.resize(var_num,1);
     variable.setOnes();
+    variable=0.3*variable;
     QString configfiename="./config/Polys/constrainParams.xml";
     xmlCore xml_reader(configfiename.toStdString());
     xml_reader.xmlRead("pointnum",pointnum);
@@ -21,6 +22,7 @@ SplineVariable::SplineVariable(int num, std::string &varname):VariableSet(num,va
     {
         variable((2*dims+1)*(i+1)-1)=dec_num*steptime/pointnum;
     }
+    //将剩余参数设为0，这样可能会好一些？
 }
 
 void SplineVariable::SetVariables(const VectorXd &x)

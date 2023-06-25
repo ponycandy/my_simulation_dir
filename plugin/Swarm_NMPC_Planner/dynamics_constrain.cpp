@@ -68,37 +68,40 @@ ifopt::Component::VectorXd Dynamics_Constrain::GetValues() const
     formactmat();
     FillinG(g);
 
-    int maxnum=x.rows();
-    Eigen::MatrixXd mat_num_jacob;
-    mat_num_jacob.resize(GetRows(),maxnum);
-    mat_num_jacob.setZero();
-    double step=0.01;
-    for(int i=0;i<maxnum;i++)
-    {
-        VectorXd g_plus_1(GetRows());
-        Eigen::VectorXd y_var=x;
-        y_var(i)+=step;
-        packvariable_states_set(y_var,states,decnum);
-        formactmat();
-        FillinG(g_plus_1);
-        mat_num_jacob.block(0,i,mat_num_jacob.rows(),1)=(g_plus_1-g)/step;
-    }
-    std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
-    std::cout<<mat_num_jacob<<std::endl;
-    std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
-    std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
-    Jacobian jac_block;
-    jac_block.resize(mat_num_jacob.rows(),GetRows());
-    formactmat();
-    Fill_dynamics_Jacob(jac_block);
-    std::cout<<jac_block<<std::endl;
-    std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
-    std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
-    Eigen::MatrixXd matyup;
-    matyup=jac_block-mat_num_jacob;
-    std::cout<<matyup<<std::endl;
-    std::cout<<" "<<std::endl;
 
+    //    var_name="spline_p_set_of_"+QString::number(0);
+    //    x=GetVariables()->GetComponent(var_name.toStdString())->GetValues();
+    //    int maxnum=x.rows();
+    //    Eigen::MatrixXd mat_num_jacob;
+    //    mat_num_jacob.resize(GetRows(),maxnum);
+    //    mat_num_jacob.setZero();
+    //    double step=0.001;
+
+    //    for(int i=0;i<maxnum;i++)
+    //    {
+    //        VectorXd g_plus_1(GetRows());
+    //        Eigen::VectorXd y_var=x;
+    //        y_var(i)+=step;
+    //        m_polys[0].packvariable(y_var);
+    //        formactmat();
+    //        FillinG(g_plus_1);
+    //        mat_num_jacob.block(0,i,mat_num_jacob.rows(),1)=(g_plus_1-g)/step;
+    //    }
+    //    std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
+    //    std::cout<<mat_num_jacob<<std::endl;
+    //    std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
+    //    std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
+    //    Jacobian jac_block;
+    //    jac_block.resize(GetRows(),maxnum);
+    //    Fill_dynamics_action(jac_block);
+    //    m_polys[0].clearconstrainindex();
+    //    std::cout<<jac_block<<std::endl;
+    //    std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
+    //    std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
+    //    Eigen::MatrixXd matyup;
+    //    matyup=jac_block-mat_num_jacob;
+    //    std::cout<<matyup<<std::endl;
+    //    std::cout<<" "<<std::endl;
 
     return g;
 }
@@ -146,7 +149,7 @@ void Dynamics_Constrain::Fill_dynamics_Jacob(Jacobian &jac) const
             dadpt.setZero();
             Calc_a_2_pt(dadpt,mid,i);
             mat_sparse.Copy_Mat_2_Sparse_block(jac,Identi,statenum*i,statenum*(i),statenum,statenum);
-            dfd1=-Identi-steptime*A_mat+steptime*B_mat*dadpt;
+            dfd1=-Identi-steptime*A_mat-steptime*B_mat*dadpt;
             mat_sparse.Copy_Mat_2_Sparse_block(jac,dfd1,statenum*i,statenum*(i-1),statenum,statenum);
 
         }
@@ -213,7 +216,7 @@ void Dynamics_Constrain::Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,i
         dfdpt(0,0)=2*(pt(0,0)-pi(0,0));//1*2矩阵
         dfdpt(0,1)=2*(pt(1,0)-pi(1,0));
 
-        mat.block(0,0,2,2)-=(eye_2*coef_K/f_norm)+(pi-pt)*(coef_K/(f_norm*f_norm))*dfdpt;
+        mat.block(0,0,2,2)+=(eye_2*coef_K/f_norm)+(pi-pt)*(coef_K/(f_norm*f_norm))*dfdpt;
     }
 }
 
@@ -221,32 +224,31 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
 {
     //下面的矩阵实际上无需反复求算，可以在初始化的时候搞定然后
     //赋值给jac_block
-    //    if (var_set == "state_value")
-    //    {
-    //        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
-    //        packvariable_states_set(x,states,decnum );
-    //        formactmat();
-    //        Fill_dynamics_Jacob(jac_block);
-    //        std::cout<<jac_block<<std::endl;
-    //    }
-    //    for(int j=0;j<agentnum;j++)
-    //    {
-    //        QString var_name;
-    //        var_name="spline_p_set_of_"+QString::number(j);
-    //        if (var_set == var_name.toStdString())
-    //        {
-    //            current_agent=j;
-    //            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-    //            m_polys[current_agent].packvariable(x);
-    //            //获取states和actMat变量
-    //            //如果不存在，必须全部初始化为0
-    //            Fill_dynamics_action(jac_block);
-    //            m_polys[current_agent].clearconstrainindex();
-    //            std::cout<<jac_block<<std::endl;
+    if (var_set == "state_value")
+    {
+        Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
+        packvariable_states_set(x,states,decnum );
+        formactmat();
+        Fill_dynamics_Jacob(jac_block);
+    }
+    for(int j=0;j<agentnum;j++)
+    {
+        QString var_name;
+        var_name="spline_p_set_of_"+QString::number(j);
+        if (var_set == var_name.toStdString())
+        {
+            current_agent=j;
+            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+            m_polys[current_agent].packvariable(x);
+            //获取states和actMat变量
+            //如果不存在，必须全部初始化为0
+            Fill_dynamics_action(jac_block);
+            m_polys[current_agent].clearconstrainindex();
+            //                std::cout<<jac_block<<std::endl;
 
-    //            break;
-    //        }
-    //    }
+            break;
+        }
+    }
 }
 
 void Dynamics_Constrain::FillinG(Eigen::VectorXd &g) const
