@@ -16,7 +16,7 @@ Dynamics_Constrain::Dynamics_Constrain(int num):ConstraintSet(num,"Dynamics_Cons
     xml_reader.xmlRead("actnum",actnum);
     xml_reader.xmlRead("Coef",coef_K);
     initstates_of_animals.resize(statenum,1);
-    initstates_of_animals<<2,2,0,0;
+    initstates_of_animals<<4,4,0,0;
 
 
     constrainnum=num;
@@ -224,11 +224,23 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
 {
     //下面的矩阵实际上无需反复求算，可以在初始化的时候搞定然后
     //赋值给jac_block
+
+
     if (var_set == "state_value")
     {
         Eigen::VectorXd x=GetVariables()->GetComponent("state_value")->GetValues();
         packvariable_states_set(x,states,decnum );
+
+        for(int j=0;j<agentnum;j++)
+        {
+            QString var_name;
+            var_name="spline_p_set_of_"+QString::number(j);
+            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+            m_polys[current_agent].packvariable(x);
+
+        }
         formactmat();
+
         Fill_dynamics_Jacob(jac_block);
     }
     for(int j=0;j<agentnum;j++)
@@ -238,14 +250,8 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
         if (var_set == var_name.toStdString())
         {
             current_agent=j;
-            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-            m_polys[current_agent].packvariable(x);
-            //获取states和actMat变量
-            //如果不存在，必须全部初始化为0
             Fill_dynamics_action(jac_block);
             m_polys[current_agent].clearconstrainindex();
-            //                std::cout<<jac_block<<std::endl;
-
             break;
         }
     }

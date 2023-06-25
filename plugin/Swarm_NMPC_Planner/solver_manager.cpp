@@ -27,7 +27,16 @@ solver_manager::solver_manager()
     m_service->Use_BuildIn_Dynamics_Cons(false);
     m_service->setuseterminal(false);
 
-    //以下完成三组变量,以及对应的曲线约束
+
+
+    //添加状态变量
+    State_Variable *stateVar;
+    std::string statevarname="state_value";
+    stateVar=new State_Variable(statenum*dec_num,statevarname);
+    std::shared_ptr<ifopt::VariableSet> statevarptr(stateVar);
+    m_service->AddVariableSet(statevarptr);
+
+    //以下完成三组变量,以及对应的曲线约束,请注意变量的先后插入顺序，将会对雅可比矩阵的计算造成影响
 
     for(int i=0;i<agentnum;i++)
     {
@@ -46,12 +55,6 @@ solver_manager::solver_manager()
         m_service->AddConstraintSet(consptr);
     }
 
-    //添加状态变量
-    State_Variable *stateVar;
-    std::string statevarname="state_value";
-    stateVar=new State_Variable(statenum*dec_num,statevarname);
-    std::shared_ptr<ifopt::VariableSet> statevarptr(stateVar);
-    m_service->AddVariableSet(statevarptr);
     //添加动力学约束
     Dynamics_Constrain *Dcons;
     Dcons=new Dynamics_Constrain(statenum*dec_num);
