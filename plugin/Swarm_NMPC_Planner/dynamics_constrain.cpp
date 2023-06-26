@@ -236,6 +236,7 @@ void Dynamics_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bl
             QString var_name;
             var_name="spline_p_set_of_"+QString::number(j);
             Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
+            current_agent=j;
             m_polys[current_agent].packvariable(x);
 
         }
