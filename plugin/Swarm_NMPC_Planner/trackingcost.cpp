@@ -78,48 +78,8 @@ void TrackingCost::FillJacobianBlock(std::string var_set, Jacobian &jac) const
         var_name="spline_p_set_of_"+QString::number(j);
         if (var_set == var_name.toStdString())
         {
-            double value=GetCost();
+//            double value=GetCost();
             m_polys[j].FillinJacobian(jac,Jac_Group_vactor[j]);
-
-
-            int maxnum=15;
-            Eigen::MatrixXd mat_num_jacob;
-            mat_num_jacob.resize(1,maxnum);
-            mat_num_jacob.setZero();
-            double step=0.00001;
-            Eigen::VectorXd x=GetVariables()->GetComponent(var_set)->GetValues();
-            Eigen::MatrixXd sinmat;
-            sinmat.resize(dims,decnum);
-            for(int i=0;i<maxnum;i++)
-            {
-                Eigen::VectorXd y_var=x;
-                y_var(i)+=step;
-                m_polys[j].packvariable(y_var);
-                distance=0;
-                for(int k=0;k<agentnum;k++)
-                {
-                    Eigen::MatrixXd jacmat;
-                    jacmat.resize(1,2);
-                    m_polys[k].Get_Poly_Value_Mat(sinmat);
-                    double mid=pow(sinmat(0,decnum-1)-states(0,decnum-1),2)+pow(sinmat(1,decnum-1)-states(1,decnum-1),2);
-                    distance+=epson*pow(mid-1,2);
-                }
-
-                mat_num_jacob(0,i)=(distance-value)/step;
-            }
-            std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
-            std::cout<<mat_num_jacob<<std::endl;
-            std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
-            std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
-            std::cout<<jac<<std::endl;
-            std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
-            std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
-            Eigen::MatrixXd matyup;
-            matyup=jac-mat_num_jacob;
-            std::cout<<matyup<<std::endl;
-            std::cout<<" "<<std::endl;
-
-
             m_polys[j].clearconstrainindex();
             break;
         }
