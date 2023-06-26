@@ -10,6 +10,7 @@
 #include "xmlcore.h"
 #include "state_variable.h"
 #include "dynamics_constrain.h"
+#include "trackingcost.h"
 solver_manager::solver_manager()
 {
 
@@ -60,7 +61,11 @@ solver_manager::solver_manager()
     Dcons=new Dynamics_Constrain(statenum*dec_num);
     std::shared_ptr<ifopt::ConstraintSet> Dconsptr(Dcons);
     m_service->AddConstraintSet(Dconsptr);
-
+    //添加目标函数
+    TrackingCost *tcost;
+    tcost=new TrackingCost;
+    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
+    m_service->AddCostSet(Dtcostptr);
 
     m_service->start_crack();
     Eigen::VectorXd x=m_service->solve_problem("spline_p_set_of_0");
