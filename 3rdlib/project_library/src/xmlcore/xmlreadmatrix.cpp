@@ -48,6 +48,7 @@ bool xmlCore::xmlRead(std::string cName,Eigen::MatrixXd& matrix)
             matrix_vector.insert(matrix_vector.begin(),value.toDouble());
 
             i += 1;
+            part=matrix_qString[i];
         }
         row +=1;
 

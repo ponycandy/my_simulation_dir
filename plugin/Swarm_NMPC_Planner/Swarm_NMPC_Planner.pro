@@ -33,7 +33,8 @@ SOURCES += \
     splinevariable.cpp \
     state_variable.cpp \
     testpolyparams.cpp \
-    PolyParams.cpp
+    PolyParams.cpp \
+    trackingcost.cpp
 
 
 
@@ -48,8 +49,11 @@ HEADERS += \
     splinevariable.h \
     state_variable.h \
     testpolyparams.h \
+    trackingcost.h \
     var_packer.h \
     PolyParams.h
+
+
 
 
 

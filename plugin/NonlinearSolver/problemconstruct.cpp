@@ -7,7 +7,7 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     set_Terminal=false;
     ipopt.SetOption("linear_solver", "mumps");
     ipopt.SetOption("jacobian_approximation", "exact");
-    //    ipopt.SetOption("tol",0.0001);
+    ipopt.SetOption("tol",0.0001);
     ipopt.SetOption("linear_solver","ma57");
 }
 

@@ -16,7 +16,20 @@ Dynamics_Constrain::Dynamics_Constrain(int num):ConstraintSet(num,"Dynamics_Cons
     xml_reader.xmlRead("actnum",actnum);
     xml_reader.xmlRead("Coef",coef_K);
     initstates_of_animals.resize(statenum,1);
-    initstates_of_animals<<400,400,0,0;
+    xml_reader.xmlRead("Initstate",initstates_of_animals);
+    //这里注意矩阵的固定格式，是tab+enter换行，首尾开始和结束时各换一次行，
+    //矩阵换行时同时换行，如下：
+    //    <Initstate type="Eigen::MatrixXd">
+    //        <value>
+    //        2.0
+    //        2.0
+    //        0.0
+    //        0.0
+    //        </value>
+    //        </Initstate>
+    //换行用tab+enter，不要加空格！！
+    //元素之间可以有多个空格吗，这个无影响
+
 
 
     constrainnum=num;
