@@ -1,14 +1,27 @@
 ﻿#include "problemconstruct.h"
 #include "terminalset.h"
+#include "xmlcore.h"
 ProblemConstruct::ProblemConstruct(QObject *parent)
     : QObject{parent}
 {
     use_internal_dynamics=false;
     set_Terminal=false;
-    ipopt.SetOption("linear_solver", "mumps");
+
+    QString configfiename="./config/Ipopt/Ipoptconfig.xml";
+    xmlCore xml_reader(configfiename.toStdString());
+    std::string linear_solver;
+    std::string jacobian_approximation;
+    int print_level;
+    double tol;
+    xml_reader.xmlRead("linear_solver",linear_solver);
+    xml_reader.xmlRead("jacobian_approximation",jacobian_approximation);
+    xml_reader.xmlRead("print_level",print_level);
+    xml_reader.xmlRead("tol",tol);
+
+    ipopt.SetOption("linear_solver", linear_solver);
     ipopt.SetOption("jacobian_approximation", "exact");
-    ipopt.SetOption("tol",0.0001);
-    ipopt.SetOption("linear_solver","ma57");
+    ipopt.SetOption("tol",tol);
+    ipopt.SetOption("print_level",print_level);
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)

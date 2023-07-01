@@ -13,7 +13,7 @@ DESTDIR = ../../build
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
-
+INCLUDEPATH += ../../3rdlib
 SOURCES += \
     AnimatorActivator.cpp \
     base_widget.cpp \

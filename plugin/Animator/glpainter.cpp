@@ -42,9 +42,9 @@ void glpainter::setupUI()
 {
     layout = new QGridLayout;
     layout->addWidget(m_glwidget);
-//    layout->setContentsMargins();
+    //    layout->setContentsMargins();
     m_widget->setLayout(layout);
-//    m_widget->show();
+    //    m_widget->show();
 }
 double glpainter::to_pixel_x(double x)
 {
@@ -175,6 +175,13 @@ void glpainter::draw_line(double startx, double starty, double endx, double endy
     brush_painter->drawLine(QLineF(pix_x0,pix_y0,pix_x1,pix_y1));
 }
 
+void glpainter::draw_spline()
+{
+    brush_painter->setBrush(Qt::transparent);
+    brush_painter->drawPath(*paintpath);
+
+}
+
 void glpainter::draw_beacon(double x, double y, double alpha)
 {
     int pixl=15;
@@ -215,6 +222,27 @@ void glpainter::draw_circle(double x, double y, double r)
 
     brush_painter->drawEllipse(pix_x-l,pix_y-l,2*l,2*l);
 }
+
+void glpainter::Add_path_point(double x, double y)
+{
+
+    double pix_y=to_pixel_y(y);
+    double pix_x=to_pixel_x(x);
+     paintpath->lineTo(pix_x,pix_y);
+
+}
+
+void glpainter::Start_a_path(double x, double y)
+{
+    paintpath=new QPainterPath;
+    QPointF point;
+    double pix_y=to_pixel_y(y);
+    double pix_x=to_pixel_x(x);
+    point.setX(pix_x);
+    point.setY(pix_y);
+    paintpath->moveTo(point);
+}
+
 
 void glpainter::zoomout()
 {

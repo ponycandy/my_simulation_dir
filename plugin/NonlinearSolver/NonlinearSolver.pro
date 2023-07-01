@@ -1,4 +1,4 @@
-QT       += core gui testlib
+QT       += core gui testlib xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include($$PWD/Ifopt_dependency.pri)
@@ -17,7 +17,8 @@ INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 
-
+INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
+LIBS += -L../../3rdlib/project_library/bin -lxmlcore
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
 LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
 

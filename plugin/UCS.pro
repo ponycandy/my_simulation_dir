@@ -3,5 +3,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
     launcher \
-    Swarm_NMPC_Planner   \
-    NonlinearSolver  \
+    Animator \
+    TestPolyPainting   \
+    Swarm_NMPC_Planner

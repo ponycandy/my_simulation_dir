@@ -9,6 +9,7 @@
 #include "QGridLayout"
 #include <QPainter>
 #include <include/GL_2D/draw_operation.h>
+#include <QPainterPath>
 #include <QMap>
 class glwidget;
 class base_widget;
@@ -24,8 +25,12 @@ public:
     void draw_square_oneside(double leftside_center_x, double leftside_center_y, double width, double height, double spinangle) override;
     void draw_square(double centerx,double centery,double width,double height,double spinangle) override;
     void draw_line(double startx, double starty, double endx, double endy) override;
+    void draw_spline() override;
     void draw_beacon(double x, double y, double alpha) override;
     void draw_circle(double x, double y, double r) override;
+    void Add_path_point(double x,double y) override;
+    void Start_a_path(double x,double y) override;
+
     void zoomout();
     void move_the_bound(double x,double y);
     void resizeWindow(int width, int height) override;
@@ -79,6 +84,7 @@ public:
 
     QMap<int,DrawOperation*>    DrawOperation_map;
     int operation_num;
+    QPainterPath *paintpath;
 signals:
     void sig_mouse_pressed(double x,double y,double pix_x,double pix_y);
 
