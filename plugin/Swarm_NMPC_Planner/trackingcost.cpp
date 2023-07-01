@@ -20,6 +20,7 @@ TrackingCost::TrackingCost(): CostTerm("Minimize_distance")
     states.setZero();
     D2statemat.resize(1,2);
     epson=0.0001;
+    coef_S=0.5;
 }
 
 double TrackingCost::GetCost() const
@@ -59,7 +60,10 @@ double TrackingCost::GetCost() const
         Jac_Group_vactor[i]=gpj;
         D2statemat-=jacmat;
     }
-    return distance;
+    double speed=0;
+    speed=pow(states(2,decnum-1),2)+pow(states(3,decnum-1),2);
+
+    return distance+coef_S*speed;
 
 }
 
@@ -70,6 +74,8 @@ void TrackingCost::FillJacobianBlock(std::string var_set, Jacobian &jac) const
         Matrix_sparser m_sparser;
         double value=GetCost();
         m_sparser.Copy_Mat_2_Sparse_block(jac,D2statemat,0,statenum*(decnum-1),1,2);
+        jac.coeffRef(0,statenum*(decnum-1)+2)+=coef_S*2*states(2,decnum-1);
+        jac.coeffRef(0,statenum*(decnum-1)+3)+=coef_S*2*states(3,decnum-1);
 
     }
     for(int j=0;j<agentnum;j++)

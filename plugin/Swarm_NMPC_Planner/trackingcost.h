@@ -37,6 +37,7 @@ public:
     mutable Jac_Group jgroup;
     mutable Eigen::MatrixXd D2statemat;
     mutable double epson;
+    mutable double coef_S;
 
 
     mutable Eigen::MatrixXd initstates_of_animals;

@@ -73,13 +73,14 @@ solver_manager::solver_manager()
     //    tcost=new TrackingCost;
     //    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     //    m_service->AddCostSet(Dtcostptr);
+
     Minimize_Speed_Cost *tcost;
     tcost=new Minimize_Speed_Cost;
     std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     m_service->AddCostSet(Dtcostptr);
 
     m_service->start_crack();
-    std::cout<<"optimal value is "<<tcost->GetValues()<<std::endl;
+    //    std::cout<<"optimal value is "<<tcost->GetValues()<<std::endl;
     Dcons->GetValues();
     QVector<PolyParams> polysj;
     m_widget->fx=Dcons->states(0,dec_num-1);
