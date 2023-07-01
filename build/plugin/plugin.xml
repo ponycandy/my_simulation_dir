@@ -1,8 +1,9 @@
 <plugins>
 
+<plugin order="1" name="Animator" />
 <plugin order="1" name="NonlinearSolver" />
 <plugin order="1" name="Swarm_NMPC_Planner" />
-
+<plugin order="1" name="TestPolyPainting" />
 
 <!--		<endplugin/>-->
 <pluginnum value="1"/>

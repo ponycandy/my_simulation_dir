@@ -5,6 +5,7 @@
 #include <QObject>
 #include <include/GL_2D/draw_operation.h>
 #include <QPainter>
+#include <Eigen/Core>
 class DrawOperation;
 class Animateservice
 {
@@ -20,7 +21,9 @@ public:
     virtual void draw_line(double startx,double starty,double endx,double endy)=0;
     virtual void draw_square(double centerx,double centery,double width,double height,double spinangle)=0;
     virtual void draw_square_oneside(double leftside_center_x,double leftside_center_y,double width,double height,double spinangle)=0;
-
+    virtual void Start_a_path(double x,double y)=0;
+    virtual void Add_path_point(double x,double y)=0;
+    virtual void draw_spline()=0;
     virtual Animateservice* cloneservice()=0;
     virtual QWidget* getwidget()=0;
     QPainter *brush_painter;

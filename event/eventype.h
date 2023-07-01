@@ -36,6 +36,6 @@ const char CONTROLLER_CMD[]="CONTROLLER_CMD";
 const char V1_AUTO[]="V1_AUTO";
 
 const char V2_AUTO[]="V2_AUTO";
-
+const char Display_POlys[]="Display_POlys";
 }
 #endif
