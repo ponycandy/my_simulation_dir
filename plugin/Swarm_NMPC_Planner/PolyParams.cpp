@@ -26,7 +26,9 @@ void PolyParams::initilization()
     double x0;
     double dx0;
     unit_length=2*dims+1;
-
+    Eigen::MatrixXd init_curve;
+    init_curve.resize(dims,2);
+    xml_reader.xmlRead("InitCurve",init_curve);
     for(int j=0;j<dims;j++)
     {
         Spline new_dim;
@@ -35,12 +37,9 @@ void PolyParams::initilization()
             pos_and_derivative an_epoch;
             new_dim.insert(p,an_epoch);
         }
-
-        xml_reader.xmlRead(var_name_x.toStdString(),new_dim[0].x0);
-        xml_reader.xmlRead(var_name_dx.toStdString(),new_dim[0].dx0);
+        new_dim[0].x0=init_curve(j,0);
+        new_dim[0].dx0=init_curve(j,1);
         Spline_Set.insert(j,new_dim);
-        var_name_x="dim_"+QString::number(j+2)+"_x";
-        var_name_dx="dim_"+QString::number(j+2)+"_dx";
     }
     local_mat_2_params.resize(dims,2*unit_length);
 
@@ -216,6 +215,25 @@ void PolyParams::Get_Single_Value(double currenttime, double &value, int dim)
     double T0;
     T0=currenttime-time_2_summuptime_map.value(phase);
     value=set.a0+T0*(set.a1+T0*(set.a2+set.a3*T0));
+}
+
+double PolyParams::Get_Single_value_any(double currenttime, int dim)
+{
+    int phase=0;
+    for(int i=0;i<point_num;i++)
+    {
+        if(currenttime<time_2_summuptime_map.value(i))//默认时间是大于0的
+        {
+            phase=i;
+            break;
+        }
+    }
+    pos_and_derivative set;
+    Get_pos_and_derivative_set(phase, set,dim);
+    double T0;
+    T0=currenttime-time_2_summuptime_map.value(phase);
+    return set.a0+T0*(set.a1+T0*(set.a2+set.a3*T0));
+
 }
 
 void PolyParams::Get_Single_derivative(double currenttime,

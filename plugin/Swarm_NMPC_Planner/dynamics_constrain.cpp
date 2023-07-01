@@ -126,6 +126,7 @@ void Dynamics_Constrain::init_num(int state_num, int agent_num, int dec_num, int
     for(int j=0;j<agent_num;j++)
     {
         PolyParams single_poly;
+        single_poly.configfiename="./config/Polys/constrainParams"+QString::number(j)+".xml";
         single_poly.initilization();
         m_polys.insert(j,single_poly);
     }

@@ -11,19 +11,24 @@
 #include "state_variable.h"
 #include "dynamics_constrain.h"
 #include "trackingcost.h"
+#include "event/eventype.h"
+#include "service/Animateservice.h"
+#include "minimize_speed_cost.h"
 solver_manager::solver_manager()
 {
-
+    qRegisterMetaType<QVector<PolyParams>>("QVector<PolyParams>");
     QString configfiename="./config/Polys/constrainParams.xml";
     xmlCore xml_reader(configfiename.toStdString());
     xml_reader.xmlRead("dim",dims);
     xml_reader.xmlRead("steps",dec_num);
     xml_reader.xmlRead("pointnum",pointnum);
+
     xml_reader.xmlRead("step_time",steptime);
     xml_reader.xmlRead("agentnum",agentnum);
     xml_reader.xmlRead("statenum",statenum);
+    m_widget=new startdreaw;
 
-
+    Swarm_NMPC_PlannerActivator::publishsignal(m_widget,SIGNAL(sig_start(QVector<PolyParams>,double,double)),UCSEVENT::Display_POlys,Qt::QueuedConnection);
     m_service=Swarm_NMPC_PlannerActivator::getService<NonlinearSolverservice>("NonlinearSolverservice");
     m_service->Use_BuildIn_Dynamics_Cons(false);
     m_service->setuseterminal(false);
@@ -52,6 +57,8 @@ solver_manager::solver_manager()
         std::string Controlconsname=ControlconsnameQ.toStdString();
         ControlConstrain *control_0=new ControlConstrain(1+2*pointnum,Controlconsname);
         control_0->current_agent_num=i;
+        control_0->m_poly->configfiename="./config/Polys/constrainParams"+QString::number(i)+".xml";
+        control_0->m_poly->initilization();
         std::shared_ptr<ifopt::ConstraintSet> consptr(control_0);
         m_service->AddConstraintSet(consptr);
     }
@@ -62,12 +69,23 @@ solver_manager::solver_manager()
     std::shared_ptr<ifopt::ConstraintSet> Dconsptr(Dcons);
     m_service->AddConstraintSet(Dconsptr);
     //添加目标函数
-    TrackingCost *tcost;
-    tcost=new TrackingCost;
+    //    TrackingCost *tcost;
+    //    tcost=new TrackingCost;
+    //    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
+    //    m_service->AddCostSet(Dtcostptr);
+    Minimize_Speed_Cost *tcost;
+    tcost=new Minimize_Speed_Cost;
     std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     m_service->AddCostSet(Dtcostptr);
 
     m_service->start_crack();
-    Eigen::VectorXd x=m_service->solve_problem("spline_p_set_of_0");
-    std::cout<<x<<std::endl;
+    std::cout<<"optimal value is "<<tcost->GetValues()<<std::endl;
+    Dcons->GetValues();
+    QVector<PolyParams> polysj;
+    m_widget->fx=Dcons->states(0,dec_num-1);
+    m_widget->fy=Dcons->states(1,dec_num-1);
+
+    m_widget->m_polys=Dcons->m_polys;
+    m_widget->show();
+
 }

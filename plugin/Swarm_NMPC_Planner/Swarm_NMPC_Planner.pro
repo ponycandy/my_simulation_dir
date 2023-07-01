@@ -28,13 +28,16 @@ SOURCES += \
     dynamics_constrain.cpp \
     dynamics_of_animals.cpp \
     jacobian_state.cpp \
+    minimize_speed_cost.cpp \
     problem_wrapup.cpp \
     solver_manager.cpp \
     splinevariable.cpp \
+    startdreaw.cpp \
     state_variable.cpp \
     testpolyparams.cpp \
     PolyParams.cpp \
-    trackingcost.cpp
+    trackingcost.cpp \
+    visualizer.cpp
 
 
 
@@ -44,14 +47,20 @@ HEADERS += \
     dynamics_constrain.h \
     dynamics_of_animals.h \
     jacobian_state.h \
+    minimize_speed_cost.h \
     problem_wrapup.h \
     solver_manager.h \
     splinevariable.h \
+    startdreaw.h \
     state_variable.h \
     testpolyparams.h \
     trackingcost.h \
     var_packer.h \
-    PolyParams.h
+    PolyParams.h \
+    visualizer.h
+
+FORMS += \
+    startdreaw.ui
 
 
 

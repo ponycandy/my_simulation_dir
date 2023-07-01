@@ -93,6 +93,7 @@ public:
     void Get_Single_Jacobian_form_2(double currenttime,Eigen::MatrixXd &jacmat,LastintTimeDerivative &timederive);
     void Get_pos_and_derivative_set(int phase,pos_and_derivative &set, int dim);
     void Get_Single_Value(double currenttime,double &value,int dim);
+    double Get_Single_value_any(double currenttime,int dim);
     void Get_Single_derivative(double currenttime,int dim,
                                double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T,single_dim &a_dim);
     void FillinJacobian(Eigen::SparseMatrix<double, Eigen::RowMajor> &jacmat_2_go,
