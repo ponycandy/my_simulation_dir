@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <dim type="int">
+        <value>2</value>
+    </dim>
+<InitCurve type="Eigen::MatrixXd">
+	<value>
+	0.0 -1.0
+	0.0 -1.0
+	</value>
+</InitCurve>
+<!-- 矩阵row为dim序数，col为：x,dx-->
+
+    <pointnum type="int">
+        <value>1</value>
+    </pointnum>
+    <step_time type="double">
+        <value>0.1</value>
+    </step_time>
+    <steps type="int">
+        <value>15</value>
+    </steps>
+    <agentnum type="int">
+        <value>3</value>
+    </agentnum>
+    <Radius type="double">
+        <value>100</value>
+    </Radius>
+    <statenum type="int">
+        <value>4</value>
+    </statenum>
+    <actnum type="int">
+        <value>2</value>
+    </actnum>
+    <Coef type="double">
+        <value>10</value>
+    </Coef>
+<Initstate type="Eigen::MatrixXd">
+	<value>
+	0
+	5
+	0.0
+	0.0
+	</value>
+</Initstate>
+</parameters>

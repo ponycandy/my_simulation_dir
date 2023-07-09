@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <linear_solver type="string">
+        <value>ma57</value>
+    </linear_solver>
+    <tol type="double">
+        <value>0.0001</value>
+    </tol>
+    <jacobian_approximation type="string">
+        <value>exact</value>
+    </jacobian_approximation>
+    <print_level type="int">
+        <value>5</value>
+    </print_level>
+
+
+</parameters>
