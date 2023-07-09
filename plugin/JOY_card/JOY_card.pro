@@ -3,6 +3,10 @@ QT       += core gui testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+INCLUDEPATH += ../../3rdlib/project_library/src/ClosePoint
+LIBS += -L../../3rdlib/project_library/bin -lClosePoint
+INCLUDEPATH += ../../3rdlib/project_library/src/SwarmAgent
+LIBS += -L../../3rdlib/project_library/bin -lSwarmAgent
 #INCLUDEPATH +=../../3rdlib/project_library/include/classA_test
 #LIBS += -L../../3rdlib/project_library/bin -lclassA_test
 
@@ -31,6 +35,10 @@ HEADERS += \
     main_stream.h \
     mypainter.h \
     simulator.h \
+
+
+
+
 
 
 
