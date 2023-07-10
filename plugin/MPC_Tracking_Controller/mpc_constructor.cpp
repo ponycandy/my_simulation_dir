@@ -12,7 +12,7 @@ MPC_Constructor::MPC_Constructor(QObject *parent)
     leanrflag=0;
 }
 
-void MPC_Constructor::set_ref_target(Eigen::MatrixXd &state)
+void MPC_Constructor::set_ref_target(Eigen::MatrixXd state)
 {
     Eigen::MatrixXd realstate;
     realstate.resize(state_num,dec_num);
@@ -23,7 +23,7 @@ void MPC_Constructor::set_ref_target(Eigen::MatrixXd &state)
     set_reference(realstate,realstate,false);
 }
 
-void MPC_Constructor::set_reference(Eigen::MatrixXd &state, Eigen::MatrixXd &action, bool use_action)
+void MPC_Constructor::set_reference(Eigen::MatrixXd state, Eigen::MatrixXd action, bool use_action)
 {
     act_ref_all=action;
     ifuseaction=use_action;
@@ -281,7 +281,7 @@ void MPC_Constructor::calc_bound()
 
 }
 
-Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd &state)
+Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd state)
 {
     //从这里开始是控制了，开始构建！
 
@@ -322,7 +322,7 @@ Eigen::MatrixXd MPC_Constructor::feed_Back_control(Eigen::MatrixXd &state)
         last_control=last_control+QPSolution.block(0, 0, act_num, 1);
 
         last_mv_seqc.block(0,0,act_num,1)=last_control
-        + QPSolution.block(1*act_num, 0, act_num, 1);//已经添加过的！
+                                               + QPSolution.block(1*act_num, 0, act_num, 1);//已经添加过的！
         for(int i=1;i<dec_num-1;i++)
         {
             last_mv_seqc.block(0,i,act_num,1)=
@@ -437,7 +437,7 @@ Eigen::MatrixXd MPC_Constructor::Tandemride_A_list(int start, int end)
     }
 }
 
-void MPC_Constructor::setWeightMatrices(Eigen::MatrixXd &Q_in, Eigen::MatrixXd &R_in)
+void MPC_Constructor::setWeightMatrices(Eigen::MatrixXd Q_in, Eigen::MatrixXd R_in)
 {
     int Q_width=Q_in.rows();
     int R_width=R_in.rows();
@@ -455,13 +455,13 @@ void MPC_Constructor::setWeightMatrices(Eigen::MatrixXd &Q_in, Eigen::MatrixXd &
 
 }
 
-void MPC_Constructor::set_state_bound(Eigen::MatrixXd &lower, Eigen::MatrixXd &higher)
+void MPC_Constructor::set_state_bound(Eigen::MatrixXd lower, Eigen::MatrixXd higher)
 {
     state_l=lower;
     state_h=higher;
 }
 
-void MPC_Constructor::set_control_bound(Eigen::MatrixXd &lower, Eigen::MatrixXd &higher)
+void MPC_Constructor::set_control_bound(Eigen::MatrixXd lower, Eigen::MatrixXd higher)
 {
     lower_u=lower;
     high_u=higher;
@@ -480,7 +480,7 @@ void MPC_Constructor::set_control_bound(Eigen::MatrixXd &lower, Eigen::MatrixXd 
 
 }
 
-void MPC_Constructor::set_delta_control_bound(Eigen::MatrixXd &lower, Eigen::MatrixXd &higher)
+void MPC_Constructor::set_delta_control_bound(Eigen::MatrixXd lower, Eigen::MatrixXd higher)
 {
 
 }
@@ -526,8 +526,8 @@ bool MPC_Constructor::xref_move_toward()
 
                 if(pointer_1>=total_predict_length-1)
                 {
-//                    act_ref.block(0,i,act_num,1)=
-//                        act_ref_all.block(0,pointer_1,act_num,1);
+                    //                    act_ref.block(0,i,act_num,1)=
+                    //                        act_ref_all.block(0,pointer_1,act_num,1);
                     act_ref.block(0,i,act_num,1)=
                         last_mv_seqc.block(0,i,act_num,1);
                 }
@@ -560,8 +560,8 @@ bool MPC_Constructor::xref_move_toward()
 
     for(int i=0;i<dec_num;i++)
     {
-//        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
-//            = act_ref.block(0,i,act_num,1);
+        //        Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)
+        //            = act_ref.block(0,i,act_num,1);
         Y_ref.block(i*(state_num+act_num)+state_num,0,act_num,1)<<0;
     }
     if(ref_count<total_predict_length)
