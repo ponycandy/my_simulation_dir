@@ -74,10 +74,11 @@ solver_manager::solver_manager()
     //    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     //    m_service->AddCostSet(Dtcostptr);
 
-    Minimize_Speed_Cost *tcost;
-    tcost=new Minimize_Speed_Cost;
-    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
-    m_service->AddCostSet(Dtcostptr);
+//    Minimize_Speed_Cost *tcost;
+//    tcost=new Minimize_Speed_Cost;
+//    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
+//    m_service->AddCostSet(Dtcostptr);
+//最终约束：masscenter分布在中央一定范围内部，不要使用cost!
 
     m_service->start_crack();
     //    std::cout<<"optimal value is "<<tcost->GetValues()<<std::endl;
