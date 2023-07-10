@@ -20,7 +20,7 @@ class MPC_Constructor : public QObject,public MPC_Trackerservice
 public:
     explicit
         MPC_Constructor(QObject *parent = nullptr);
-    void set_ref_target(Eigen::MatrixXd state);
+    void set_ref_target(Eigen::MatrixXd &state);
     void set_reference(Eigen::MatrixXd &state,Eigen::MatrixXd &action,bool use_action) override;
     void init_steptime(double time) override;
     void init_all_mat();
@@ -31,7 +31,7 @@ public:
     void calc_weight();
     void calc_bound();
 
-    Eigen::MatrixXd feed_Back_control(Eigen::MatrixXd state) override;
+    Eigen::MatrixXd feed_Back_control(Eigen::MatrixXd &state) override;
     void registerODE(MPC_ODE *odefunction) override;//这个可以通用
     void fill_in_ABC();
     void calc_H_q_cons();
@@ -45,10 +45,10 @@ public:
     Eigen::MatrixXd controlMatrix_temp;
     Eigen::MatrixXd Tandemride_A_list(int start,int end);
 
-    void setWeightMatrices(Eigen::MatrixXd Q, Eigen::MatrixXd R) override;
-    void set_state_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;
-    void set_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;
-    void set_delta_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;
+    void setWeightMatrices(Eigen::MatrixXd &Q, Eigen::MatrixXd &R) override;
+    void set_state_bound(Eigen::MatrixXd &lower,Eigen::MatrixXd &higher) override;
+    void set_control_bound(Eigen::MatrixXd &lower, Eigen::MatrixXd &higher) override;
+    void set_delta_control_bound(Eigen::MatrixXd &lower,Eigen::MatrixXd &higher) override;
     //    Eigen::MatrixXd feed_Back_control(Eigen::MatrixXd state,bool *is_end) override;
 
     void feed_xref();
