@@ -19,4 +19,8 @@ pushingbox_2d \
 Simulator \
 swarm_rl_experiment \
 SwarmSimulator \
-TCPAutoNet \
+TCPCommunicator \
+MPC_Tracking_Controller \
+test_MPC_nonlinear_tracking \
+test_MPC_tracker \
+testNonlinearSOlver
