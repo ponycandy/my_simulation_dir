@@ -23,7 +23,7 @@ void MPC_Constructor::set_ref_target(Eigen::MatrixXd state)
     set_reference(realstate,realstate,false);
 }
 
-void MPC_Constructor::set_reference(Eigen::MatrixXd state, Eigen::MatrixXd action, bool use_action)
+void MPC_Constructor::set_reference(Eigen::MatrixXd &state, Eigen::MatrixXd &action, bool use_action)
 {
     act_ref_all=action;
     ifuseaction=use_action;

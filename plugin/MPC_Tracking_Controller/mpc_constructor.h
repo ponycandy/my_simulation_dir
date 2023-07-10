@@ -21,7 +21,7 @@ public:
     explicit
         MPC_Constructor(QObject *parent = nullptr);
     void set_ref_target(Eigen::MatrixXd state);
-    void set_reference(Eigen::MatrixXd state,Eigen::MatrixXd action,bool use_action) override;
+    void set_reference(Eigen::MatrixXd &state,Eigen::MatrixXd &action,bool use_action) override;
     void init_steptime(double time) override;
     void init_all_mat();
     int total_predict_length;

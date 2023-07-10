@@ -7,8 +7,6 @@ QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
 LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
-INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser
-LIBS += -L../../3rdlib/project_library/bin -lMatrix_sparser
 
 TEMPLATE = lib
 DEFINES += MPC_TRACKING_CONTROLLER_LIBRARY
