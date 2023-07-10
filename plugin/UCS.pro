@@ -23,4 +23,5 @@ TCPCommunicator \
 MPC_Tracking_Controller \
 test_MPC_nonlinear_tracking \
 test_MPC_tracker \
-testNonlinearSOlver
+testNonlinearSOlver \
+test_NMPC_Plugin

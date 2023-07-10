@@ -304,7 +304,6 @@ void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
     {
         if (i<=2)
         {
-
             newsparser.add_mat_block(calc_single_jacobia(i),state_num*(i-1),0);
             //            self_ode_jacob->jacobica(actMat,stateMat);
             //一个block的尺寸是state_num*state_num_plus_act_num
@@ -354,6 +353,7 @@ void Dynamics_Constrain_Set::init_state(Eigen::MatrixXd initstate, Eigen::Matrix
 
 Eigen::MatrixXd Dynamics_Constrain_Set::calc_single_jacobia(int timestep) const
 {
+    //看来需要小改一下这个
     int j=0;
     if(timestep==1)
     {
@@ -361,7 +361,7 @@ Eigen::MatrixXd Dynamics_Constrain_Set::calc_single_jacobia(int timestep) const
         state_array=initState;
         jac_mat=self_ode_jacob->jacobica(act_array,state_array);
         jac_mat=-steptime*jac_mat/2;
-        return jac_mat;
+        return jac_mat;//返回值会报错，果然还是矢量问题
     }
     else
     {

@@ -83,9 +83,9 @@ main_exe::main_exe(QObject *parent) : QObject(parent)
 }
 
 
-
 void main_exe::startsolve()
 {
+//    m_service->constructNLP();
     m_service->start_crack();
     Eigen::MatrixXd actmat=m_service->get_actMat();
     Eigen::MatrixXd statemat=m_service->get_stateMat();
