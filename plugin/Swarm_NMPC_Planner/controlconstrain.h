@@ -10,7 +10,7 @@ public:
     ControlConstrain(int num,std::string &name);
     VectorXd GetValues() const override;
     VecBound GetBounds() const override;
-    void GetValue(Eigen::VectorXd &x,Eigen::MatrixXd &returnvalue) const override;
+    void GetValue(Eigen::VectorXd &x,Eigen::VectorXd &returnvalue) const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
     void FillinG(Eigen::VectorXd &g) const;
     mutable int current_agent_num;

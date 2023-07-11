@@ -4,18 +4,20 @@ Automated_Gradient::Automated_Gradient()
 
 }
 
-void Automated_Gradient::GetGradient(int constrainNum,Eigen::VectorXd &x,const AutoCalc *calculator,Eigen::MatrixXd &jacob)
+void Automated_Gradient::GetGradient(Eigen::VectorXd &x, const AutoCalc *calculator, Eigen::MatrixXd &jacob)
 {
-    int maxnum=constrainNum;
+    Eigen::VectorXd value;
+    calculator->GetValue(x,value);
+
+    int maxnum=value.rows();
     int varnum=x.size();
     double step=0.0001;
-    Eigen::MatrixXd value;
-    value.resize(maxnum,1);
-    value.setZero();
-    Eigen::MatrixXd consmat;
+    jacob.resize(maxnum,varnum);
+    jacob.setZero();
+    Eigen::VectorXd consmat;
     consmat.resize(maxnum,1);
     consmat.setZero();
-    calculator->GetValue(x,value);
+
     for(int i=0;i<varnum;i++)
     {
         Eigen::VectorXd y_var=x;
@@ -24,3 +26,5 @@ void Automated_Gradient::GetGradient(int constrainNum,Eigen::VectorXd &x,const A
         jacob.block(0,i,maxnum,1)=(consmat-value)/step;
     }
 }
+
+

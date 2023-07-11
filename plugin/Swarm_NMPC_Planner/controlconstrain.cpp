@@ -22,11 +22,7 @@ ControlConstrain::ControlConstrain(int num,std::string &name):ConstraintSet(num,
 
 ifopt::Component::VectorXd ControlConstrain::GetValues() const
 {
-    Automated_Gradient calcer;
-    Eigen::VectorXd xasa;
-    Eigen::MatrixXd asdasd;
 
-    calcer.GetGradient(1,xasa,reinterpret_cast< const AutoCalc *>(this),asdasd);
     //
     QString var_name;
     VectorXd g(GetRows());
@@ -53,9 +49,10 @@ ifopt::Component::VecBound ControlConstrain::GetBounds() const
     return b;
 }
 
-void ControlConstrain::GetValue(Eigen::VectorXd &x, Eigen::MatrixXd &returnvalue) const
+void ControlConstrain::GetValue(Eigen::VectorXd &x, Eigen::VectorXd &returnvalue) const
 {
     m_poly->packvariable(x);
+    returnvalue.resize(consnum);
     pos_and_derivative x_x;
     pos_and_derivative x_y;
     double total_T=0;
@@ -111,28 +108,12 @@ void ControlConstrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bloc
             jac_block.coeffRef(constrainIndex+i+1,setx.lasting_time_index)=1;
         }
         jac_block.makeCompressed();
+
         Automated_Gradient calcer;
-        Eigen::MatrixXd value;
-        value.resize(consnum,x.size());
-        int maxnum=consnum;
-        int varnum=x.size();
-        double step=0.0001;
-        value.resize(maxnum,1);
-        value.setZero();
-        Eigen::MatrixXd consmat;
-        consmat.resize(maxnum,1);
-        consmat.setZero();
         Eigen::MatrixXd jacob;
-        jacob.resize(maxnum,varnum);
-        jacob.setZero();
-        GetValue(x, value);
-        for(int i=0;i<varnum;i++)
-        {
-            Eigen::VectorXd y_var=x;
-            y_var(i)+=step;
-            GetValue(y_var, consmat);
-            jacob.block(0,i,maxnum,1)=(consmat-value)/step;
-        }
+
+        calcer.GetGradient(x,dynamic_cast< const AutoCalc *>(this),jacob);
+
         std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
         std::cout<<jacob<<std::endl;
         std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
