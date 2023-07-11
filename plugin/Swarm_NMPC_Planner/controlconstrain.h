@@ -3,13 +3,14 @@
 
 #include "ifopt/constraint_set.h"
 #include "PolyParams.h"
-
-class ControlConstrain:public ifopt::ConstraintSet
+#include "include/Autogradient/AutoCalc.h"
+class ControlConstrain:public ifopt::ConstraintSet,public AutoCalc
 {
 public:
     ControlConstrain(int num,std::string &name);
     VectorXd GetValues() const override;
     VecBound GetBounds() const override;
+    void GetValue(Eigen::VectorXd &x,Eigen::MatrixXd &returnvalue) const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
     void FillinG(Eigen::VectorXd &g) const;
     mutable int current_agent_num;
@@ -20,7 +21,7 @@ public:
     mutable int agentnum;
     mutable PolyParams *m_poly;
     mutable int constrainIndex;
-
+    mutable int consnum;
 };
 
 #endif // CONTROLCONSTRAIN_H

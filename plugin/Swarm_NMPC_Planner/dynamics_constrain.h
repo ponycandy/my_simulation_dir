@@ -8,6 +8,7 @@
 #include "PolyParams.h"
 #include <QMap>
 #include <include/MPC/MPC_ODE.h>
+#include "include/Autogradient/AutoCalc.h"
 typedef Eigen::SparseMatrix<double> Espmat;
 
 class Dynamics_Constrain:public ifopt::ConstraintSet

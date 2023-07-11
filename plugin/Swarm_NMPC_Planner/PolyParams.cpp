@@ -236,6 +236,24 @@ double PolyParams::Get_Single_value_any(double currenttime, int dim)
 
 }
 
+double PolyParams::Get_Single_Speed_any(double currenttime, int dim)
+{
+    int phase=0;
+    for(int i=0;i<point_num;i++)
+    {
+        if(currenttime<time_2_summuptime_map.value(i))//默认时间是大于0的
+        {
+            phase=i;
+            break;
+        }
+    }
+    pos_and_derivative set;
+    Get_pos_and_derivative_set(phase, set,dim);
+    double T0;
+    T0=currenttime-time_2_summuptime_map.value(phase);
+    return set.a1+T0*(2*set.a2+3*set.a3*T0);
+}
+
 void PolyParams::Get_Single_derivative(double currenttime,
                                        int dim, double &a2x0, double &a2x1, double &a2dx0, double &a2dx1, double &a2T, single_dim &a_dim)
 {

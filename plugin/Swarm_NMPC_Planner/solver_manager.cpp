@@ -57,7 +57,7 @@ solver_manager::solver_manager()
 
         QString ControlconsnameQ="ControlCons_of_"+QString::number(i);
         std::string Controlconsname=ControlconsnameQ.toStdString();
-        ControlConstrain *control_0=new ControlConstrain(1+2*pointnum,Controlconsname);
+        ControlConstrain *control_0=new ControlConstrain(dec_num+2*pointnum,Controlconsname);
         control_0->current_agent_num=i;
         control_0->m_poly->configfiename="./config/Polys/constrainParams"+QString::number(i)+".xml";
         control_0->m_poly->initilization();
@@ -81,10 +81,10 @@ solver_manager::solver_manager()
 //    std::shared_ptr<ifopt::ConstraintSet> Dconmassconssptr(masscons);
 //    m_service->AddConstraintSet(Dconmassconssptr);
     //质量中心散布约束
-    TerminalWithinRange *TerminalWithinRangecons;
-    TerminalWithinRangecons=new TerminalWithinRange(agentnum);
-    std::shared_ptr<ifopt::ConstraintSet> TerminalWithinRangeconsptr(TerminalWithinRangecons);
-    m_service->AddConstraintSet(TerminalWithinRangeconsptr);
+//    TerminalWithinRange *TerminalWithinRangecons;
+//    TerminalWithinRangecons=new TerminalWithinRange(agentnum);
+//    std::shared_ptr<ifopt::ConstraintSet> TerminalWithinRangeconsptr(TerminalWithinRangecons);
+//    m_service->AddConstraintSet(TerminalWithinRangeconsptr);
     //目标速度损失函数
 //    Minimize_Speed_Cost *tcost;
 //    tcost=new Minimize_Speed_Cost;

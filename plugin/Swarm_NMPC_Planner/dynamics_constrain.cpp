@@ -81,43 +81,9 @@ ifopt::Component::VectorXd Dynamics_Constrain::GetValues() const
     formactmat();
     FillinG(g);
 
-
-    //    var_name="spline_p_set_of_"+QString::number(0);
-    //    x=GetVariables()->GetComponent(var_name.toStdString())->GetValues();
-    //    int maxnum=x.rows();
-    //    Eigen::MatrixXd mat_num_jacob;
-    //    mat_num_jacob.resize(GetRows(),maxnum);
-    //    mat_num_jacob.setZero();
-    //    double step=0.001;
-
-    //    for(int i=0;i<maxnum;i++)
-    //    {
-    //        VectorXd g_plus_1(GetRows());
-    //        Eigen::VectorXd y_var=x;
-    //        y_var(i)+=step;
-    //        m_polys[0].packvariable(y_var);
-    //        formactmat();
-    //        FillinG(g_plus_1);
-    //        mat_num_jacob.block(0,i,mat_num_jacob.rows(),1)=(g_plus_1-g)/step;
-    //    }
-    //    std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
-    //    std::cout<<mat_num_jacob<<std::endl;
-    //    std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
-    //    std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
-    //    Jacobian jac_block;
-    //    jac_block.resize(GetRows(),maxnum);
-    //    Fill_dynamics_action(jac_block);
-    //    m_polys[0].clearconstrainindex();
-    //    std::cout<<jac_block<<std::endl;
-    //    std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
-    //    std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
-    //    Eigen::MatrixXd matyup;
-    //    matyup=jac_block-mat_num_jacob;
-    //    std::cout<<matyup<<std::endl;
-    //    std::cout<<" "<<std::endl;
-
     return g;
 }
+
 
 void Dynamics_Constrain::init_num(int state_num, int agent_num, int dec_num, int pointnum,double step) const
 {

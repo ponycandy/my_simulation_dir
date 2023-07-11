@@ -24,6 +24,7 @@ INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 SOURCES += \
     Swarm_NMPC_PlannerActivator.cpp \
+    automated_gradient.cpp \
     controlconstrain.cpp \
     dynamics_constrain.cpp \
     dynamics_of_animals.cpp \
@@ -45,6 +46,7 @@ SOURCES += \
 
 HEADERS += \
     Swarm_NMPC_PlannerActivator.h \
+    automated_gradient.h \
     controlconstrain.h \
     dynamics_constrain.h \
     dynamics_of_animals.h \
