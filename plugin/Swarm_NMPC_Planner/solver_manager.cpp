@@ -14,6 +14,8 @@
 #include "event/eventype.h"
 #include "service/Animateservice.h"
 #include "minimize_speed_cost.h"
+#include "mass_center_constrain.h"
+#include "terminalwithinrange.h"
 solver_manager::solver_manager()
 {
     qRegisterMetaType<QVector<PolyParams>>("QVector<PolyParams>");
@@ -73,7 +75,17 @@ solver_manager::solver_manager()
     //    tcost=new TrackingCost;
     //    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     //    m_service->AddCostSet(Dtcostptr);
-
+    //质量中心约束
+//    mass_center_constrain *masscons;
+//    masscons=new mass_center_constrain(2);
+//    std::shared_ptr<ifopt::ConstraintSet> Dconmassconssptr(masscons);
+//    m_service->AddConstraintSet(Dconmassconssptr);
+    //质量中心散布约束
+    TerminalWithinRange *TerminalWithinRangecons;
+    TerminalWithinRangecons=new TerminalWithinRange(agentnum);
+    std::shared_ptr<ifopt::ConstraintSet> TerminalWithinRangeconsptr(TerminalWithinRangecons);
+    m_service->AddConstraintSet(TerminalWithinRangeconsptr);
+    //目标速度损失函数
 //    Minimize_Speed_Cost *tcost;
 //    tcost=new Minimize_Speed_Cost;
 //    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
@@ -88,6 +100,7 @@ solver_manager::solver_manager()
     m_widget->fy=Dcons->states(1,dec_num-1);
 
     m_widget->m_polys=Dcons->m_polys;
+    m_widget->move(20,20);
     m_widget->show();
 
 }

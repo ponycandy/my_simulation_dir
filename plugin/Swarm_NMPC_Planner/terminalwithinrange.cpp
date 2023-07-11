@@ -1,12 +1,9 @@
-﻿
-
-
-
-#include "mass_center_constrain.h"
-#include "QString"
+#include "terminalwithinrange.h"
+#include "xmlcore.h"
 #include "var_packer.h"
-mass_center_constrain::mass_center_constrain(int num):ConstraintSet(num,"mass_center_constrain")
+TerminalWithinRange::TerminalWithinRange(int num):ifopt::ConstraintSet(num,"TerminalWithinRange")
 {
+    consnum=num;
     QString configfiename="./config/Polys/constrainParams.xml";
     xmlCore xml_reader(configfiename.toStdString());
     xml_reader.xmlRead("dim",dims);
@@ -28,7 +25,7 @@ mass_center_constrain::mass_center_constrain(int num):ConstraintSet(num,"mass_ce
 
 }
 
-ifopt::Component::VectorXd mass_center_constrain::GetValues() const
+ifopt::Component::VectorXd TerminalWithinRange::GetValues() const
 {
     //计算末端坐标质心
     QString var_name;
@@ -51,7 +48,7 @@ ifopt::Component::VectorXd mass_center_constrain::GetValues() const
     return g;
 }
 
-void mass_center_constrain::init_num(int state_num, int agent_num, int dec_num, int pointnum, double step) const
+void TerminalWithinRange::init_num(int state_num, int agent_num, int dec_num, int pointnum, double step) const
 {
     agentnum=agent_num;
     for(int j=0;j<agent_num;j++)
@@ -63,30 +60,46 @@ void mass_center_constrain::init_num(int state_num, int agent_num, int dec_num, 
     }
 }
 
-ifopt::Component::VecBound mass_center_constrain::GetBounds() const
+ifopt::Component::VecBound TerminalWithinRange::GetBounds() const
 {
     VecBound b(GetRows());
 
-    for(int i=1;i<=2;i++)
+    for(int i=1;i<=consnum;i++)
     {
-        b.at(i-1)=ifopt::Bounds(0.0, 0.0);
+        b.at(i-1)=ifopt::BoundSmallerZero;
     }
 
     return b;
 }
 
-void mass_center_constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_block) const
+void TerminalWithinRange::FillJacobianBlock(std::string var_set, Jacobian &jac_block) const
 {
     if (var_set == "state_value")
     {
-        jac_block.coeffRef(0,statenum*(decnum-1))=-1;
-        jac_block.coeffRef(1,statenum*(decnum-1)+1)=-1;
+        QString vars_name;
+        VectorXd g(GetRows());
+        for(int i=0;i<agentnum;i++)
+        {
+            vars_name="spline_p_set_of_"+QString::number(i);
+            Eigen::VectorXd x=GetVariables()->GetComponent(vars_name.toStdString())->GetValues();
+            m_polys[i].packvariable(x);
+        }
+        Eigen::VectorXd x;
+        x.resize(statenum*decnum);
+        x=GetVariables()->GetComponent("state_value")->GetValues();
+        packvariable_states_set(x,states,decnum);
+
+
+        formactmat();
+
         QString var_name;
         for(int i=0;i<agentnum;i++)
         {
-            var_name="spline_p_set_of_"+QString::number(i);
-            Eigen::VectorXd x=GetVariables()->GetComponent(var_name.toStdString())->GetValues();
-            m_polys[i].packvariable(x);
+            double x_current_agent=ActMats[i](0,decnum-1);
+            double y_current_agent=ActMats[i](1,decnum-1);
+            jac_block.coeffRef(i,statenum*(decnum-1)+0)=2*states(0,decnum-1)-2*x_current_agent;
+            jac_block.coeffRef(i,statenum*(decnum-1)+1)=2*states(1,decnum-1)-2*y_current_agent;
+
         }
 
     }
@@ -100,25 +113,23 @@ void mass_center_constrain::FillJacobianBlock(std::string var_set, Jacobian &jac
             single_jacob jac0;
             group.init(1);
             Eigen::MatrixXd dgda;
-            dgda.resize(2,2);
-            dgda<<1,0,0,1;
+            dgda.resize(1,2);
+            double x_current_agent=ActMats[j](0,decnum-1);
+            double y_current_agent=ActMats[j](1,decnum-1);
+
+            dgda<<-2*states(0,decnum-1)+2*x_current_agent,-2*states(1,decnum-1)+2*y_current_agent;
             jac0.relative_2_dec=decnum-1;
-            jac0.jacobian=dgda/agentnum;
+            jac0.jacobian=dgda;
             group.jac_sets[0]=jac0;
             m_polys[j].FillinJacobian(jac_block,group);
-            // 我想我们需要三级，乃至多级的雅可比矩阵计算！雅可比的级数
-            //也需要可变
-
             m_polys[j].clearconstrainindex();
             break;
         }
     }
 }
 
-void mass_center_constrain::FillinG(Eigen::VectorXd &g) const
+void TerminalWithinRange::FillinG(Eigen::VectorXd &g) const
 {
-    double x_average=0;
-    double y_average=0;
     double x_current_agent=0;
     double y_current_agent=0;
     double distance=0;
@@ -126,24 +137,15 @@ void mass_center_constrain::FillinG(Eigen::VectorXd &g) const
     {
         x_current_agent=ActMats[i](0,decnum-1);
         y_current_agent=ActMats[i](1,decnum-1);
-
-        x_average+=x_current_agent;
-        y_average+=y_current_agent;
         distance=pow(states(0,decnum-1)-x_current_agent,2)+
                    pow(states(1,decnum-1)-y_current_agent,2);
-//        g(2+i)=distance-minimalD*minimalD;
-
-
+        g(i)=distance-minimalD*minimalD;
     }
-    x_average/=agentnum;
-    y_average/=agentnum;
-    g(0)=x_average-states(0,decnum-1);
-    g(1)=y_average-states(1,decnum-1);
-    //下面需要添加约束：1.每段的最大速度小于一个值，2.最终的所有点都在一个圆圈里面
+    //下面需要添加约束：最终的所有点都在一个圆圈里面
 }
 
 
-void mass_center_constrain::formactmat() const
+void TerminalWithinRange::formactmat() const
 {
     for(int i=0;i<agentnum;i++)
     {

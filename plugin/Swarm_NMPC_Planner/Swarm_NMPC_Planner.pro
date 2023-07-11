@@ -34,10 +34,12 @@ SOURCES += \
     splinevariable.cpp \
     startdreaw.cpp \
     state_variable.cpp \
+    terminalwithinrange.cpp \
     testpolyparams.cpp \
     PolyParams.cpp \
     trackingcost.cpp \
-    visualizer.cpp
+    visualizer.cpp \
+    mass_center_constrain.cpp
 
 
 
@@ -53,11 +55,13 @@ HEADERS += \
     splinevariable.h \
     startdreaw.h \
     state_variable.h \
+    terminalwithinrange.h \
     testpolyparams.h \
     trackingcost.h \
     var_packer.h \
     PolyParams.h \
-    visualizer.h
+    visualizer.h \
+    mass_center_constrain.h
 
 FORMS += \
     startdreaw.ui
