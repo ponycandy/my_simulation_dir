@@ -2,6 +2,7 @@
 
 #include "xmlcore.h"
 #include "automated_gradient.h"
+#include "Matrix_sparser.h"
 ControlConstrain::ControlConstrain(int num,std::string &name):ConstraintSet(num,name)
 {
     //两个约束，第一是相邻点距离约束，第二个是时间约束
@@ -114,17 +115,20 @@ void ControlConstrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bloc
 
         calcer.GetGradient(x,dynamic_cast< const AutoCalc *>(this),jacob);
 
-        std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
-        std::cout<<jacob<<std::endl;
-        std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
-        std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
-        std::cout<<jac_block<<std::endl;
-        std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
-        std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
-        Eigen::MatrixXd matyup;
-        matyup=jac_block-jacob;
-        std::cout<<matyup<<std::endl;
-        std::cout<<" "<<std::endl;
+//        std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
+//        std::cout<<jacob<<std::endl;
+//        std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
+//        std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
+//        std::cout<<jac_block<<std::endl;
+//        std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
+//        std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
+//        Eigen::MatrixXd matyup;
+//        matyup=jac_block-jacob;
+//        std::cout<<matyup<<std::endl;
+//        std::cout<<" "<<std::endl;
+        Matrix_sparser sparser;
+        sparser.Copy_Mat_2_Sparse_block(jac_block,jacob,0,0,jacob.rows(),jacob.cols());
+
     }
 
 
