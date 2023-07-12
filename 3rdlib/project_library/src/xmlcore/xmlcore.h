@@ -16,7 +16,7 @@
 //一般配置
 #include "iostream"
 #include "vector"
-
+#include "QMap"
 class XMLCORE_EXPORT xmlCore
 {
 public:
@@ -40,7 +40,7 @@ public:
     bool paramNameCheck(QString paramName);
 
     bool isRight;
-
+    QMap<QString,QString> xmlReadAllelement();
 private:
     bool doc_load();
 

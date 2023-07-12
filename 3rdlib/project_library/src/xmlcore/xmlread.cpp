@@ -102,5 +102,43 @@ bool xmlCore::xmlRead(std::string cName, std::string& value)
 }
 
 
+QMap<QString,QString> xmlCore::xmlReadAllelement()
+{
+    QMap<QString,QString> mapper;
+    if (!m_file->open(QIODevice::ReadOnly))
+        qDebug()<<"cant open xml file";
+    if (!m_document->setContent(m_file)) {
+        m_file->close();
+        qDebug()<<"cant open xml file";
+    }
+    m_file->close();
 
+    // print out the element names of all elements that are direct children
+    // of the outermost element.
+    QDomElement docElem = m_document->documentElement();
+
+    QDomNode n = docElem.firstChild();
+    while(!n.isNull()) {
+        QDomElement e = n.toElement(); // try to convert the node to an element.
+        if(!e.isNull()) {
+            qDebug()<< qPrintable(e.tagName()) << '\n'; // the node really is an element.
+            QDomNodeList list = e.childNodes();
+            QString value_qString;
+            for(int i = 0; i < list.count(); i++)
+            {
+                QDomNode n = list.at(i);
+
+                if(n.nodeName() == "value")
+                {
+                    value_qString = n.toElement().text();
+
+                    break;
+                }
+            }
+            mapper.insert(e.tagName(),value_qString);
+            qDebug()<<value_qString;
+        }
+        n = n.nextSibling();
+    }
+}
 
