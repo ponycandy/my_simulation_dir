@@ -89,7 +89,6 @@ bool xmlCore::xmlWrite(std::string cName, int value)
                         // Write the modified value tag with 10 as the text
                         writer.writeStartElement("value");
                         writer.writeCharacters(QString::number(value));
-                        writer.writeEndElement();
                         reader.readNext();
                     }
                 }
@@ -203,7 +202,6 @@ bool xmlCore::xmlWrite(std::string cName, double value)
                     {
                         writer.writeStartElement("value");
                         writer.writeCharacters(QString::number(value));
-                        writer.writeEndElement();
                         reader.readNext();
                     }
                 }
@@ -317,7 +315,6 @@ bool xmlCore::xmlWrite(std::string cName, std::string value)
                     {
                         writer.writeStartElement("value");
                         writer.writeCharacters(QString::fromStdString(value));
-                        writer.writeEndElement();
                         reader.readNext();
                     }
                 }
