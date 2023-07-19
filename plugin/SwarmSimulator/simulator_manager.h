@@ -19,7 +19,7 @@ public:
     SimDynamicsservice * get_simer() override;
     QMap<int, SwarmAgent *> getagentgroup() override;
     void startsim() override;
-    void init_plant(int steptime, int init_method, SwarmAgent *singleagents) override;
+    void init_plant(int steptime, QString configfile, SwarmAgent *singleagents) override;
     void set_neib_sequnce(int flag) override;
     Animateservice *Anim_service;
     SimDynamicsservice* SimDy_service;

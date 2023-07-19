@@ -89,16 +89,16 @@ void ControlConstrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bloc
         group.init(1);
         for(int i=0;i<dec_num;i++)
         {
-            jac0.relative_2_dec=i;
-            Eigen::MatrixXd mid;
-            mid.resize(1,2);
-            double vx=m_poly->Get_Single_Speed_any(i*steptime,0);
-            double vy=m_poly->Get_Single_Speed_any(i*steptime,1);
-            mid<<2*vx,2*vy;
-            jac0.jacobian=mid;
-            group.jac_sets[0]=jac0;
-            m_poly->FillinJacobian(jac_block,group);
-
+//            jac0.relative_2_dec=i;
+//            Eigen::MatrixXd mid;
+//            mid.resize(1,2);
+//            double vx=m_poly->Get_Single_Speed_any(i*steptime,0);
+//            double vy=m_poly->Get_Single_Speed_any(i*steptime,1);
+//            mid<<2*vx,2*vy;
+//            jac0.jacobian=mid;
+//            group.jac_sets[0]=jac0;
+//            m_poly->FillinJacobian(jac_block,group);
+//这个矩阵显然是错误的
         }
         m_poly->clearconstrainindex();
         for(int i=0;i<pointNum;i++)
@@ -115,19 +115,18 @@ void ControlConstrain::FillJacobianBlock(std::string var_set, Jacobian &jac_bloc
 
         calcer.GetGradient(x,dynamic_cast< const AutoCalc *>(this),jacob);
 
-//        std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
-//        std::cout<<jacob<<std::endl;
-//        std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
-//        std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
-//        std::cout<<jac_block<<std::endl;
-//        std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
-//        std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
-//        Eigen::MatrixXd matyup;
-//        matyup=jac_block-jacob;
-//        std::cout<<matyup<<std::endl;
-//        std::cout<<" "<<std::endl;
-        Matrix_sparser sparser;
-        sparser.Copy_Mat_2_Sparse_block(jac_block,jacob,0,0,jacob.rows(),jacob.cols());
+        std::cout<<"-----------------numerical -   results   -  down --here   ----------------------"<<std::endl;
+        std::cout<<jacob<<std::endl;
+        std::cout<<"-----------------numerical -   results   -  up  --here    ----------------------"<<std::endl;
+        std::cout<<"-----------------Analytical -   results   -  down  --here    ----------------------"<<std::endl;
+        std::cout<<jac_block<<std::endl;
+        std::cout<<"-----------------Analytical -   results   -  up  --here    ----------------------"<<std::endl;
+        std::cout<<"-----------------relative bias is below    ----------------------"<<std::endl;
+        Eigen::MatrixXd matyup;
+        matyup=jac_block-jacob;
+        std::cout<<matyup<<std::endl;
+        std::cout<<" "<<std::endl;
+        jac_block=jacob.sparseView();
 
     }
 

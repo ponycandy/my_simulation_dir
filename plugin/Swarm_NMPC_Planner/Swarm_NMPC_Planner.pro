@@ -3,6 +3,7 @@ QT       += core gui testlib xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include($$PWD/Ifopt_dependency.pri)
+include(../../3rdlib/ATGlib/ATGlib_dependency.pri)
 CONFIG += c++17
 
 

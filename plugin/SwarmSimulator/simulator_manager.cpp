@@ -1,6 +1,7 @@
 ﻿#include "simulator_manager.h"
 #include "SwarmSimulatorActivator.h"
 #include "algorithm"
+#include "xmlcore.h"
 simulator_manager::simulator_manager(QObject *parent) : QObject(parent)
 {
     Animateservice *Anim_service_0=SwarmSimulatorActivator::getService<Animateservice>("Animateservice");
@@ -54,31 +55,41 @@ void simulator_manager::startsim()
     //    SimDy_service->start_sim();
 }
 
-void simulator_manager::init_plant(int steptime, int init_method, SwarmAgent *singleagents)
+void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent *singleagents)
 {
-    QString agent_mat=f_Read_TXT("./config/agent_mat.txt");
-    QString obs_mat=f_Read_TXT("./config/obs_mat.txt");
-    int agent_num=f_get_mat_height(agent_mat);
-    int status_num=f_get_mat_width(agent_mat);
-    int obs_num=f_get_mat_height(obs_mat);
-    m_sim->delta_t=steptime;
-    m_sim->agent_num=agent_num;
-    m_sim->obs_num=obs_num;
+    //需要更改，从外部选择配置文件！
+    int states_num=0;
+    xmlCore xmlreader(configfile.toStdString());
+
+    xmlreader.xmlRead("agent_num",m_sim->agent_num);
+    xmlreader.xmlRead("states_num",states_num);
+
+    xmlreader.xmlRead("obs_num",m_sim->obs_num);
+    xmlreader.xmlRead("steptime",m_sim->delta_t);
+
+    Eigen::MatrixXd agent_mat;
+    agent_mat.resize(m_sim->agent_num,states_num);
+    xmlreader.xmlRead("agent_mat",agent_mat);
+
     SimDy_service->set_delta_t(m_sim->delta_t);
     SimDy_service->set_ODE(m_sim);
-    for(int i=1;i<=obs_num;i++)
+
+    Eigen::MatrixXd obs_mat;
+    for(int i=1;i<=m_sim->obs_num;i++)
     {
         SwarmObstacle *new_obs=new SwarmObstacle;
+        QString obs_term_name="OBS_"+QString::number(i)+"_vertexnum";
+        xmlreader.xmlRead(obs_term_name.toStdString(),new_obs->vertex_num);
         new_obs->ID=i;
-        new_obs->vertex_num=f_get_line_length(obs_mat,i-1)/2;
-
+        obs_mat.resize(new_obs->vertex_num,2);
+        obs_term_name="OBS_"+QString::number(i)+"_vertexparams";
         std::vector<double> point_x_vec;
         std::vector<double> point_y_vec;
-
+        xmlreader.xmlRead(obs_term_name.toStdString(),obs_mat);
         for(int j=1;j<=new_obs->vertex_num;j=j+1)
         {
-            double x= f_get_mat_at(i-1,(j-1)*2,obs_mat).toDouble();
-            double y= f_get_mat_at(i-1,1+(j-1)*2,obs_mat).toDouble();
+            double x= obs_mat(j-1,0);
+            double y= obs_mat(j-1,1);
             point_x_vec.push_back(x);
             point_y_vec.push_back(y);
             new_obs->vertex_map<<QPointF(x,y);
@@ -97,21 +108,21 @@ void simulator_manager::init_plant(int steptime, int init_method, SwarmAgent *si
         m_sim->obsbounding_group.insert(i,new_obs);
     }
 
-    for(int i=1;i<=agent_num;i++)
+    for(int i=1;i<=m_sim->agent_num;i++)
     {
         SwarmAgent *new_agent=singleagents->clone_agent();
-        new_agent->state_vector.resize(status_num,1);
+        new_agent->state_vector.resize(states_num,1);
         new_agent->ID=i;
         for(int j=0;j<new_agent->status_num;j++)
         {
-            new_agent->state_vector(j,0)=f_get_mat_at(i-1,j,agent_mat).toDouble();
+            new_agent->state_vector(j,0)=agent_mat(i-1,j);
             new_agent->act_vector.resize(new_agent->action_num,1);
             new_agent->act_vector.setZero();
         }
         m_sim->Agents_group.insert(i,new_agent);
     }
-    m_sim->state_array.resize(agent_num,status_num);
-    m_sim->act_array.resize(agent_num,singleagents->action_num);
+    m_sim->state_array.resize(m_sim->agent_num,states_num);
+    m_sim->act_array.resize(m_sim->agent_num,singleagents->action_num);
     m_sim->act_array.setZero();
     m_sim->state_array.setZero();
     m_sim->update_obs();

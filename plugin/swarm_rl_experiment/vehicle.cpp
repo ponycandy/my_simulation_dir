@@ -15,7 +15,7 @@ vehicle::vehicle():SwarmAgent()
 
 void vehicle::state_update()
 {
-   heading_angle=state_vector(2,0);
+    heading_angle=state_vector(2,0);
     pos_xy(0,0)=state_vector(0,0);
     pos_xy(1,0)=state_vector(1,0);
     vel_xy(0,0)=act_vector(0,0)*cos(heading_angle);

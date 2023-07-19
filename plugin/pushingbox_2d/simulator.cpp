@@ -61,6 +61,8 @@ void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 
 void Simulator::control(Eigen::MatrixXd sensor, Eigen::MatrixXd state_mat)
 {
+//        control_0(0,0)=-state(0,0)-state(1,0);
+//         control_0(1,0)=-state(2,0)-state(3,0);
 }
 void Simulator::sensor(Eigen::MatrixXd state_mat)
 {

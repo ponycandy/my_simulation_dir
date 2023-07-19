@@ -24,4 +24,6 @@ MPC_Tracking_Controller \
 test_MPC_nonlinear_tracking \
 test_MPC_tracker \
 testNonlinearSOlver \
-test_NMPC_Plugin
+test_NMPC_Plugin \
+    testautograd   \
+    Swarm_obstacle_avoid   \
