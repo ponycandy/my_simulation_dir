@@ -193,6 +193,54 @@ collison_result collisionCalculator::polygen_circle_detect(double circle_x, doub
                 return result;
             }
         }
+        else
+        {
+            if(vector_dot(edge,edge1)>0 && vector_dot(edge,edge2)>0)
+            {
+                result.closest_point.x=obs.at(index-1).x();
+                result.closest_point.y=obs.at(index-1).y();
+                result.closest_point.last_vertex=former;
+                result.closest_point.next_vertex=latter;
+                result.closest_point.edge1_x=edge1(0,0);result.closest_point.edge1_y=edge1(1,0);
+                result.closest_point.edge2_x=edge2(0,0);result.closest_point.edge2_y=edge2(1,0);
+                //                result.closest_point.edg1=edge1;
+                //                result.closest_point.edg2=edge2;
+                return result;
+            }
+            if(vector_dot(edge,edge1)<0 && vector_dot(edge,edge2)>0)
+            {
+                x0=edge1(0,0);y0=edge1(1,0);x1=obs.at(index-1).x();y1=obs.at(index-1).y();
+                x2=circle_x;y2=circle_y;
+
+                result.closest_point.x=(1/(pow(x0,2)+pow(y0,2)))*(x0*y0*(y2-y1)+pow(y0,2)*x1+pow(x0,2)*x2);
+                result.closest_point.y=(1/(pow(x0,2)+pow(y0,2)))*(x0*y0*(x2-x1)+pow(y0,2)*y2+pow(x0,2)*y1);
+                result.closest_point.last_vertex=index;
+                result.closest_point.next_vertex=former;
+                result.closest_point.edge1_x=edge1(0,0);result.closest_point.edge1_y=edge1(1,0);
+                result.closest_point.edge2_x=-edge1(0,0);result.closest_point.edge2_y=-edge1(1,0);
+                //                result.closest_point.edg1=edge1;
+                //                result.closest_point.edg2=-edge1;
+
+
+                return result;
+            }
+            if(vector_dot(edge,edge1)>0 && vector_dot(edge,edge2)<0)
+            {
+                x0=edge2(0,0);y0=edge2(1,0);x1=obs.at(index-1).x();y1=obs.at(index-1).y();
+                x2=circle_x;y2=circle_y;
+
+                result.closest_point.x=(1/(pow(x0,2)+pow(y0,2)))*(x0*y0*(y2-y1)+pow(y0,2)*x1+pow(x0,2)*x2);
+                result.closest_point.y=(1/(pow(x0,2)+pow(y0,2)))*(x0*y0*(x2-x1)+pow(y0,2)*y2+pow(x0,2)*y1);
+                result.closest_point.last_vertex=index;
+                result.closest_point.next_vertex=latter;
+                result.closest_point.edge1_x=edge2(0,0);result.closest_point.edge1_y=edge2(1,0);
+                result.closest_point.edge2_x=-edge2(0,0);result.closest_point.edge2_y=-edge2(1,0);
+
+                //                result.closest_point.edg1=edge2;
+                //                result.closest_point.edg2=-edge2;
+                return result;
+            }
+        }
     }
 
 
