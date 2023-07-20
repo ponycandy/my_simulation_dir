@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameters>
     <agent_num type="int">
-        <value>7</value>
+        <value>1</value>
     </agent_num>
     <states_num type="int">
         <value>3</value>
     </states_num>
     <obs_num type="int">
-        <value>2</value>
+        <value>1</value>
     </obs_num>
     <steptime type="int">
         <value>30</value>
@@ -31,24 +31,23 @@
 <agent_mat type="Eigen::MatrixXd">
 	<value>
 	1.0 2.0 0
-	3.0 3.5 0.1
-	0.0 1.1 0
-	4.0 3.5 0.1
-	-1.0 3.5 0.1
-	2.3 0 3.5
-	-1.2 3.5 0.1
 	</value>
 </agent_mat>
 <OBS_1_vertexnum type="int">
 	<value>
-	3
+	8
 	</value>
 </OBS_1_vertexnum>
 <OBS_1_vertexparams type="Eigen::MatrixXd">
 	<value>
-	6 1
-	8 1
-	8 4
+	9.5 0
+	9 -1
+	8 -1.5
+	7 -1
+	6.5 0
+	7 1
+	8 1.5
+	9 1
 	</value>
 </OBS_1_vertexparams>
 <OBS_2_vertexnum type="int">
