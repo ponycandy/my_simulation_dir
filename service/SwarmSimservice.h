@@ -17,7 +17,7 @@ public:
     virtual QMap<int,SwarmAgent*> getagentgroup()=0;
     virtual void startsim()=0;
     virtual void set_neib_sequnce(int flag)=0;
-    virtual void init_plant(int steptime,int init_method,SwarmAgent *singleagents)=0;//obs的位置在txt文件中指定
+    virtual void init_plant(int steptime,QString configfile,SwarmAgent *singleagents)=0;//obs的位置在txt文件中指定
 
 };
 #define SwarmSimservice_iid "SwarmSimservice"
