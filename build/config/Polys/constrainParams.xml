@@ -5,8 +5,8 @@
     </dim>
 <InitCurve type="Eigen::MatrixXd">
 	<value>
-	0.0 -1.0
-	0.0 -1.0
+	20.0 -1.0
+	20.0 -1.0
 	</value>
 </InitCurve>
 <!-- 矩阵row为dim序数，col为：x,dx-->
