@@ -1,9 +1,7 @@
 <plugins>
-<plugin order="1" name="TCPCommunicator" />
-<plugin order="1" name="C_Python_decode" />
-<plugin order="1" name="Animator" />
-<plugin order="1" name="Simulator" />
-<plugin order="1" name="pushingbox_2d" />
+
+<plugin order="1" name="NonlinearSolver" />
+<plugin order="1" name="testautograd" />
 
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
