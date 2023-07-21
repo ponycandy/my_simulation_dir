@@ -149,7 +149,9 @@ void HMagent::controlfunction()
         pos_close_agent(0,0)=close_agent->x;
         pos_close_agent(1,0)=close_agent->y;
 
-        dot=state_vector(2,0)*edge1(0,0)+state_vector(3,0)*edge2(1,0);
+        dot=state_vector(2,0)*edge1(0,0)+state_vector(3,0)*edge1(1,0);
+        //此处需要仔细考虑一下....仿真使用这个精度是不是就够了...这样的速度判断
+        //这里就不严格按照论文来了
         if(dot>=0)
         {
             edge0=edge1;
