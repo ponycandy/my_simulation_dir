@@ -7,18 +7,18 @@
 simmanager::simmanager(QObject *parent)
     : QObject{parent}
 {
-      auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/testswarm.txt", true);
+    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/testswarm.txt", true);
 
-//    TCPsoc=Swarm_obstacle_avoidActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
-//    Swarm_obstacle_avoidActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
-//                                                ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
-//    //    Animateservice *Anim_service=swarm_rl_experimentActivator::getService<Animateservice>("Animateservice");
-//    TCPsoc->setport("8001","127.0.0.1");
-//    TCPsoc->connectport();
-//    decoder=Swarm_obstacle_avoidActivator::getService<CPYcoderservice>("CPYcoderservice");
+    //    TCPsoc=Swarm_obstacle_avoidActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
+    //    Swarm_obstacle_avoidActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
+    //                                                ,OSGIEVENT::MAT_GET_NOW,Qt::QueuedConnection);
+    //    //    Animateservice *Anim_service=swarm_rl_experimentActivator::getService<Animateservice>("Animateservice");
+    //    TCPsoc->setport("8001","127.0.0.1");
+    //    TCPsoc->connectport();
+    //    decoder=Swarm_obstacle_avoidActivator::getService<CPYcoderservice>("CPYcoderservice");
 
 
-      m_painter=new MYpainter;
+    m_painter=new MYpainter;
     QString filename="./config/swarm/swarm.xml";
     singleone=new vehicle;
     xmlCore xmlreader(filename.toStdString());
@@ -39,7 +39,7 @@ simmanager::simmanager(QObject *parent)
     m_widget->show();
     anim->start_animate();
     dysim=swarmsim->get_simer();
-//    dysim->set_step_in_mode(1);
+    //    dysim->set_step_in_mode(1);
     swarmsim->startsim();
 }
 void simmanager::matrecieved(Eigen::MatrixXd mat)
@@ -74,7 +74,7 @@ void simmanager::matrecieved(Eigen::MatrixXd mat)
         }
         //所有的状态变量存在第一行
 
-//        decoder->sendMAT(matreturn,TCPsoc);//返回3*9矩阵
+        //        decoder->sendMAT(matreturn,TCPsoc);//返回3*9矩阵
         //then send mat
     }
 

@@ -20,7 +20,7 @@ public:
     Tcpcommunicateservice *TCPsoc;
     CPYcoderservice *decoder;
     int agentnum;
-     QMap<int, SwarmAgent *> agentgroup;
+    QMap<int, SwarmAgent *> agentgroup;
     MYpainter *m_painter;
 
 signals:

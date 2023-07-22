@@ -196,30 +196,30 @@ void vehicle::Getlookaheadpoint()
             act_vector(1,0)=-maxOmega;
         }
     }
-//    if(isnan(act_vector(1,0)))
-//    {
-//        act_vector(1,0)=0;
-//    }
-//    if(isnan(act_vector(0,0)))
-//    {
-//        act_vector(0,0)=0;
-//    }
-//    //    act_vector(0,0)=veltracking;
+    //    if(isnan(act_vector(1,0)))
+    //    {
+    //        act_vector(1,0)=0;
+    //    }
+    //    if(isnan(act_vector(0,0)))
+    //    {
+    //        act_vector(0,0)=0;
+    //    }
+    //    //    act_vector(0,0)=veltracking;
 
 
-//    //    QString outcome="agentID: "+QString::number(sinagent->ID)+";direction reverse!"
-//    //                      +QString::number(deltatheta);
-//    //    my_logger->info(outcome.toStdString());
-//    //    my_logger->flush();
-//    qDebug()<<"speed over load what happened?"<<deltatheta<<" vel is "<<act_vector(0,0)<<" omega is"
-//             << act_vector(1,0)<<" L is "<< L<<" predictheadingangle :"<<
-//        sinagent->heading_angle<<" selfheading: "<<this->heading_angle;
+    //    //    QString outcome="agentID: "+QString::number(sinagent->ID)+";direction reverse!"
+    //    //                      +QString::number(deltatheta);
+    //    //    my_logger->info(outcome.toStdString());
+    //    //    my_logger->flush();
+    //    qDebug()<<"speed over load what happened?"<<deltatheta<<" vel is "<<act_vector(0,0)<<" omega is"
+    //             << act_vector(1,0)<<" L is "<< L<<" predictheadingangle :"<<
+    //        sinagent->heading_angle<<" selfheading: "<<this->heading_angle;
 
-//    //    else
-//    //    {
-//    //        act_vector(1,0)=2*veltracking*sin(deltatheta/2)/L;
-//    //        act_vector(0,0)=veltracking;
-//    //    }
+    //    //    else
+    //    //    {
+    //    //        act_vector(1,0)=2*veltracking*sin(deltatheta/2)/L;
+    //    //        act_vector(0,0)=veltracking;
+    //    //    }
 }
 
 void vehicle::fault_set(int option)
