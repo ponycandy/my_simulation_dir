@@ -1,13 +1,14 @@
 #include "dataloggermanager.h"
 #include "DataLoggerActivator.h"
-
+#include "QDebug"
 
 DataloggerManager::DataloggerManager(QObject *parent)
     : QObject{parent}
 {
     Tcpcommunicateservice *tcpservice=DataLoggerActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
     m_serivce=tcpservice->cloneservice();
-    DataLoggerActivator::registerservice(this,"Datalogservice");
+
+    flag=0;
 }
 
 void DataloggerManager::log(QString word, int level)
@@ -32,13 +33,44 @@ void DataloggerManager::log(QString word, int level)
 
 }
 
+void DataloggerManager::log(int rows, int colums, double value)
+{
+    short Id=0xaaff;
+    QString msg=" "+QString::number(rows)+" "+QString::number(colums)+" "+QString::number(value)+" ";
+    std::string data2send=spdgcreatePacket(msg.toStdString(),Id);
+    QByteArray data2=QByteArray::fromStdString(data2send);
+    m_serivce->send(data2);
+    return;
+}
+
 void DataloggerManager::createlogfile(QString logfilename, int port)
 {
     QString command=QString("start ./logs/SPDG_logger.exe ")+QString::number(port)+" "+logfilename;
-    //    system(command.toStdString().c_str());
+    system(command.toStdString().c_str());
     m_serivce->setport(QString::number(port),"127.0.0.1");
     m_serivce->connectport();
     portname.push_back(m_serivce);
+    flag=1;
+}
+
+void DataloggerManager::createxlsfile(QString logfilename)
+{
+    customAssert(flag==1,"must create logfile before create xls!");
+    short Id=0xaaee;
+    std::string data2send=spdgcreatePacket(logfilename.toStdString(),Id);
+    QByteArray data2=QByteArray::fromStdString(data2send);
+    m_serivce->send(data2);
+    return;
+}
+
+void DataloggerManager::savexlsfile()
+{
+    //确保至少写入一个数字，否则将会无法保存！！
+    short Id=0xbbaa;
+    std::string data2send=spdgcreatePacket(" ",Id);
+    QByteArray data2=QByteArray::fromStdString(data2send);
+    m_serivce->send(data2);
+    return;
 }
 
 std::string DataloggerManager::spdgcreatePacket(const std::string &message, short Id)
@@ -56,4 +88,20 @@ std::string DataloggerManager::spdgcreatePacket(const std::string &message, shor
     std::string packet = headerStr + message;
 
     return packet;
+}
+
+void DataloggerManager::customAssert(bool condition, const char *message)
+{
+    if (!condition)
+    {
+        qDebug() << "Assertion Failed: " << message ;
+        // Additional print statements or error handling can be added here
+        abort(); // Terminate the program
+    }
+}
+
+Datalogservice *DataloggerManager::cloneservice()
+{
+    DataloggerManager *newservice=new DataloggerManager;
+    return newservice;
 }
