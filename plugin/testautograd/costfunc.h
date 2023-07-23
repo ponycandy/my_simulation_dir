@@ -5,8 +5,8 @@
 #include "ifopt/cost_term.h"
 #include "Eigen/core"
 #include "autograd/variablematrix.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
+#include "service/Datalogservice.h"
+
 class costfunc :public ifopt::CostTerm
 {
 public:
@@ -17,6 +17,7 @@ public:
     mutable Eigen::MatrixXd eigendata;
     mutable Eigen::MatrixXd Jac;
     mutable ATtensor outcome;
+    mutable Datalogservice *m_service;
 };
 
 #endif // COSTFUNC_H

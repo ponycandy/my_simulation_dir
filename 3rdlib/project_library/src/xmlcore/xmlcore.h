@@ -40,7 +40,7 @@ public:
     bool paramNameCheck(QString paramName);
 
     bool isRight;
-    QMap<QString,QString> xmlReadAllelement();
+//    QMap<QString,QString> xmlReadAllelement();
 private:
     bool doc_load();
 

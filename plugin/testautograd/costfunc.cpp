@@ -2,19 +2,21 @@
 #include "iostream"
 
 
-
+#include "testautogradActivator.h"
 costfunc::costfunc():ifopt::CostTerm("cost")
 {
 
     m_variable.resize(5,1);//假设变量为x1~x5
     eigendata.resize(5,5);
     Jac.resize(1,5);
-    //    eigendata<<2 , 1 , 0 , 0.7 , 9,
-    //        1 , 1 , 3 , 0.8 ,0,
-    //        0 , 3 , 3 , 0.8 ,0,
-    //        0.7,0.8,0.8, 0   ,0,
-    //        9 ,0 ,0 , 0   , 0;
+
     eigendata.setIdentity();
+    m_service=testautogradActivator::getService<Datalogservice>("Datalogservice");
+    m_service->createlogfile("./logs/testlog1.txt",8002);
+    m_service->createxlsfile(QString("./logs/testmyloggerfile.xlsx"));
+    m_service->log(1,1,2.0);
+    m_service->log(2,2,3.0);
+    m_service->savexlsfile();
 }
 
 double costfunc::GetCost() const
@@ -35,6 +37,7 @@ double costfunc::GetCost() const
 //    my_logger->flush();
     //因为程序没有退出，所以务必在这里手动刷新，否则文本是没有写入的！
     //logger不能够放在ipopt的优化程序内
+    m_service->log(QString::number(double(outcome[0][0]->value_)),2);
 
     return outcome[0][0]->value_;
 }

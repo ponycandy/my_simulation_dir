@@ -139,18 +139,6 @@ void vehicle::predicitTraj()
     for(int j=0;j<predicthorizon;j++)
     {
         dysim->step_in();
-        //纪录轨迹，观测合理性
-
-        //        for(int i=1;i<=agentnum;i++)
-        //        {
-        //            SwarmAgent *sinagent=agentgroup[i];
-        //            QString outcome="agentID: "+QString::number(sinagent->ID)+"; x is: "
-        //                              +QString::number(sinagent->pos_xy(0,0)) + "; y is: "
-        //                              +QString::number(sinagent->pos_xy(1,0));
-        //            my_logger->info(outcome.toStdString());
-        //        }
-
-
 
     }
     //    my_logger->flush();
@@ -196,30 +184,6 @@ void vehicle::Getlookaheadpoint()
             act_vector(1,0)=-maxOmega;
         }
     }
-    //    if(isnan(act_vector(1,0)))
-    //    {
-    //        act_vector(1,0)=0;
-    //    }
-    //    if(isnan(act_vector(0,0)))
-    //    {
-    //        act_vector(0,0)=0;
-    //    }
-    //    //    act_vector(0,0)=veltracking;
-
-
-    //    //    QString outcome="agentID: "+QString::number(sinagent->ID)+";direction reverse!"
-    //    //                      +QString::number(deltatheta);
-    //    //    my_logger->info(outcome.toStdString());
-    //    //    my_logger->flush();
-    //    qDebug()<<"speed over load what happened?"<<deltatheta<<" vel is "<<act_vector(0,0)<<" omega is"
-    //             << act_vector(1,0)<<" L is "<< L<<" predictheadingangle :"<<
-    //        sinagent->heading_angle<<" selfheading: "<<this->heading_angle;
-
-    //    //    else
-    //    //    {
-    //    //        act_vector(1,0)=2*veltracking*sin(deltatheta/2)/L;
-    //    //        act_vector(0,0)=veltracking;
-    //    //    }
 }
 
 void vehicle::fault_set(int option)

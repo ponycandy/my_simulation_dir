@@ -64,10 +64,12 @@ void Simulator::broad_cast(Eigen::MatrixXd state_mat, Eigen::MatrixXd act_mat, E
 }
 void Simulator::detect_neibor(Eigen::MatrixXd state_mat)
 {
+
     double dis=0;
     for(int i=1;i<=agent_num;i++)
     {
         Agents_group.value(i)->remove_all_neibors();
+        Agents_group.value(i)->remove_all_sensorsubject();
     }
     for(int iter1=1;iter1<=agent_num;iter1++)
     {
@@ -75,11 +77,21 @@ void Simulator::detect_neibor(Eigen::MatrixXd state_mat)
         {
             dis=pow(Agents_group.value(iter1)->pos_xy(0,0)-Agents_group.value(iter2)->pos_xy(0,0),2)
                     +pow(Agents_group.value(iter1)->pos_xy(1,0)-Agents_group.value(iter2)->pos_xy(1,0),2);
-            if(dis<pow(Agents_group.value(iter1)->communication_range,2))
+            if(dis<pow(Agents_group.value(iter1)->communication_range,2) && dis<pow(Agents_group.value(iter2)->communication_range,2))
             {
+            //这里需要两种判断：1.感知判断，添加appendsensor  2.通讯判断，添加appendneibor
                 Agents_group.value(iter1)->appendNeibor(Agents_group.value(iter2),dis);
                 Agents_group.value(iter2)->appendNeibor(Agents_group.value(iter1),dis);
-
+                //一般认为，只有满足双向连接的通讯才可以作为邻居
+            //不然就会默认：感知=通讯，将会无法适用于目标追踪
+            }
+            if(dis<pow(Agents_group.value(iter1)->sensor_range,2))
+            {
+                Agents_group.value(iter1)->appendsensorsubject(Agents_group.value(iter2));
+            }
+            if(dis<pow(Agents_group.value(iter2)->sensor_range,2))
+            {
+                Agents_group.value(iter2)->appendsensorsubject(Agents_group.value(iter1));
             }
 
         }
@@ -93,6 +105,7 @@ void Simulator::detect_neibor(Eigen::MatrixXd state_mat)
             Agents_group.value(i)->sorting();
         }
     }
+
 
 }
 bool Simulator::within_range(Eigen::MatrixXd posxy, SwarmObstacle *obs)
@@ -120,6 +133,10 @@ void Simulator::detect_collision()
                                     Agents_group.value(i)->pos_xy(1,0),Agents_group.value(i)->collision_r,obs->vertex_map);
                 if(result.flag==1)
                 {
+                    //一般都将collision range设置为communiaction range，涉及到的假设就是，无人车
+                    //之间只能用视觉传感器感知对方，所以collisionr和communication_r是一样的
+                    //当让，也存在collision_r小于communication_r的情况
+                    //但是，一般不考虑无人车之间的碰撞
                     SwarmAgent* as=Agents_group.value(i);
                     result.closest_point.obs_ID=j;
                     ClosePoint *a_point=new ClosePoint;

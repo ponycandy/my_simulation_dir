@@ -18,7 +18,6 @@ pythonCpptcpptest \
 pushingbox_2d \
 Simulator \
 swarm_rl_experiment \
-SwarmSimulator \
 TCPCommunicator \
 MPC_Tracking_Controller \
 test_MPC_nonlinear_tracking \
@@ -26,4 +25,6 @@ test_MPC_tracker \
 testNonlinearSOlver \
 test_NMPC_Plugin \
     testautograd   \
-    Swarm_obstacle_avoid   \
+    DataLogger   \
+    swarm_Target_Incept_with_obs_avoidence   \
+    SwarmSimulator

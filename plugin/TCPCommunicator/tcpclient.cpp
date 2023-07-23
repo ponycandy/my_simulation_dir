@@ -51,6 +51,12 @@ void TCPClient::send(QByteArray data)
     }
 }
 
+void TCPClient::send(QString data)
+{
+    QByteArray byteArr = data.toUtf8();
+    send(byteArr);
+}
+
 void TCPClient::setport(QString port, QString ip)
 {
     IP=ip;

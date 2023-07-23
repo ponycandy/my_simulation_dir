@@ -1,5 +1,6 @@
 ﻿#include "mypainter.h"
 #include "QtDebug"
+#include "xmlcore.h"
 MYpainter::MYpainter(QObject *parent) : QObject(parent)
 {
     agent_brush.setColor(Qt::red);
@@ -35,7 +36,7 @@ void MYpainter::draw()
         }
         m_animator->brush_painter->setBrush(circle_brush);
 
-        m_animator->draw_circle(iter1.value()->pos_xy(0,0),iter1.value()->pos_xy(1,0),iter1.value()->collision_r);
+        m_animator->draw_circle(iter1.value()->pos_xy(0,0),iter1.value()->pos_xy(1,0),iter1.value()->communication_range);
 
         m_animator->brush_painter->setBrush(close_brush);
         QMap<int, ClosePoint*>::const_iterator iter11 = iter1.value()->closepoint_map.cbegin();

@@ -8,6 +8,7 @@ SwarmAgent::SwarmAgent()
     vel_xy.resize(2,1);
     vel_xy.setZero();
     neib_num=0;
+    sensor_subject_num=0;
     obs_closet_point_num=0;
 }
 
@@ -16,6 +17,12 @@ void SwarmAgent::appendNeibor(SwarmAgent *agent, double dis)
     neib_num+=1;
     neib_map.insert(neib_num,agent);  //一般按照从近到远的顺序append
     neib_Map_distance.insert(neib_num,dis);
+}
+
+void SwarmAgent::appendsensorsubject(SwarmAgent *agent)
+{
+    sensor_subject_num+=1;
+    sensor_subject_map.insert(sensor_subject_num,agent);  //一般按照从近到远的顺序append
 }
 
 void SwarmAgent::remove_all_closepoint()
@@ -65,6 +72,15 @@ void SwarmAgent::remove_all_neibors()
         neib_Map_distance.remove(it);
     }
     neib_num=0;
+}
+
+void SwarmAgent::remove_all_sensorsubject()
+{
+    for(int it=1;it<=sensor_subject_num;it++)
+    {
+        sensor_subject_map.remove(it);
+    }
+    sensor_subject_num=0;
 }
 
 void SwarmAgent::append_closepointpair(int j, ClosePoint *closest)
