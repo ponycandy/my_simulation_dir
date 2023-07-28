@@ -9,9 +9,19 @@
     <jacobian_approximation type="string">
         <value>exact</value>
     </jacobian_approximation>
+<!--finite-difference-values: user-provided structure, values by finite differences-->
+  <!--exact: user-provided derivatives-->
+  <nlp_scaling_method type="string">
+        <value>gradient-based</value>
+    </nlp_scaling_method>
+  <check_derivatives_for_naninf type="string">
+        <value>yes</value>
+    </check_derivatives_for_naninf>
     <print_level type="int">
-        <value>1</value>
+        <value>5</value>
     </print_level>
+
+
 
 
 </parameters>

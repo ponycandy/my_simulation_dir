@@ -1,0 +1,7 @@
+1.
+restoration failed
+
+查看输出的inf_pr项的最大值，如果是6.28e66这种非常大的值
+那么就很有可能是因为
+初始化constrain的时候，constrain的数目不对，导致多出来几行没有赋值的约束参数
+记得std::cout<<g<<std::endl查看一下
