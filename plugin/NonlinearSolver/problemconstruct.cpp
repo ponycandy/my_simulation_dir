@@ -11,17 +11,26 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     xmlCore xml_reader(configfiename.toStdString());
     std::string linear_solver;
     std::string jacobian_approximation;
+    std::string nlp_scaling_method;
+    std::string check_derivatives_for_naninf;
+    double acceptable_obj_change_tol;
     int print_level;
     double tol;
     xml_reader.xmlRead("linear_solver",linear_solver);
+    xml_reader.xmlRead("acceptable_obj_change_tol",acceptable_obj_change_tol);
     xml_reader.xmlRead("jacobian_approximation",jacobian_approximation);
     xml_reader.xmlRead("print_level",print_level);
     xml_reader.xmlRead("tol",tol);
-
+    xml_reader.xmlRead("nlp_scaling_method",nlp_scaling_method);
+    xml_reader.xmlRead("check_derivatives_for_naninf",check_derivatives_for_naninf);
     ipopt.SetOption("linear_solver", linear_solver);
-    ipopt.SetOption("jacobian_approximation", "exact");
+    ipopt.SetOption("nlp_scaling_method", nlp_scaling_method);
+    ipopt.SetOption("jacobian_approximation", jacobian_approximation);
     ipopt.SetOption("tol",tol);
     ipopt.SetOption("print_level",print_level);
+    ipopt.SetOption("check_derivatives_for_naninf",check_derivatives_for_naninf);
+    ipopt.SetOption("acceptable_obj_change_tol",acceptable_obj_change_tol);
+
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)
@@ -52,6 +61,9 @@ void ProblemConstruct::init_num(int statenum, int actnum, int decisionnum)
     constrain_num=dec_num*statenum;
     constrain_num_dynamics=constrain_num;
     total_varaible_num=state_num_plus_act_num*dec_num;
+    selflower.resize(actnum,1);
+    selflower.setConstant(-99999);
+    selfhigher=-selflower;
 
 }
 

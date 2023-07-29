@@ -14,7 +14,7 @@ void Dynamics_varaible_Set::SetVariables(const VectorXd &x)
 void Dynamics_varaible_Set::init_parents()
 {
     all_variable.resize(total_varaible_num,1);
-    all_variable.setZero();
+    all_variable.setRandom();
 }
 
 void Dynamics_varaible_Set::set_cons_num(int statenum, int actnum, int decisionnum)
