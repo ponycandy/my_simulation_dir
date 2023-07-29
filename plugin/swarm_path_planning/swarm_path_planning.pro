@@ -31,7 +31,8 @@ SOURCES += \
     obs_avoidence.cpp \
     planner_manager.cpp \
     swarm_ode.cpp \
-    swarm_path_planningActivator.cpp
+    swarm_path_planningActivator.cpp \
+    topology_constrain.cpp
 
 
 
@@ -43,6 +44,7 @@ HEADERS += \
     obs_avoidence.h \
     planner_manager.h \
     swarm_ode.h \
-    swarm_path_planningActivator.h
+    swarm_path_planningActivator.h \
+    topology_constrain.h
 
 

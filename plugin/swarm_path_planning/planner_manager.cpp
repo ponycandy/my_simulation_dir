@@ -6,6 +6,7 @@
 #include "minimize_topology.h"
 #include "swarm_path_planningActivator.h"
 #include "service/Datalogservice.h"
+#include "topology_constrain.h"
 planner_manager::planner_manager(QObject *parent)
     : QObject{parent}
 {
@@ -59,9 +60,27 @@ planner_manager::planner_manager(QObject *parent)
     m_service->AddConstraintSet(consptr1);
 
 
-    minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
-    std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
-    m_service->AddCostSet(consptr2);
+//    minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
+//    std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
+//    m_service->AddCostSet(consptr2);
+
+    swarmvehicle var_struct;
+    common_initialize(var_struct);
+    int op=0;
+    for(int steps=0;steps<decnum;steps++)
+    {
+        for(int i=0;i<agentnum;i++)
+        {
+            int edge_num=(var_struct.steps[steps])->agents[i]->edgenum;
+            for(int j=0;j<edge_num;j++)
+            {
+                  op+=1;
+            }
+        }
+    }
+    Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
+    std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
+    m_service->AddConstraintSet(consptr3);
 //一个想法是将最优化转化为约束问题
     //但是，我们需要搞明白这么干不会有用的机制
     //而不是频繁的更换，不知道底层原理是没有用的
