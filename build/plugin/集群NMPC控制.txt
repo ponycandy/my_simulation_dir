@@ -14,7 +14,6 @@
 
 
 
-                <plugin order="1" name="Test_Use_Hession" />
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
 </plugins>
