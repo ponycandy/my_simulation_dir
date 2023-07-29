@@ -27,4 +27,6 @@ test_NMPC_Plugin \
     testautograd   \
     DataLogger   \
     swarm_Target_Incept_with_obs_avoidence   \
-    SwarmSimulator
+    SwarmSimulator \
+    swarm_path_planning   \
+    Test_Use_Hession   \
