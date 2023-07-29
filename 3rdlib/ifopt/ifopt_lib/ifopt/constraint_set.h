@@ -81,7 +81,7 @@ public:
    * FillJacobianBlock().
    */
   Jacobian GetJacobian() const final;
-
+  Jacobian GetSingleHession(int irow) const;
   /**
    * @brief Set individual Jacobians corresponding to each decision variable set.
    * @param var_set  Set of variables the current Jacobian block belongs to.

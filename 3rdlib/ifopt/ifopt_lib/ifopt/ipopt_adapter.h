@@ -89,7 +89,11 @@ private:
 
   /** Method to return the gradient of the objective */
   virtual bool eval_grad_f(Index n, const double* x, bool new_x, double* grad_f);
-
+  virtual bool eval_h(Ipopt::Index n, const Ipopt::Number *x, bool new_x,
+                            Ipopt::Number obj_factor, Ipopt::Index m,
+                            const Ipopt::Number *lambda, bool new_lambda,
+                            Ipopt::Index nele_hess,
+                      Ipopt::Index *iRow, Ipopt::Index *jCol, Ipopt::Number *values);
   /** Method to return the constraint residuals */
   virtual bool eval_g(Index n, const double* x, bool new_x, Index m, double* g);
 

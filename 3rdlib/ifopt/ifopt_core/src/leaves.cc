@@ -76,6 +76,34 @@ ConstraintSet::GetJacobian () const
   return jacobian;
 }
 
+Component::Jacobian ConstraintSet::GetSingleHession(int irow) const
+{
+  Jacobian Hes(variables_->GetRows(), variables_->GetRows());
+
+  int col = 0;
+  Jacobian Heslocal;
+  std::vector< Eigen::Triplet<double> > triplet_list;
+
+  for (const auto& vars : variables_->GetComponents()) {
+    int n = vars->GetRows();
+    Heslocal.resize(n, n);
+
+    FillHessionBlock(vars->GetName(), Heslocal);
+    // reserve space for the new elements to reduce memory allocation
+    triplet_list.reserve(triplet_list.size()+Heslocal.nonZeros());
+
+    // create triplets for the derivative at the correct position in the overall Jacobian
+    for (int k=0; k<Heslocal.outerSize(); ++k)
+      for (Jacobian::InnerIterator it(Heslocal,k); it; ++it)
+        triplet_list.push_back(Eigen::Triplet<double>(it.row(), col+it.col(), it.value()));
+    col += n;
+  }
+
+  // transform triplet vector into sparse matrix
+  Hes.setFromTriplets(triplet_list.begin(), triplet_list.end());
+  return Hes;
+}
+
 void
 ConstraintSet::LinkWithVariables(const VariablesPtr& x)
 {

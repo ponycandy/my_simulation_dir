@@ -158,10 +158,24 @@ Problem::EvalNonzerosOfJacobian (const double* x, double* values)
   std::copy(jac.valuePtr(), jac.valuePtr() + jac.nonZeros(), values);
 }
 
+void Problem::EvalNonzerosOfHession(const double *x, double *values, double obj_factor, double *lambda)
+{
+  SetVariables(x);
+  Jacobian Hes = GetHessionOfCosts(obj_factor,lambda);
+
+  Hes.makeCompressed(); // so the valuePtr() is dense and accurate
+  std::copy(Hes.valuePtr(), Hes.valuePtr() + Hes.nonZeros(), values);
+}
+
 Problem::Jacobian
 Problem::GetJacobianOfConstraints () const
 {
   return constraints_.GetJacobian();
+}
+
+Problem::Jacobian Problem::GetHessionOfCosts(double obj_factor, double *lambda)
+{
+  return constraints_.GetHession(obj_factor,lambda);
 }
 
 Problem::Jacobian

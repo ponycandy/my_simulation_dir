@@ -115,7 +115,8 @@ public:
    * @li Not sensible for Variable.
    */
   virtual Jacobian GetJacobian() const = 0;
-
+  virtual Jacobian GetHession(double obj_factor,double *lambuda) const=0;
+  virtual Jacobian GetSingleHession(int irow)  const = 0;
   /**
    * @brief Returns the number of rows of this component.
    */
@@ -178,6 +179,7 @@ public:
   // see Component for documentation
   VectorXd GetValues   () const override;
   Jacobian GetJacobian () const override;
+  Jacobian GetHession(double obj_factor,double *lambuda) const override;
   VecBound GetBounds   () const override;
   void SetVariables(const VectorXd& x) override;
   void PrintAll() const;
