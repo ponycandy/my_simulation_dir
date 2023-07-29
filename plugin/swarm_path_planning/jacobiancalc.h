@@ -8,6 +8,9 @@ public:
     Jacobiancalc();
     Eigen::MatrixXd jacobica(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat) override;
     int agent_Num;
+    Eigen::MatrixXd returnmat;
+    Eigen::MatrixXd JacBlock;
+
 };
 
 #endif // JACOBIANCALC_H

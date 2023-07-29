@@ -11,6 +11,7 @@ public:
 
     Eigen::MatrixXd ode_function(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat) override;
     int agent_Num;
+    Eigen::MatrixXd dstate;
 signals:
 
 };

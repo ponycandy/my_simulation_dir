@@ -3,7 +3,7 @@
 
 Collision_Avoidence::Collision_Avoidence(int num, std::string name):ifopt::ConstraintSet(num,name)
 {
-    m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+//    m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
     xmlCore xmlreader("./config/swarmmpc/swarm.xml");
 
     xmlreader.xmlRead("agent_num",agentnum);
@@ -14,7 +14,7 @@ Collision_Avoidence::Collision_Avoidence(int num, std::string name):ifopt::Const
     stateMat.resize(3*agentnum,decnum);
     constrainnum=num;
     m_jac.resize(constrainnum,5*agentnum*decnum);
-    m_service->createlogfile("./log/optimization_process.txt",8054);
+//    m_service->createlogfile("./log/optimization_process.txt",8054);
 
 }
 
@@ -50,15 +50,13 @@ ifopt::Component::VectorXd Collision_Avoidence::GetValues() const
                 m_jac(m,indexofyi)=2*yi-2*yj;
                 m_jac(m,indexofxj)=2*xj-2*xi;
                 m_jac(m,indexofyj)=2*yj-2*yi;
-                QString value="g("+QString::number(m)+") is " +QString::number(distance_error);
+//                QString value="g("+QString::number(m)+") is " +QString::number(distance_error);
                 m+=1;
 
-                m_service->log(value,2);
+//                m_service->log(value,2);
             }
         }
     }
-    std::cout<<"start of g"<<std::endl;
-    std::cout<<g<<std::endl;
     //碰撞约束完成,雅可比计算相对比较简单，就不用Tensor了
     return g;
 }
@@ -78,6 +76,5 @@ ifopt::Component::VecBound Collision_Avoidence::GetBounds() const
 void Collision_Avoidence::FillJacobianBlock(std::string var_set, Jacobian &jac_block) const
 {
     GetValues();
-    m_jac.setZero();
     jac_block=m_jac.sparseView();
 }

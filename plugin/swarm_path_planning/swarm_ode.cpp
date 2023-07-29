@@ -10,15 +10,15 @@ Swarm_ODE::Swarm_ODE(QObject *parent)
 
     xmlreader.xmlRead("agent_num",agent_Num);
     xmlreader.xmlRead("decnum",decnum);
+    dstate.resize(3*agent_Num,1);
 
 }
 
 
 Eigen::MatrixXd Swarm_ODE::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 {
-    Eigen::MatrixXd dstate;
-    dstate.resize(3*agent_Num,1);
-    dstate.setZero();
+
+
     for(int i=0;i<agent_Num;i++)
     {
         double x=state_mat(3*i+0);

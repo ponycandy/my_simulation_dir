@@ -35,12 +35,12 @@ double minimize_Topology::GetCost() const
                 single_vehicle_data *neib=var_struct.steps[steps]->agents[ID-1];
                 double Dis=pow((var_struct.steps[steps]->agents[i]->posxy-neib->posxy).norm(),2)-length*length;
 
-                error+=Dis;
+                error+=(Dis*Dis)/(100*agentnum*decnum);
 
-                m_jac(0,var_struct.steps[steps]->agents[i]->indexofx)+=2*(var_struct.steps[steps])->agents[i]->x;
-                m_jac(0,var_struct.steps[steps]->agents[i]->indexofy)+=2*(var_struct.steps[steps])->agents[i]->y;
-                m_jac(0,var_struct.steps[steps]->agents[j]->indexofx)+=2*(var_struct.steps[steps])->agents[j]->x;
-                m_jac(0,var_struct.steps[steps]->agents[j]->indexofy)+=2*(var_struct.steps[steps])->agents[j]->y;
+                m_jac(0,var_struct.steps[steps]->agents[i]->indexofx)+=4*Dis*((var_struct.steps[steps])->agents[i]->x-neib->x)/(agentnum*decnum);
+                m_jac(0,var_struct.steps[steps]->agents[i]->indexofy)+=4*Dis*((var_struct.steps[steps])->agents[i]->y-neib->y)/(agentnum*decnum);
+                m_jac(0,var_struct.steps[steps]->agents[ID-1]->indexofx)+=4*Dis*(-(var_struct.steps[steps])->agents[i]->x+neib->x)/(agentnum*decnum);
+                m_jac(0,var_struct.steps[steps]->agents[ID-1]->indexofy)+=4*Dis*(-(var_struct.steps[steps])->agents[i]->y+neib->y)/(agentnum*decnum);
 
             }
         }

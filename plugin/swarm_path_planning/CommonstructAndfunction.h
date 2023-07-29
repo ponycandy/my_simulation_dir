@@ -137,9 +137,9 @@ void unpackvariable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
         for(int i=0;i<agentnum;i++)
         {
             single_vehicle_data* a_vehicle=var_struct.steps[k]->agents[i];//不是插入，而是更改
-            a_vehicle->x=stateMat(3*i+0,k);a_vehicle->indexofx=k*5*agentnum+3*i+2;
-            a_vehicle->y=stateMat(3*i+1,k);a_vehicle->indexofy=k*5*agentnum+3*i+3;
-            a_vehicle->phi=stateMat(3*i+2,k);a_vehicle->indexofphi=k*5*agentnum+3*i+4;
+            a_vehicle->x=stateMat(3*i+0,k);a_vehicle->indexofx=k*5*agentnum+3*i+agentnum*2;
+            a_vehicle->y=stateMat(3*i+1,k);a_vehicle->indexofy=k*5*agentnum+3*i+agentnum*2+1;
+            a_vehicle->phi=stateMat(3*i+2,k);a_vehicle->indexofphi=k*5*agentnum+3*i+agentnum*2+2;
             a_vehicle->v=actMat(2*i+0,k);a_vehicle->indexofv=k*5*agentnum+2*i+0;
             a_vehicle->w=stateMat(2*i+1,k);a_vehicle->indexofw=k*5*agentnum+2*i+1;
             a_vehicle->posxy<<a_vehicle->x,a_vehicle->y;

@@ -9,16 +9,17 @@ Jacobiancalc::Jacobiancalc()
     xmlreader.xmlRead("agent_num",agent_Num);
     xmlreader.xmlRead("decnum",decnum);
 
+    returnmat.resize(3*agent_Num,5*agent_Num);
+    returnmat.setZero();
+
+    JacBlock.resize(3,5);
+    JacBlock.setZero();
+
 }
 
 Eigen::MatrixXd Jacobiancalc::jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
 {
-    Eigen::MatrixXd returnmat;
-    returnmat.resize(3*agent_Num,5*agent_Num);
-    returnmat.setZero();
-    Eigen::MatrixXd JacBlock;
-    JacBlock.resize(3,5);
-    JacBlock.setZero();
+
 
     for(int i=0;i<agent_Num;i++)
     {
