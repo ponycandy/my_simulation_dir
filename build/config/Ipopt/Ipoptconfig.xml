@@ -7,7 +7,7 @@
         <value>0.0001</value>
     </tol>
     <jacobian_approximation type="string">
-        <value>finite-difference-values</value>
+        <value>exact</value>
     </jacobian_approximation>
 <!--finite-difference-values: user-provided structure, values by finite differences-->
   <!--exact: user-provided derivatives-->
@@ -23,7 +23,9 @@
     <acceptable_obj_change_tol type="double">
         <value>0.0001</value>
     </acceptable_obj_change_tol>
-
-
+    <hessian_approximation type="string">
+        <value>exact</value>
+    </hessian_approximation>
+<!--limited-memory: Perform a limited-memory quasi-Newton approximation-->
 
 </parameters>
