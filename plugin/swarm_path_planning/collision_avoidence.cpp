@@ -78,3 +78,8 @@ void Collision_Avoidence::FillJacobianBlock(std::string var_set, Jacobian &jac_b
     GetValues();
     jac_block=m_jac.sparseView();
 }
+
+void Collision_Avoidence::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}

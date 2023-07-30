@@ -1,17 +1,14 @@
-#ifndef JACOBIANCALC_H
-#define JACOBIANCALC_H
+#ifndef SIMPLEODEJACOB_H
+#define SIMPLEODEJACOB_H
 
 #include "include/NMPC/NMPC_dynamic_Jacob.h"
-class Jacobiancalc:public NMPC_Dynamic_Jacob
+class simpleodejacob:public NMPC_Dynamic_Jacob
 {
 public:
-    Jacobiancalc();
+    simpleodejacob();
     Eigen::MatrixXd jacobica(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat) override;
     void Hession(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat,Eigen::MatrixXd &Hession_temp,int state_index) override;
-    int agent_Num;
-    Eigen::MatrixXd returnmat;
-    Eigen::MatrixXd JacBlock;
 
 };
 
-#endif // JACOBIANCALC_H
+#endif // SIMPLEODEJACOB_H

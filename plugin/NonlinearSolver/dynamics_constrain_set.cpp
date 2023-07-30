@@ -290,7 +290,58 @@ void Dynamics_Constrain_Set::FillJacobianBlock(std::string var_set, Jacobian &ja
 
 void Dynamics_Constrain_Set::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
 {
+    if (var_set == "action_state_set1")
+    {
+        VectorXd x = GetVariables()->GetComponent("action_state_set1")->GetValues();
+        Matrix_sparser a_sparser;
+        a_sparser.clearall();
+        Eigen::MatrixXd Hession_temp;
+        Hession_temp.resize(state_num_plus_act_num,state_num_plus_act_num);
+        Hession_temp.setZero();
+        pack_variable(x);
+        if(irow<state_num)
+        {
+            int state_index=irow % state_num;
+            //第一个时刻的Hession
+            act_array=actMat.block(0,0,act_num,1);
+            state_array=initState;
+            self_ode_jacob->Hession(act_array,state_array,Hession_temp,state_index);
+            Hession_temp*=(-steptime/2);
+            a_sparser.Copy_Mat_2_Sparse_block(jac_block,Hession_temp,0,0,state_num_plus_act_num,state_num_plus_act_num);
 
+            return;
+        }
+        if(irow>=state_num  &&  irow<state_num*(dec_num))
+        {
+            int state_index=irow % state_num;
+            int stepnow=irow / state_num;
+            //第一个时刻的Hession
+            act_array=actMat.block(0,stepnow-1,act_num,1);
+            state_array=stateMat.block(0,stepnow-1,state_num,1);
+
+            self_ode_jacob->Hession(act_array,state_array,Hession_temp,state_index);
+            Hession_temp*=(-steptime/2);
+            a_sparser.Copy_Mat_2_Sparse_block(jac_block,Hession_temp,state_num_plus_act_num*(stepnow-1)
+                                             ,state_num_plus_act_num*(stepnow-1),
+                                              state_num_plus_act_num,state_num_plus_act_num);
+
+            act_array=actMat.block(0,stepnow,act_num,1);
+            state_array=stateMat.block(0,stepnow,state_num,1);
+
+            self_ode_jacob->Hession(act_array,state_array,Hession_temp,state_index);
+            Hession_temp*=(-steptime/2);
+            a_sparser.Copy_Mat_2_Sparse_block(jac_block,Hession_temp,state_num_plus_act_num*stepnow
+                                              ,state_num_plus_act_num*stepnow,
+                                              state_num_plus_act_num,state_num_plus_act_num);
+            return;
+        }
+        if(irow>=state_num*(dec_num))
+        {
+            //这部分约束的Hession等于0
+            return;
+        }
+
+    }
 }
 
 void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const

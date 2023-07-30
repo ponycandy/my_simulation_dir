@@ -8,6 +8,7 @@ class testODE_jac:public NMPC_Dynamic_Jacob
 public:
     testODE_jac();
     Eigen::MatrixXd jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat) override;
+    void Hession(Eigen::MatrixXd act_mat,Eigen::MatrixXd state_mat,Eigen::MatrixXd &Hession_temp,int state_index) override;
     double l;
     double m1;
     double m2;

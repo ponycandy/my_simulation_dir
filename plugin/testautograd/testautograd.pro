@@ -2,7 +2,7 @@ QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(../../3rdlib/ATGlib/ATGlib_dependency.pri)
-include($$PWD/Ifopt_dependency.pri)
+include(../../3rdlib/ifopt/Ifopt_dependency.pri)
 CONFIG += console
 CONFIG += c++17
 QMAKE_CXXFLAGS += /arch:AVX

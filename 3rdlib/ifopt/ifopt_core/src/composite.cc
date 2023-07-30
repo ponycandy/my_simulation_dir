@@ -198,7 +198,9 @@ Component::Jacobian Composite::GetHession(double obj_factor,const  double *lambu
         m_var = components_.empty() ? 0 : components_.front()->GetSingleHession(0).cols();
     }
     Jacobian Hes(m_var, m_var);
-
+    Jacobian Hes_Transition_vessel(m_var*2, m_var*2);//find the best value depend on trial
+    int maximum_element=m_var*m_var;
+    int elementcounter=0;
     if (m_var == 0)
     {
         return Hes;
@@ -222,12 +224,39 @@ Component::Jacobian Composite::GetHession(double obj_factor,const  double *lambu
             }
 
             const Jacobian& jac =intermidiate * c->GetSingleHession(i);
+            //这一步不造成溢出
+
+            //但是下面的会，如果坐标相同的太多的话
+            //约束数目太多也会导致下面的问题
+            //这个问题必须给与修正
+            //一旦数目超出限制，就强制的清空triplet_list
+            //用最新的Jacobian的值去同步新的triplet_list
             triplet_list.reserve(triplet_list.size()+jac.nonZeros());
             for (int k=0; k<jac.outerSize(); ++k)
             {
                 for (Jacobian::InnerIterator it(jac,k); it; ++it)
                 {
                     triplet_list.push_back(Eigen::Triplet<double>(row+it.row(), it.col(), it.value()));
+                    elementcounter+=1;
+                    if(elementcounter==maximum_element)
+                    {
+                        Hes_Transition_vessel.setFromTriplets(triplet_list.begin(), triplet_list.end());
+                        triplet_list.clear();
+                        elementcounter=0;
+                        for (int kin=0; kin<Hes_Transition_vessel.outerSize(); ++kin)
+                        {
+                            for (Jacobian::InnerIterator itin(Hes_Transition_vessel,kin); itin; ++itin)
+                            {
+                                triplet_list.push_back(Eigen::Triplet<double>(itin.row(), itin.col(), itin.value()));
+                                elementcounter+=1;
+                            }
+                        }
+                        Hes_Transition_vessel.setZero();
+                        //最极端的情况，矩阵全部填满，这样下一步百分百触动
+                        //重置，所以要设置一个比Hes更大的矩阵，这样每次重置最多
+                        //占用有限的空间
+
+                    }
                 }
             }
         }

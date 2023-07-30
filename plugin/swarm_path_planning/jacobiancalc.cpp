@@ -39,3 +39,8 @@ Eigen::MatrixXd Jacobiancalc::jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd 
     }
     return returnmat;
 }
+
+void Jacobiancalc::Hession(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat, Eigen::MatrixXd &Hession_temp, int state_index)
+{
+
+}

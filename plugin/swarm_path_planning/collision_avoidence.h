@@ -12,6 +12,7 @@ public:
     VectorXd GetValues() const override;
     VecBound GetBounds() const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
+    void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     mutable swarmvehicle var_struct;
     mutable int  agentnum;
     mutable int  decnum;

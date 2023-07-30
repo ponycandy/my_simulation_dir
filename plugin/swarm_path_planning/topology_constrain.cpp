@@ -61,6 +61,11 @@ ifopt::Component::VecBound Topology_Constrain::GetBounds() const
     return b;
 }
 
+void Topology_Constrain::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}
+
 void Topology_Constrain::FillJacobianBlock(std::string var_set, Jacobian &jac_block) const
 {
     GetValues();

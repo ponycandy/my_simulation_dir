@@ -182,6 +182,8 @@ Problem::Jacobian Problem::GetHessionOfCosts(double obj_factor,const  double *la
     size_t Hessize=costs_.GetMvar();
     Jacobian Hes(Hessize, Hessize);
     //上面两个计算通道是通用的
+    //下面在何种情况下可能会出现triplest超过尺寸？
+    //两个都是满的情况下，就会这样,或者足够满
     std::vector< Eigen::Triplet<double> > triplet_list;
     triplet_list.reserve(triplet_list.size()+part_1.nonZeros());
     for (int k=0; k<part_1.outerSize(); ++k)

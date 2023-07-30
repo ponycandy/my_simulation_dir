@@ -49,6 +49,11 @@ double minimize_Topology::GetCost() const
     return error;
 }
 
+void minimize_Topology::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}
+
 void minimize_Topology::FillJacobianBlock(std::string var_set, Jacobian &jac) const
 {
     GetCost();

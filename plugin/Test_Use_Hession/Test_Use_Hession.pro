@@ -1,7 +1,7 @@
 QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+include(../../3rdlib/ifopt/Ifopt_dependency.pri)
 CONFIG += c++17
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
@@ -14,13 +14,21 @@ DESTDIR = ../../build
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
-
+INCLUDEPATH += ../../3rdlib
 SOURCES += \
-    Test_Use_HessionActivator.cpp
+    Test_Use_HessionActivator.cpp \
+    costtermas.cpp \
+    managerkl.cpp \
+    simpleode.cpp \
+    simpleodejacob.cpp
 
 
 
 HEADERS += \
-    Test_Use_HessionActivator.h
+    Test_Use_HessionActivator.h \
+    costtermas.h \
+    managerkl.h \
+    simpleode.h \
+    simpleodejacob.h
 
 

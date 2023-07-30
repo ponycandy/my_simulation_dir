@@ -8,7 +8,7 @@
 #include "plugininterface.h"
 #include "service/eventservice.h"
 
-
+#include "managerkl.h"
 
 class Test_Use_HessionActivator : public QObject,public PluginInterface
 {
@@ -52,6 +52,7 @@ public:
 private:
     static Test_Use_HessionActivator *m_instance;
     static PluginContext *m_CONTEXT;
+    managerkl *m_manager;
 };
 
 #endif 

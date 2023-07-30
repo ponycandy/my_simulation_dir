@@ -13,7 +13,7 @@ void Test_Use_HessionActivator::init(PluginContext *CONTEXT)
 }
 void Test_Use_HessionActivator::start()
 {
-
+    m_manager=new managerkl;
 }
 void Test_Use_HessionActivator::stop()
 {

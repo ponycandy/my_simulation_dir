@@ -1,7 +1,7 @@
 QT       += core gui testlib xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-include($$PWD/Ifopt_dependency.pri)
+include(../../3rdlib/ifopt/Ifopt_dependency.pri)
 CONFIG += c++17
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX

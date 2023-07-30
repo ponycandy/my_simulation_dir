@@ -79,7 +79,10 @@ void Matrix_sparser::Copy_Mat_2_Sparse_block(Eigen::SparseMatrix<double, Eigen::
     {
         for(int j=0;j<mat_cols;j++)
         {
+            if(mat(i,j)!=0)
+            {
             sparse.coeffRef(start_row+i,start_col+j)+=mat(i,j);
+            }
         }
     }
 }

@@ -23,3 +23,8 @@ Eigen::MatrixXd testODE_jac::jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd s
     dydx=Eigen::Map<Eigen::MatrixXd>(Eigen20,4,5);
     return dydx;
 }
+
+void testODE_jac::Hession(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat, Eigen::MatrixXd &Hession_temp, int state_index)
+{
+
+}

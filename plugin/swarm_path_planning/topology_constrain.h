@@ -9,6 +9,7 @@ public:
     Topology_Constrain(int num,std::string name);
     VectorXd GetValues() const override;
     VecBound GetBounds() const override;
+    void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
     mutable swarmvehicle var_struct;
     mutable int  agentnum;

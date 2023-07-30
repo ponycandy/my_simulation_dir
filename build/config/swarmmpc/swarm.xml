@@ -4,7 +4,7 @@
         <value>2</value>
     </agent_num>
     <decnum type="int">
-        <value>16</value>
+        <value>4</value>
     </decnum>
   <nlp_scaling_method type="int">
         <value>0</value>

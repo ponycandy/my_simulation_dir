@@ -60,27 +60,27 @@ planner_manager::planner_manager(QObject *parent)
     m_service->AddConstraintSet(consptr1);
 
 
-//    minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
-//    std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
-//    m_service->AddCostSet(consptr2);
+    minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
+    std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
+    m_service->AddCostSet(consptr2);
 
-    swarmvehicle var_struct;
-    common_initialize(var_struct);
-    int op=0;
-    for(int steps=0;steps<decnum;steps++)
-    {
-        for(int i=0;i<agentnum;i++)
-        {
-            int edge_num=(var_struct.steps[steps])->agents[i]->edgenum;
-            for(int j=0;j<edge_num;j++)
-            {
-                  op+=1;
-            }
-        }
-    }
-    Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
-    std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
-    m_service->AddConstraintSet(consptr3);
+//    swarmvehicle var_struct;
+//    common_initialize(var_struct);
+//    int op=0;
+//    for(int steps=0;steps<decnum;steps++)
+//    {
+//        for(int i=0;i<agentnum;i++)
+//        {
+//            int edge_num=(var_struct.steps[steps])->agents[i]->edgenum;
+//            for(int j=0;j<edge_num;j++)
+//            {
+//                  op+=1;
+//            }
+//        }
+//    }
+//    Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
+//    std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
+//    m_service->AddConstraintSet(consptr3);
 
 
 //一个想法是将最优化转化为约束问题
@@ -99,7 +99,7 @@ planner_manager::planner_manager(QObject *parent)
     //可是不能够一直这样吧，步数继续增长呢？
 
     m_service->solve_problem();
-    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+//    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
 //    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
 //    newset2->GetCost();
     //    newset2->var_struct;
