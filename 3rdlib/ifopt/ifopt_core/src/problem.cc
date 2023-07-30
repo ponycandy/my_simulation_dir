@@ -36,211 +36,238 @@ namespace ifopt {
 
 Problem::Problem ()
     :constraints_("constraint-sets", false),
-     costs_("cost-terms", true)
+    costs_("cost-terms", true)
 {
-  variables_ = std::make_shared<Composite>("variable-sets", false);
+    variables_ = std::make_shared<Composite>("variable-sets", false);
 }
 
 void
 Problem::AddVariableSet(VariableSet::Ptr variable_set)
 {
-  variables_->AddComponent(variable_set);
+    variables_->AddComponent(variable_set);
 }
 
 void
 Problem::AddConstraintSet(ConstraintSet::Ptr constraint_set)
 {
-  constraint_set->LinkWithVariables(variables_);
-  constraints_.AddComponent(constraint_set);
+    constraint_set->LinkWithVariables(variables_);
+    constraints_.AddComponent(constraint_set);
 }
 
 void
 Problem::AddCostSet(CostTerm::Ptr cost_set)
 {
-  cost_set->LinkWithVariables(variables_);
-  costs_.AddComponent(cost_set);
+    cost_set->LinkWithVariables(variables_);
+    costs_.AddComponent(cost_set);
 }
 
 int
 Problem::GetNumberOfOptimizationVariables () const
 {
-  return variables_->GetRows();
+    return variables_->GetRows();
 }
 
 Problem::VecBound
 Problem::GetBoundsOnOptimizationVariables () const
 {
-  return variables_->GetBounds();
+    return variables_->GetBounds();
 }
 
 Problem::VectorXd
 Problem::GetVariableValues () const
 {
-  return variables_->GetValues();
+    return variables_->GetValues();
 }
 
 void
 Problem::SetVariables (const double* x)
 {
-  variables_->SetVariables(ConvertToEigen(x));
+    variables_->SetVariables(ConvertToEigen(x));
 }
 
 double
 Problem::EvaluateCostFunction (const double* x)
 {
-  VectorXd g = VectorXd::Zero(1);
-  if (HasCostTerms()) {
-    SetVariables(x);
-    g = costs_.GetValues();
-  }
-  return g(0);
+    VectorXd g = VectorXd::Zero(1);
+    if (HasCostTerms()) {
+        SetVariables(x);
+        g = costs_.GetValues();
+    }
+    return g(0);
 }
 
 Problem::VectorXd
 Problem::EvaluateCostFunctionGradient (const double* x, bool use_finite_difference_approximation, double epsilon)
 {
-  int n = GetNumberOfOptimizationVariables();
-  Jacobian jac = Jacobian(1,n);
-  if (HasCostTerms()) {
-    if(use_finite_difference_approximation) {
-      double step_size = epsilon;
-      
-      // calculate forward difference by disturbing each optimization variable
-      double g = EvaluateCostFunction(x);
-      std::vector<double> x_new(x, x + n);
-      for (int i=0; i<n; ++i) {
-        x_new[i] += step_size; // disturb
-        double g_new = EvaluateCostFunction(x_new.data());
-        jac.coeffRef(0,i) = (g_new - g)/step_size;
-        x_new[i] = x[i]; // reset for next iteration
-      }
-    } else {
-      SetVariables(x);
-      jac = costs_.GetJacobian();
-    }
-  }
+    int n = GetNumberOfOptimizationVariables();
+    Jacobian jac = Jacobian(1,n);
+    if (HasCostTerms()) {
+        if(use_finite_difference_approximation) {
+            double step_size = epsilon;
 
-  return jac.row(0).transpose();
+            // calculate forward difference by disturbing each optimization variable
+            double g = EvaluateCostFunction(x);
+            std::vector<double> x_new(x, x + n);
+            for (int i=0; i<n; ++i) {
+                x_new[i] += step_size; // disturb
+                double g_new = EvaluateCostFunction(x_new.data());
+                jac.coeffRef(0,i) = (g_new - g)/step_size;
+                x_new[i] = x[i]; // reset for next iteration
+            }
+        } else {
+            SetVariables(x);
+            jac = costs_.GetJacobian();
+        }
+    }
+
+    return jac.row(0).transpose();
 }
 
 Problem::VecBound
 Problem::GetBoundsOnConstraints () const
 {
-  return constraints_.GetBounds();
+    return constraints_.GetBounds();
 }
 
 int
 Problem::GetNumberOfConstraints () const
 {
-  return GetBoundsOnConstraints().size();
+    return GetBoundsOnConstraints().size();
 }
 
 Problem::VectorXd
 Problem::EvaluateConstraints (const double* x)
 {
-  SetVariables(x);
-  return constraints_.GetValues();
+    SetVariables(x);
+    return constraints_.GetValues();
 }
 
 bool
 Problem::HasCostTerms () const
 {
-  return costs_.GetRows()>0;
+    return costs_.GetRows()>0;
 }
 
 void
 Problem::EvalNonzerosOfJacobian (const double* x, double* values)
 {
-  SetVariables(x);
-  Jacobian jac = GetJacobianOfConstraints();
+    SetVariables(x);
+    Jacobian jac = GetJacobianOfConstraints();
 
-  jac.makeCompressed(); // so the valuePtr() is dense and accurate
-  std::copy(jac.valuePtr(), jac.valuePtr() + jac.nonZeros(), values);
+    jac.makeCompressed(); // so the valuePtr() is dense and accurate
+    std::copy(jac.valuePtr(), jac.valuePtr() + jac.nonZeros(), values);
 }
 
-void Problem::EvalNonzerosOfHession(const double *x, double *values, double obj_factor, double *lambda)
+void Problem::EvalNonzerosOfHession(const double *x, double *values, double obj_factor,const double *lambda)
 {
-  SetVariables(x);
-  Jacobian Hes = GetHessionOfCosts(obj_factor,lambda);
+    SetVariables(x);
+    Jacobian Hes = GetHessionOfCosts(obj_factor,lambda);
 
-  Hes.makeCompressed(); // so the valuePtr() is dense and accurate
-  std::copy(Hes.valuePtr(), Hes.valuePtr() + Hes.nonZeros(), values);
+    Hes.makeCompressed(); // so the valuePtr() is dense and accurate
+    std::copy(Hes.valuePtr(), Hes.valuePtr() + Hes.nonZeros(), values);
 }
 
 Problem::Jacobian
 Problem::GetJacobianOfConstraints () const
 {
-  return constraints_.GetJacobian();
+    return constraints_.GetJacobian();
 }
 
-Problem::Jacobian Problem::GetHessionOfCosts(double obj_factor, double *lambda)
+Problem::Jacobian Problem::GetHessionOfCosts(double obj_factor,const  double *lambda)
 {
-  return constraints_.GetHession(obj_factor,lambda);
+
+    //这里存在两部分，一部分由constraints提供，另一部分由cost提供
+    Jacobian part_1=constraints_.GetHession(obj_factor,lambda);
+    Jacobian part_2=costs_.GetHession(obj_factor,lambda);
+    size_t Hessize=costs_.GetMvar();
+    Jacobian Hes(Hessize, Hessize);
+    //上面两个计算通道是通用的
+    std::vector< Eigen::Triplet<double> > triplet_list;
+    triplet_list.reserve(triplet_list.size()+part_1.nonZeros());
+    for (int k=0; k<part_1.outerSize(); ++k)
+    {
+        for (Jacobian::InnerIterator it(part_1,k); it; ++it)
+        {
+            triplet_list.push_back(Eigen::Triplet<double>(it.row(), it.col(), it.value()));
+        }
+    }
+    //
+    triplet_list.reserve(triplet_list.size()+part_2.nonZeros());
+    for (int k=0; k<part_2.outerSize(); ++k)
+    {
+        for (Jacobian::InnerIterator it(part_2,k); it; ++it)
+        {
+            triplet_list.push_back(Eigen::Triplet<double>(it.row(), it.col(), it.value()));
+        }
+    }
+
+    Hes.setFromTriplets(triplet_list.begin(), triplet_list.end());
+    return Hes;
 }
 
 Problem::Jacobian
 Problem::GetJacobianOfCosts () const
 {
-  return costs_.GetJacobian();
+    return costs_.GetJacobian();
 }
 
 void
 Problem::SaveCurrent()
 {
-  x_prev.push_back(variables_->GetValues());
+    x_prev.push_back(variables_->GetValues());
 }
 
 Composite::Ptr
 Problem::GetOptVariables () const
 {
-  return variables_;
+    return variables_;
 }
 
 void
 Problem::SetOptVariables (int iter)
 {
-  variables_->SetVariables(x_prev.at(iter));
+    variables_->SetVariables(x_prev.at(iter));
 }
 
 void
 Problem::SetOptVariablesFinal ()
 {
-  variables_->SetVariables(x_prev.at(GetIterationCount()-1));
+    variables_->SetVariables(x_prev.at(GetIterationCount()-1));
 }
 
 void
 Problem::PrintCurrent() const
 {
-  using namespace std;
-  cout << "\n"
-       << "************************************************************\n"
-       << "    IFOPT - Interface to Nonlinear Optimizers (v2.0)\n"
-       << "                \u00a9 Alexander W. Winkler\n"
-       << "           https://github.com/ethz-adrl/ifopt\n"
-       << "************************************************************"
-       << "\n"
-       << "Legend:\n"
-       << "c - number of variables, constraints or cost terms" << std::endl
-       << "i - indices of this set in overall problem" << std::endl
-       << "v - number of [violated variable- or constraint-bounds] or [cost term value]"
-       << "\n\n"
-       << std::right
-       << std::setw(33) << ""
-       << std::setw(5)  << "c  "
-       << std::setw(16) << "i    "
-       << std::setw(11) << "v "
-       << std::left
-       << "\n";
+    using namespace std;
+    cout << "\n"
+         << "************************************************************\n"
+         << "    IFOPT - Interface to Nonlinear Optimizers (v2.0)\n"
+         << "                \u00a9 Alexander W. Winkler\n"
+         << "           https://github.com/ethz-adrl/ifopt\n"
+         << "************************************************************"
+         << "\n"
+         << "Legend:\n"
+         << "c - number of variables, constraints or cost terms" << std::endl
+         << "i - indices of this set in overall problem" << std::endl
+         << "v - number of [violated variable- or constraint-bounds] or [cost term value]"
+         << "\n\n"
+         << std::right
+         << std::setw(33) << ""
+         << std::setw(5)  << "c  "
+         << std::setw(16) << "i    "
+         << std::setw(11) << "v "
+         << std::left
+         << "\n";
 
-  variables_->PrintAll();
-  constraints_.PrintAll();
-  costs_.PrintAll();
+    variables_->PrintAll();
+    constraints_.PrintAll();
+    costs_.PrintAll();
 };
 
 Problem::VectorXd
 Problem::ConvertToEigen(const double* x) const
 {
-  return Eigen::Map<const VectorXd>(x,GetNumberOfOptimizationVariables());
+    return Eigen::Map<const VectorXd>(x,GetNumberOfOptimizationVariables());
 }
 
 } /* namespace opt */

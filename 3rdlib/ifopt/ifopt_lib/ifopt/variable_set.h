@@ -58,6 +58,16 @@ public:
   {
     throw std::runtime_error("not implemented for variables");
   };
+  Jacobian GetHession(double obj_factor,const double *lambuda) const
+  {
+    throw std::runtime_error("not implemented for variables");
+  };
+
+  Jacobian GetSingleHession(int irow) const
+  {
+    throw std::runtime_error("not implemented for variables");
+  };
+
 };
 
 } // namespace ifopt

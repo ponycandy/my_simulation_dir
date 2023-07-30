@@ -42,11 +42,26 @@ bool IpoptAdapter::get_nlp_info(Index& n, Index& m, Index& nnz_jac_g,
     m = nlp_->GetNumberOfConstraints();
 
     if (finite_diff_)
+    {
         nnz_jac_g = m*n;
+        nnz_h_lag = n*n;
+    }
     else
-        nnz_jac_g = nlp_->GetJacobianOfConstraints().nonZeros();
+    {
+        int SIZE=nlp_->GetNumberOfConstraints();
+        double obj_factor_temp=1;
+        SIZE+=1;//prevent case where SIZE=0
+        double* lambuda_temp = new double[SIZE];
 
-    nnz_h_lag = n*n;
+        // Initialize all values to 1
+        for (int i = 0; i < SIZE; i++)
+        {
+            lambuda_temp[i] = 1.0;
+        }
+
+        nnz_jac_g = nlp_->GetJacobianOfConstraints().nonZeros();
+        nnz_h_lag = nlp_->GetHessionOfCosts(obj_factor_temp,lambuda_temp).nonZeros();
+    }
 
     // start index at 0 for row/col entries
     index_style = C_STYLE;
@@ -129,6 +144,7 @@ bool IpoptAdapter::eval_h(Ipopt::Index n, const Ipopt::Number *x, bool new_x,
             //set default value
             int SIZE=nlp_->GetNumberOfConstraints();
             double obj_factor_temp=1;
+            SIZE+=1;//prevent case where SIZE=0
             double* lambuda_temp = new double[SIZE];
 
             // Initialize all values to 1
@@ -138,7 +154,8 @@ bool IpoptAdapter::eval_h(Ipopt::Index n, const Ipopt::Number *x, bool new_x,
             }
 
 
-            auto Hessian = nlp_->GetHession(obj_factor_temp,lambuda_temp); //default value assigned
+
+            auto Hessian = nlp_->GetHessionOfCosts(obj_factor_temp,lambuda_temp); //default value assigned
             for (int k=0; k<Hessian.outerSize(); ++k)
             {
                 for (Jacobian::InnerIterator it(Hessian,k); it; ++it)

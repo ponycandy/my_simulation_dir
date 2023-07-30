@@ -190,24 +190,38 @@ Composite::GetJacobian () const
     return jacobian;
 }
 
-Component::Jacobian Composite::GetHession(double obj_factor, double *lambuda) const
+Component::Jacobian Composite::GetHession(double obj_factor,const  double *lambuda) const
 {
-    if (n_var == -1)
-        n_var = components_.empty() ? 0 : components_.front()->GetJacobian().cols();
+    //meaning of n_var?the number of variable
+    if (m_var == -1)
+    {
+        m_var = components_.empty() ? 0 : components_.front()->GetSingleHession(0).cols();
+    }
+    Jacobian Hes(m_var, m_var);
 
-    Jacobian Hes(n_var, n_var);
-
-    if (n_var == 0) return Hes;
+    if (m_var == 0)
+    {
+        return Hes;
+    }
 
     int row = 0;
     std::vector< Eigen::Triplet<double> > triplet_list;
-
+    double intermidiate;
     for (const auto& c : components_)
     {
         int SIZE=c->GetRows();
         for(int i=0;i<SIZE;i++)
         {
-            const Jacobian& jac =lambuda[i + row] * c->GetSingleHession(i);
+            if (!is_cost_)
+            {
+                intermidiate = lambuda[i + row];
+            }
+            else
+            {
+                intermidiate = obj_factor ;
+            }
+
+            const Jacobian& jac =intermidiate * c->GetSingleHession(i);
             triplet_list.reserve(triplet_list.size()+jac.nonZeros());
             for (int k=0; k<jac.outerSize(); ++k)
             {
@@ -234,6 +248,12 @@ Component::Jacobian Composite::GetHession(double obj_factor, double *lambuda) co
     return Hes;
 }
 
+Component::Jacobian Composite::GetSingleHession(int irow) const
+{
+    throw std::runtime_error("GetSingleHession not implemented for Composite");
+    //this will not be valid
+}
+
 Composite::VecBound
 Composite::GetBounds () const
 {
@@ -250,6 +270,11 @@ const Composite::ComponentVec
 Composite::GetComponents () const
 {
     return components_;
+}
+
+size_t Composite::GetMvar() const
+{
+    return m_var;
 }
 
 void

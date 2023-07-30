@@ -199,7 +199,7 @@ public:
    * @param [out] values  The nonzero derivatives ordered by Eigen::RowMajor.
    */
     void EvalNonzerosOfJacobian(const double* x, double* values);
-    void EvalNonzerosOfHession(const double*x, double* values,double obj_factor,double* lambda) ;
+    void EvalNonzerosOfHession(const double*x, double* values,double obj_factor,const double* lambda) ;
     /**
    * @brief The sparse-matrix representation of Jacobian of the constraints.
    *
@@ -207,7 +207,7 @@ public:
    * variable.
    */
     Jacobian GetJacobianOfConstraints() const;
-    Jacobian GetHessionOfCosts(double obj_factor,double *lambda);
+    Jacobian GetHessionOfCosts(double obj_factor,const double *lambda);
     /**
    * @brief The sparse-matrix representation of Jacobian of the costs.
    *

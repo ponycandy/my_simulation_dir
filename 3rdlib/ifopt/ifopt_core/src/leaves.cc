@@ -88,7 +88,7 @@ Component::Jacobian ConstraintSet::GetSingleHession(int irow) const
     int n = vars->GetRows();
     Heslocal.resize(n, n);
 
-    FillHessionBlock(vars->GetName(), Heslocal);
+    FillHessionBlock(vars->GetName(), Heslocal,irow);
     // reserve space for the new elements to reduce memory allocation
     triplet_list.reserve(triplet_list.size()+Heslocal.nonZeros());
 
