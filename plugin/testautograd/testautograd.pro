@@ -18,6 +18,7 @@ INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 SOURCES += \
+    constraintest.cpp \
     costfunc.cpp \
     testautogradActivator.cpp \
     testmain.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 
 HEADERS += \
+    constraintest.h \
     costfunc.h \
     testautogradActivator.h \
     testmain.h \

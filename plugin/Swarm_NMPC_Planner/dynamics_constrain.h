@@ -20,6 +20,7 @@ public:
     VecBound GetBounds() const override;
     void Fill_dynamics_Jacob(Jacobian &jac) const;
     void Fill_dynamics_action(Jacobian &jac)  const;
+     void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     void Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN,int agentindex) const;
     void Calc_a_2_pt(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt,int decN) const;
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;

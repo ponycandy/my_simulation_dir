@@ -27,3 +27,8 @@ void cost_New::FillJacobianBlock(std::string var_set, Jacobian &jac) const
         jac.coeffRef(0, 0) = 2*x(0);
     }
 }
+
+void cost_New::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}

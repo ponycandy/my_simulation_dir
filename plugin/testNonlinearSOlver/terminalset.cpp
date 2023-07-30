@@ -42,3 +42,8 @@ void TerminalSet::FillJacobianBlock(std::string var_set, Jacobian &jac_block) co
     }
 
 }
+
+void TerminalSet::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}

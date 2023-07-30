@@ -50,6 +50,11 @@ ifopt::Component::VecBound ControlConstrain::GetBounds() const
     return b;
 }
 
+void ControlConstrain::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}
+
 void ControlConstrain::GetValue(Eigen::VectorXd &x, Eigen::VectorXd &returnvalue) const
 {
     m_poly->packvariable(x);

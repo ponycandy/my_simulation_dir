@@ -8,6 +8,7 @@ public:
     cost_New();
     double GetCost() const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac) const override;
+     void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
 };
 
 #endif // COST_NEW_H

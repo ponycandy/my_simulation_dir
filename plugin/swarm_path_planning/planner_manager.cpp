@@ -81,6 +81,8 @@ planner_manager::planner_manager(QObject *parent)
     Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
     std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
     m_service->AddConstraintSet(consptr3);
+
+
 //一个想法是将最优化转化为约束问题
     //但是，我们需要搞明白这么干不会有用的机制
     //而不是频繁的更换，不知道底层原理是没有用的

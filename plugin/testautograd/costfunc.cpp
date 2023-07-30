@@ -11,12 +11,12 @@ costfunc::costfunc():ifopt::CostTerm("cost")
     Jac.resize(1,5);
 
     eigendata.setIdentity();
-    m_service=testautogradActivator::getService<Datalogservice>("Datalogservice");
-    m_service->createlogfile("./logs/testlog1.txt",8002);
-    m_service->createxlsfile(QString("./logs/testmyloggerfile.xlsx"));
-    m_service->log(1,1,2.0);
-    m_service->log(2,2,3.0);
-    m_service->savexlsfile();
+//    m_service=testautogradActivator::getService<Datalogservice>("Datalogservice");
+//    m_service->createlogfile("./logs/testlog1.txt",8002);
+//    m_service->createxlsfile(QString("./logs/testmyloggerfile.xlsx"));
+//    m_service->log(1,1,2.0);
+//    m_service->log(2,2,3.0);
+//    m_service->savexlsfile();
 }
 
 double costfunc::GetCost() const
@@ -37,7 +37,7 @@ double costfunc::GetCost() const
 //    my_logger->flush();
     //因为程序没有退出，所以务必在这里手动刷新，否则文本是没有写入的！
     //logger不能够放在ipopt的优化程序内
-    m_service->log(QString::number(double(outcome[0][0]->value_)),2);
+//    m_service->log(QString::number(double(outcome[0][0]->value_)),2);
 
     return outcome[0][0]->value_;
 }
@@ -57,4 +57,17 @@ void costfunc::FillJacobianBlock(std::string var_set, Jacobian &jac) const
         jac=Jac.sparseView();
         //        std::cout<<Jac<<std::endl;
     }
+}
+
+void costfunc::FillHessionBlock(std::string var_set, Jacobian &jac,int irow) const
+{
+    if (var_set == "x_value_all")
+    {
+
+        jac=(2*eigendata).sparseView();
+
+    }
+    //一般来说，因为Hessian是对称的，只需要左下角的半边就可以了
+
+
 }

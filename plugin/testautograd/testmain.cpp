@@ -3,6 +3,7 @@
 #include "variablexl.h"
 #include "costfunc.h"
 #include "iostream"
+#include "constraintest.h"
 Testmain::Testmain(QObject *parent)
     : QObject{parent}
 {
@@ -16,6 +17,11 @@ Testmain::Testmain(QObject *parent)
     tcost=new costfunc;
     std::shared_ptr<ifopt::ConstraintSet> Dtcostptr(tcost);
     m_service->AddCostSet(Dtcostptr);
+
+    constraintest *cstest;
+    cstest=new constraintest(2,"asd");
+    std::shared_ptr<ifopt::ConstraintSet> Dtcostptr1(cstest);
+    m_service->AddConstraintSet(Dtcostptr1);
 
     m_service->start_crack();
     double v=tcost->GetCost();

@@ -13,6 +13,7 @@ public:
     costfunc();
     double GetCost() const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac) const override;
+    void FillHessionBlock (std::string var_set, Jacobian& jac,int irow) const override;
     mutable ATtensor m_variable;
     mutable Eigen::MatrixXd eigendata;
     mutable Eigen::MatrixXd Jac;

@@ -167,6 +167,11 @@ void Dynamics_Constrain::Fill_dynamics_action(Jacobian &jac) const
 
 }
 
+void Dynamics_Constrain::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}
+
 void Dynamics_Constrain::Calc_a_2_pi(Eigen::MatrixXd &mat, Eigen::MatrixXd &pt, int decN, int agentindex) const
 {
     Eigen::MatrixXd eye_2;
