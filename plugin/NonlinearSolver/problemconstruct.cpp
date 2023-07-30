@@ -13,10 +13,12 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     std::string jacobian_approximation;
     std::string nlp_scaling_method;
     std::string check_derivatives_for_naninf;
+    std::string hessian_approximation;
     double acceptable_obj_change_tol;
     int print_level;
     double tol;
     xml_reader.xmlRead("linear_solver",linear_solver);
+    xml_reader.xmlRead("hessian_approximation",hessian_approximation);
     xml_reader.xmlRead("acceptable_obj_change_tol",acceptable_obj_change_tol);
     xml_reader.xmlRead("jacobian_approximation",jacobian_approximation);
     xml_reader.xmlRead("print_level",print_level);
@@ -30,7 +32,7 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     ipopt.SetOption("print_level",print_level);
     ipopt.SetOption("check_derivatives_for_naninf",check_derivatives_for_naninf);
     ipopt.SetOption("acceptable_obj_change_tol",acceptable_obj_change_tol);
-
+    ipopt.SetOption("hessian_approximation",hessian_approximation);
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)

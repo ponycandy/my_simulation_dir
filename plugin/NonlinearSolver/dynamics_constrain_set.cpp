@@ -288,6 +288,11 @@ void Dynamics_Constrain_Set::FillJacobianBlock(std::string var_set, Jacobian &ja
 
 }
 
+void Dynamics_Constrain_Set::FillHessionBlock(std::string var_set, Jacobian &jac_block, int irow) const
+{
+
+}
+
 void Dynamics_Constrain_Set::calc_dynamic_constrain_Jacobian() const
 {
     int j=0;

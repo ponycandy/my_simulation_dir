@@ -33,6 +33,7 @@ public:
     // function, e.g. in ipopt.cc::use_jacobian_approximation_ = true
     // Attention: see the parent class function for important information on sparsity pattern.
     void FillJacobianBlock (std::string var_set, Jacobian& jac_block) const override;
+    void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     void calc_dynamic_constrain_Jacobian() const;
     void init_state(Eigen::MatrixXd initstate, Eigen::MatrixXd terminalstate);
     Eigen::MatrixXd calc_single_jacobia(int timestep) const;
