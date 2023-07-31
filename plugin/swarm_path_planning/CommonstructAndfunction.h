@@ -46,6 +46,7 @@ struct swarmvehicle
 {
     QVector<single_time_data*> steps;
 };
+inline double PotentialCalc(double z, double &first, double &second);
 inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value);
 
 inline void pack_variable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
@@ -124,6 +125,24 @@ void common_initialize(swarmvehicle &var_struct)
     }
 
 }
+double PotentialCalc(double z, double &first, double &second)
+{
+    double output;
+    if (z<1)
+    {
+        output=-pow((z-1),3);
+        first =-3*pow((z-1),2);
+        second =-6*(z-1);
+    }
+    else
+    {
+        output=0;
+        first =0;
+        second =0;
+    }
+    return output;
+}
+
 void unpackvariable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
                     int dec_num,int act_num,int state_num,int agentnum,Eigen::MatrixXd &actMat,
                     Eigen::MatrixXd &stateMat,

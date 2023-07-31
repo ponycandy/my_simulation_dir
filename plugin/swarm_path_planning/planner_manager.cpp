@@ -52,9 +52,9 @@ planner_manager::planner_manager(QObject *parent)
     m_service->setuseterminal(false);
     m_service->Use_BuildIn_Dynamics_Cons(true);
 
-    Obs_Avoidence *newset=new Obs_Avoidence(decnum*agentnum,"Obs_Avoidence");
-    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
-    m_service->AddConstraintSet(consptr);
+//    Obs_Avoidence *newset=new Obs_Avoidence(decnum*agentnum,"Obs_Avoidence");
+//    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
+//    m_service->AddConstraintSet(consptr);
 
 //        TestConstrain *newset=new TestConstrain(12);
 //        std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
@@ -104,29 +104,29 @@ planner_manager::planner_manager(QObject *parent)
     //可是不能够一直这样吧，步数继续增长呢？
 
     m_service->solve_problem();
-//    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
-//    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
-//    newset2->GetCost();
-//    //    newset2->var_struct;
-//    QString word;
+    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
+    newset2->GetCost();
+    //    newset2->var_struct;
+    QString word;
 
-//    m_service->createxlsfile("./log/test.xlsx");
-//    for(int k=0;k<newset2->decnum;k++)
-//    {
-//        for(int i=0;i<newset2->agentnum;i++)
-//        {
-//            word=" time : "+QString::number(k)+"agent "+
-//                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
-//                   + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
-//                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
+    m_service->createxlsfile("./log/test.xlsx");
+    for(int k=0;k<newset2->decnum;k++)
+    {
+        for(int i=0;i<newset2->agentnum;i++)
+        {
+            word=" time : "+QString::number(k)+"agent "+
+                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
+                   + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
+                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
 
 
-//            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
-//            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
-//            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
+            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
+            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
+            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
 
-//        }
-//    }
+        }
+    }
 
-//    m_service->savexlsfile();
+    m_service->savexlsfile();
 }

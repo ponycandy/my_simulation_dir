@@ -15,6 +15,8 @@ public:
 
     mutable swarmvehicle var_struct;
     mutable int  agentnum;
+    mutable Eigen::Vector2d obspos;
+    mutable double communication_range;
     mutable double Incp;
     mutable int  decnum;
     mutable double collision_r;

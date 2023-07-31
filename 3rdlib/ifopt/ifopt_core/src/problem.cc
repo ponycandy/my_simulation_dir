@@ -179,7 +179,9 @@ Problem::Jacobian Problem::GetHessionOfCosts(double obj_factor,const  double *la
     //这里存在两部分，一部分由constraints提供，另一部分由cost提供
     Jacobian part_1=constraints_.GetHession(obj_factor,lambda);
     Jacobian part_2=costs_.GetHession(obj_factor,lambda);
-    size_t Hessize=costs_.GetMvar();
+    int num1=constraints_.GetMvar();
+    int num2=costs_.GetMvar();
+    size_t Hessize=(num1 > num2) ? num1 : num2;
     Jacobian Hes(Hessize, Hessize);
     //上面两个计算通道是通用的
     //下面在何种情况下可能会出现triplest超过尺寸？

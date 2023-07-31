@@ -4,11 +4,14 @@
 minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
 {
     xmlCore xmlreader("./config/swarmmpc/swarm.xml");
-
+    obspos<<7.5,12;
     xmlreader.xmlRead("agent_num",agentnum);
     xmlreader.xmlRead("Incp",Incp);
     xmlreader.xmlRead("decnum",decnum);
     xmlreader.xmlRead("collision_r",collision_r);
+    xmlreader.xmlRead("communication_range",communication_range);
+
+
     common_initialize(var_struct);
     initilize_Traj(Target_Traj);
     actMat.resize(2*agentnum,decnum);
@@ -117,7 +120,44 @@ double minimize_Topology::GetCost() const
 
                 //作为leader的目标是减小和目标物体轨迹的差距
             }
+            //下面添加对障碍物避障的最小项
+            single_vehicle_data *agent=(var_struct.steps[steps])->agents[i];
+            double z=pow((agent->posxy-obspos).norm()/communication_range,2);
+            double first,second;
+
+            //            potential+=(PotentialCalc(z,first,second));
+
+            error+=(20*PotentialCalc(z,first,second));
+
+            double Dzdx=2/(communication_range*communication_range)*(agent->x-obspos(0,0));
+            double Dzdy=2/(communication_range*communication_range)*(agent->y-obspos(1,0));
+
+            m_jac(0,agent->indexofx)+=20*first*Dzdx;
+            m_jac(0,agent->indexofy)+=20*first*Dzdy;
+            if(z<1)
+            {
+                double valuex =
+                    -6/(communication_range*communication_range)*(z-1)*
+                    (4/(communication_range*communication_range)*pow(agent->x-obspos(0,0),2)
+                     +(z-1));
+                double valuey =
+                    -6/(communication_range*communication_range)*(z-1)*
+                    (4/(communication_range*communication_range)*pow(agent->y-obspos(1,0),2)
+                     +(z-1));
+                double valuexy =-24/(pow(communication_range,4))*
+                                 (z-1)*(agent->y-obspos(1,0))*(agent->x-obspos(0,0));
+                fillsymetrix(m_Hession,agent->indexofx,agent->indexofx,
+                             20*valuex);
+                fillsymetrix(m_Hession,agent->indexofy,agent->indexofy,
+                             20*valuey);
+                fillsymetrix(m_Hession,agent->indexofx,agent->indexofy,
+                             20*valuexy);
+                //他们是连续的
+            }
+            //上面添加对障碍物避障的最小项
         }
+
+
     }
     //碰撞约束完成,雅可比计算相对比较简单，就不用Tensor了
     return error;
