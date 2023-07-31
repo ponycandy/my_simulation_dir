@@ -5,6 +5,7 @@
 #include "SwarmObstacle.h"
 #include "CommonstructAndfunction.h"
 #include "service/CollisionDetectservice.h"
+#include "service/Datalogservice.h"
 class Obs_Avoidence:public ifopt::ConstraintSet
 {
 public:
@@ -30,6 +31,7 @@ public:
     mutable int constrainnum;
     mutable double communication_range;
  mutable double maximumPotential;
+    mutable Datalogservice *m_servicex;
 };
 
 #endif // OBS_AVOIDENCE_H

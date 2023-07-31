@@ -32,6 +32,7 @@ SOURCES += \
     planner_manager.cpp \
     swarm_ode.cpp \
     swarm_path_planningActivator.cpp \
+    testconstrain.cpp \
     topology_constrain.cpp
 
 
@@ -45,6 +46,7 @@ HEADERS += \
     planner_manager.h \
     swarm_ode.h \
     swarm_path_planningActivator.h \
+    testconstrain.h \
     topology_constrain.h
 
 

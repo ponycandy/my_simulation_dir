@@ -14,6 +14,7 @@ Obs_Avoidence::Obs_Avoidence(int num, std::string name):ifopt::ConstraintSet(num
     xmlreader.xmlRead("obs_num",obs_num);
     common_initialize(var_struct);
     m_Hession.resize(5*agentnum*decnum,5*agentnum*decnum);
+    m_Hession.setZero();
     for(int i=0;i<constrainnum;i++)
     {
         Hession_Tensor.push_back(m_Hession);
@@ -21,6 +22,8 @@ Obs_Avoidence::Obs_Avoidence(int num, std::string name):ifopt::ConstraintSet(num
     actMat.resize(2*agentnum,decnum);
     stateMat.resize(3*agentnum,decnum);
     m_service=swarm_path_planningActivator::getService<CollisionDetectservice>("CollisionDetectservice");
+    m_servicex=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+    m_servicex->createlogfile("./log/swarmlog.txt",9689);
     //初始化场景障碍物
     Eigen::MatrixXd obs_mat;
     for(int i=1;i<=obs_num;i++)
@@ -46,7 +49,7 @@ Obs_Avoidence::Obs_Avoidence(int num, std::string name):ifopt::ConstraintSet(num
         obsbounding_group.insert(i,new_obs);
     }
     m_jac.resize(constrainnum,5*agentnum*decnum);
-
+    m_jac.setZero();
 }
 
 double Obs_Avoidence::PotentialCalc(double z, double &first, double &second) const
@@ -86,9 +89,10 @@ ifopt::Component::VectorXd Obs_Avoidence::GetValues() const
     int m=0;
     for(int steps=0;steps<decnum;steps++)//N为预测的总长度
     {
-        m_Hession.setZero();
+
         for(int j=0;j<agentnum;j++)
         {
+            m_Hession.setZero();
             single_vehicle_data *vehicleN=var_struct.steps[steps]->agents[j];
             potential=0;
             for (int i = 0; i < vehicleN->clsp.size(); i++)
@@ -99,8 +103,8 @@ ifopt::Component::VectorXd Obs_Avoidence::GetValues() const
                 Dzdx=2/(communication_range*communication_range)*(vehicleN->x-agent->x);
                 Dzdy=2/(communication_range*communication_range)*(vehicleN->y-agent->y);
 
-                m_jac(m,vehicleN->indexofx)+=first*Dzdx;
-                m_jac(m,vehicleN->indexofy)+=first*Dzdy;
+                m_jac(m,vehicleN->indexofx)+=20*first*Dzdx;
+                m_jac(m,vehicleN->indexofy)+=20*first*Dzdy;
                 if(z<1)
                 {
                     double valuex =
@@ -114,21 +118,25 @@ ifopt::Component::VectorXd Obs_Avoidence::GetValues() const
                     double valuexy =-24/(pow(communication_range,4))*
                                      (z-1)*(vehicleN->y-agent->y)*(vehicleN->x-agent->x);
                     fillsymetrix(m_Hession,vehicleN->indexofx,vehicleN->indexofx,
-                                 valuex);
+                                 20*valuex);
                     fillsymetrix(m_Hession,vehicleN->indexofy,vehicleN->indexofy,
-                                 valuey);
+                                 20*valuey);
                     fillsymetrix(m_Hession,vehicleN->indexofx,vehicleN->indexofy,
-                                 valuexy);
+                                 20*valuexy);
+                    //他们是连续的
                 }
             }
 
             Hession_Tensor[m]=m_Hession;
-            g(m)=potential-maximumPotential;
-
+            g(m)=20*(potential-maximumPotential);
+            QString word="g_"+QString::number(m)+" is "+QString::number(g(m));
+            m_servicex->log(word,2);//目前用不了logger来记录矩阵...
+//            std::cout<<"m_Hession in calculation "<<m<<" "<<m_Hession<<std::endl;
             m++;
         }
     }
     //碰撞约束完成,雅可比计算相对比较简单，就不用Tensor了
+//    std::cout<<g;
     return g;
 }
 
@@ -168,30 +176,34 @@ void Obs_Avoidence::predict_beta_agent() const
             for(int j=1;j<=obs_num;j++)
             {
                 //初始化的轨迹不能够在障碍物内部
-                SwarmObstacle *obs=obsbounding_group.value(j);
+//                SwarmObstacle *obs=obsbounding_group.value(j);
 
 
 
-                collison_result result=m_service->polygen_circle_detect(vehicleN->x,
-                                                                          vehicleN->y,collision_r,obs->vertex_map);
-                if(result.flag==1)
-                {
+
+//                collison_result result=m_service->polygen_circle_detect(vehicleN->x,
+//                                                                          vehicleN->y,communication_range,obs->vertex_map);
+
+                //                if(result.flag==1)
+//                {
                     BetaAgent *newbeta=new BetaAgent;
-                    newbeta->x=result.closest_point.x;
-                    newbeta->y=result.closest_point.y;
+                    newbeta->x=7.5;
+                    newbeta->y=12;
+                    //保持与这个圆的势能
                     newbeta->posxy<< newbeta->x, newbeta->y;
 
                     vehicleN->clsp.push_back(newbeta);
 
 
 
-                    vehicleN->betaAgentNum+=1;
+//                    vehicleN->betaAgentNum+=1;
+                     vehicleN->betaAgentNum=1;
                     //Eigen probelm
                     //默认只有一个障碍物
                     //多个障碍物取势能总和
                     //然后总势能必须小于一个值
                     //因为势能函数是二阶连续的，这样优化就会简单很多
-                }
+//                }
             }
         }
     }
