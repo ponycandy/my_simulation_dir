@@ -4,17 +4,23 @@
         <value>2</value>
     </agent_num>
     <decnum type="int">
-        <value>4</value>
+        <value>6</value>
     </decnum>
-  <nlp_scaling_method type="int">
-        <value>0</value>
-    </nlp_scaling_method>
+
+  <maximumPotential type="double">
+        <value>0.262144</value>
+    </maximumPotential>
+
   <obs_num type="int">
-        <value>0</value>
+        <value>1</value>
     </obs_num>
     <sensor_range type="double">
         <value>0</value>
     </sensor_range> 	
+
+    <Incp type="double">
+        <value>4</value>
+    </Incp> 
     <Edge_num type="int">
         <value>5</value>
     </Edge_num> 
@@ -37,7 +43,7 @@
     </leadercommunication_r>
 
     <communication_range type="double">
-        <value>20</value>
+        <value>5</value>
     </communication_range>
     <collision_r type="double">
         <value>2</value>

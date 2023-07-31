@@ -36,6 +36,7 @@ struct single_vehicle_data
     QVector<BetaAgent *> clsp;
     //里面总是放最近的agent
 };
+
 struct single_time_data
 {
     QVector<single_vehicle_data*> agents;
@@ -45,6 +46,7 @@ struct swarmvehicle
 {
     QVector<single_time_data*> steps;
 };
+inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value);
 
 inline void pack_variable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
                           int dec_num,int act_num,int state_num,
@@ -116,7 +118,7 @@ void common_initialize(swarmvehicle &var_struct)
                     sv->Edg.push_back(newedge);
                 }
             }
-             std->agents.push_back(sv);
+            std->agents.push_back(sv);
         }
         var_struct.steps.push_back(std);
     }
@@ -147,5 +149,43 @@ void unpackvariable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
 
     }
 }
+inline void initilize_Traj(QVector<Eigen::Vector2d> &ref)
+{
 
+    xmlCore xmlreader0("./config/swarmmpc/swarm.xml");
+    int agentnum=0;
+    xmlreader0.xmlRead("agent_num",agentnum);
+    int decnum=0;
+    xmlreader0.xmlRead("decnum",decnum);
+    Eigen::MatrixXd trajmat;
+    trajmat.resize(decnum,2);
+    xmlCore xmlreader("./config/swarmmpc/Target.xml");
+
+
+    xmlreader.xmlRead("trajmat",trajmat);
+
+
+    int rows=trajmat.rows();
+    int cols=trajmat.cols();
+    for(int i=0;i<rows;i++)
+    {
+        Eigen::Vector2d pos;
+        pos<<trajmat(i,0),trajmat(i,1);
+        ref.push_back(pos);
+    }
+    //接下来就是轨迹生成了
+}
+
+inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value)
+{
+    if(xindex<yindex)
+    {
+        mat(yindex,xindex)+=value;
+    }
+    else
+    {
+        mat(xindex,yindex)+=value;
+
+    }
+}
 #endif // COMMONSTRUCTANDFUNCTION_H

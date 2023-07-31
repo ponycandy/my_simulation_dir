@@ -8,7 +8,7 @@ CostTermas::CostTermas(std::string name):ifopt::CostTerm(name)
 double CostTermas::GetCost() const
 {
     VectorXd x = GetVariables()->GetComponent("action_state_set1")->GetValues();
-    std::cout<<x<<std::endl;
+//    std::cout<<x<<std::endl;
     return (x(10)-1)*(x(10)-1);
 }
 

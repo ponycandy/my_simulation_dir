@@ -42,5 +42,32 @@ Eigen::MatrixXd Jacobiancalc::jacobica(Eigen::MatrixXd act_mat, Eigen::MatrixXd 
 
 void Jacobiancalc::Hession(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat, Eigen::MatrixXd &Hession_temp, int state_index)
 {
-
+    int agentindex=state_index/3;
+    int state=state_index-3*agentindex;
+    double phi=state_mat(3*agentindex+2,0);
+    double x=state_mat(3*agentindex+2,0);
+    double y=state_mat(3*agentindex+2,0);
+    double v=act_mat(2*agentindex+0,0);
+    if(state==0)
+    {
+        //v phi
+        Hession_temp(agentindex*2,agent_Num*2+3*agentindex+2)=-sin(phi);
+        //phi phi
+        Hession_temp(agent_Num*2+3*agentindex+2,agent_Num*2+3*agentindex+2)=-v*cos(phi);
+        return;
+    }
+    if(state==1)
+    {
+        //v phi
+        Hession_temp(agentindex*2,agent_Num*2+3*agentindex+2)=cos(phi);
+        //phi phi
+        Hession_temp(agent_Num*2+3*agentindex+2,agent_Num*2+3*agentindex+2)=-v*sin(phi);
+        return;
+    }
+    if(state==2)
+    {
+        //v phi
+        Hession_temp.setZero();
+        return;
+    }
 }

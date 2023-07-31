@@ -236,7 +236,7 @@ Component::Jacobian Composite::GetHession(double obj_factor,const  double *lambu
             {
                 for (Jacobian::InnerIterator it(jac,k); it; ++it)
                 {
-                    triplet_list.push_back(Eigen::Triplet<double>(row+it.row(), it.col(), it.value()));
+                    triplet_list.push_back(Eigen::Triplet<double>(it.row(), it.col(), it.value()));
                     elementcounter+=1;
                     if(elementcounter==maximum_element)
                     {
@@ -274,6 +274,9 @@ Component::Jacobian Composite::GetHession(double obj_factor,const  double *lambu
     }
 
     Hes.setFromTriplets(triplet_list.begin(), triplet_list.end());
+    //有超界数据71
+    //怎么来的...2z
+
     return Hes;
 }
 

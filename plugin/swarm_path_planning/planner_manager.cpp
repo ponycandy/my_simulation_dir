@@ -51,39 +51,39 @@ planner_manager::planner_manager(QObject *parent)
     m_service->setuseterminal(false);
     m_service->Use_BuildIn_Dynamics_Cons(true);
 
-    //    Obs_Avoidence *newset=new Obs_Avoidence(agentnum,"Obs_Avoidence");
-    //    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
-    //    m_service->AddConstraintSet(consptr);
-    //这里不能够用最大化约束，因为Ipopt会给拉到无限远，这是一个无限势墙。算法本质导致的！
-    Collision_Avoidence *newset1=new Collision_Avoidence(decnum*agentnum*(agentnum-1)/2,"Collision_Avoidence");
-    std::shared_ptr<ifopt::ConstraintSet> consptr1(newset1);
-    m_service->AddConstraintSet(consptr1);
+    Obs_Avoidence *newset=new Obs_Avoidence(decnum*agentnum,"Obs_Avoidence");
+    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
+    m_service->AddConstraintSet(consptr);
+
+    //    Collision_Avoidence *newset1=new Collision_Avoidence(decnum*agentnum*(agentnum-1)/2,"Collision_Avoidence");
+    //    std::shared_ptr<ifopt::ConstraintSet> consptr1(newset1);
+    //    m_service->AddConstraintSet(consptr1);
 
 
     minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
     std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
     m_service->AddCostSet(consptr2);
 
-//    swarmvehicle var_struct;
-//    common_initialize(var_struct);
-//    int op=0;
-//    for(int steps=0;steps<decnum;steps++)
-//    {
-//        for(int i=0;i<agentnum;i++)
-//        {
-//            int edge_num=(var_struct.steps[steps])->agents[i]->edgenum;
-//            for(int j=0;j<edge_num;j++)
-//            {
-//                  op+=1;
-//            }
-//        }
-//    }
-//    Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
-//    std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
-//    m_service->AddConstraintSet(consptr3);
+    //    swarmvehicle var_struct;
+    //    common_initialize(var_struct);
+    //    int op=0;
+    //    for(int steps=0;steps<decnum;steps++)
+    //    {
+    //        for(int i=0;i<agentnum;i++)
+    //        {
+    //            int edge_num=(var_struct.steps[steps])->agents[i]->edgenum;
+    //            for(int j=0;j<edge_num;j++)
+    //            {
+    //                  op+=1;
+    //            }
+    //        }
+    //    }
+    //    Topology_Constrain *newset3=new Topology_Constrain(op,"Topology_Constrain");
+    //    std::shared_ptr<ifopt::ConstraintSet> consptr3(newset3);
+    //    m_service->AddConstraintSet(consptr3);
 
 
-//一个想法是将最优化转化为约束问题
+    //一个想法是将最优化转化为约束问题
     //但是，我们需要搞明白这么干不会有用的机制
     //而不是频繁的更换，不知道底层原理是没有用的
     m_service->constructNLP();
@@ -99,29 +99,29 @@ planner_manager::planner_manager(QObject *parent)
     //可是不能够一直这样吧，步数继续增长呢？
 
     m_service->solve_problem();
-//    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
-//    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
-//    newset2->GetCost();
+    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
+    newset2->GetCost();
     //    newset2->var_struct;
     QString word;
 
-//    m_service->createxlsfile("./log/test.xlsx");
-//    for(int k=0;k<newset2->decnum;k++)
-//    {
-//        for(int i=0;i<newset2->agentnum;i++)
-//        {
-//            word=" time : "+QString::number(k)+"agent "+
-//                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
-//            + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
-//                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
+    m_service->createxlsfile("./log/test.xlsx");
+    for(int k=0;k<newset2->decnum;k++)
+    {
+        for(int i=0;i<newset2->agentnum;i++)
+        {
+            word=" time : "+QString::number(k)+"agent "+
+                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
+                   + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
+                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
 
 
-//            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
-//            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
-//            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
+            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
+            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
+            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
 
-//        }
-//    }
+        }
+    }
 
-//    m_service->savexlsfile();
+    m_service->savexlsfile();
 }
