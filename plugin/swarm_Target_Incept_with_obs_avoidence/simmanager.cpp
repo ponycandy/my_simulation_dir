@@ -29,13 +29,9 @@ simmanager::simmanager(QObject *parent)
         vehicle *agent=dynamic_cast<vehicle *>( agentgroup[i]);
         Datalogservice *m_sss=swarm_Target_Incept_with_obs_avoidenceActivator::getService<Datalogservice>("Datalogservice");
         agent->M_logger=m_sss->cloneservice();
-//        QString logfilename="./logs/agent_"+QString::number(i)+"/logstate.txt";
-//        QString xlsfilename="./logs/agent_"+QString::number(i)+"/logstatexls.xlsx";
 
-//        agent->M_logger->createlogfile(logfilename,8008+i);
-//        agent->M_logger->createxlsfile(xlsfilename);
-//        agent->M_logger->log("this is agent_"+QString::number(i),1);
         //需要每个agent按照其自身对应的ID采取不同的措施
+        //此处设置1号为领导者
         if(i==agentnum)
         {
             agent->setsendsig(0);//设置目标发送信号
@@ -46,7 +42,7 @@ simmanager::simmanager(QObject *parent)
             agent->state_vector.resize(3,1);
             agent->state_vector=mid1;
         }
-        if(i==agentnum-1)
+        if(i==1)
         {
             agent->setsendsig(1);//设置领导发送信号
             //领导的感知/通讯范围要远大于其它无人车
@@ -62,7 +58,7 @@ simmanager::simmanager(QObject *parent)
             }
 //            agent->collision_r=10; //这个还是不要改变，否则会导致避障行为发生很大的变化
         }
-        if(i<agentnum-1)
+        if(i<agentnum && i>1)
         {
             agent->setsendsig(2);//设置follower信号
             for(int k=0;k<vertexnum;k++)

@@ -3,6 +3,7 @@ QT       += core gui testlib xml
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 
@@ -40,5 +41,7 @@ HEADERS += \
     simmanager.h \
     vehicle.h \
     mypainter.h \
+
+
 
 

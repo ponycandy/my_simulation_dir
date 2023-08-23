@@ -4,8 +4,18 @@
 #include "swarm_Target_Incept_with_obs_avoidenceActivator.h"
 #include <cmath>
 
-// Define pi as a constant
-const double pi = 3.141592653589793;
+#include <MyMath/MyMathLib.h>
+
+Eigen::MatrixXd originalvector;
+
+
+inline double ValueOperator(Eigen::MatrixXd value)
+{
+    return abs(calculateAngleBetweenVectors(originalvector,value));
+}
+
+
+
 vehicle::vehicle():SwarmAgent()
 {
     m_e_T.resize(2,1);
@@ -13,39 +23,69 @@ vehicle::vehicle():SwarmAgent()
     m_v_T.resize(2,1);
     m_v_T.setZero();
     m_v_n=m_v_T;
+    leader_act_temp=m_v_T;
+    leader_pos_temp=m_v_T;
+    leader_vel_temp=m_v_T;
     QString configfilename="./config/swarmInception/swarm.xml";
     xmlCore Xmlreader(configfilename.toStdString());
     Xmlreader.xmlRead("agent_num",agentnum);
     status_num=4;
     action_num=2;
+    int obs_num_now;
     Xmlreader.xmlRead("communication_range",communication_range);
     Xmlreader.xmlRead("collision_r",collision_r);
     Xmlreader.xmlRead("sensor_range",sensor_range);
+    Xmlreader.xmlRead("obs_num",obs_num_now);
     heading_angle=0;
     falseflag=0;
 
     Xmlreader.xmlRead("predicthorizon",predicthorizon);
 
     steps=0;//用来记录
-}
-double vehicle::get_angle(double vx, double vy)
-{
-    double value=0;
-    if(isnan(vy/vx))
-    {
-        return value;
 
-    }
-    else
+    leader_act_temp.resize(2,1);
+    leader_act_temp.setZero();
+    leader_self_act_vector.resize(2,1);
+    leader_self_act_vector.setZero();
+    m_service=swarm_Target_Incept_with_obs_avoidenceActivator::getService<CollisionDetectservice>("CollisionDetectservice");
+
+
+    for(int i=1;i<=obs_num_now;i++)
     {
-        value=atan2(vy,vx);
-        if(isnan(value))
+        SwarmObstacle *new_obs=new SwarmObstacle;
+        QString obs_term_name="OBS_"+QString::number(i)+"_vertexnum";
+        Xmlreader.xmlRead(obs_term_name.toStdString(),new_obs->vertex_num);
+        new_obs->ID=i;
+        Eigen::MatrixXd obs_mat;
+        obs_mat.resize(new_obs->vertex_num,2);
+        obs_term_name="OBS_"+QString::number(i)+"_vertexparams";
+        std::vector<double> point_x_vec;
+        std::vector<double> point_y_vec;
+        Xmlreader.xmlRead(obs_term_name.toStdString(),obs_mat);
+        for(int j=1;j<=new_obs->vertex_num;j=j+1)
         {
-            return 0;
+            double x= obs_mat(j-1,0);
+            double y= obs_mat(j-1,1);
+            point_x_vec.push_back(x);
+            point_y_vec.push_back(y);
+            new_obs->vertex_map<<QPointF(x,y);
         }
-        return  value;
+
+        double max_x = *max_element(point_x_vec.begin(), point_x_vec.end());
+        double max_y = *max_element(point_y_vec.begin(), point_y_vec.end());
+        double min_x = *min_element(point_x_vec.begin(), point_x_vec.end());
+        double min_y = *min_element(point_y_vec.begin(), point_y_vec.end());
+
+        new_obs->x_up=max_x+collision_r;
+        new_obs->x_low=min_x-collision_r;
+        new_obs->y_up=max_y+collision_r;
+        new_obs->y_low=min_y-collision_r;
+
+        obsbounding_group.insert(i,new_obs);
     }
+
 }
+
 
 void vehicle::state_update()
 {
@@ -74,7 +114,7 @@ void vehicle::sensorfunction()
     Eigen::Matrix<double,2,1> constantmat;
     constantmat<<0,0;//constant可以随着队形方向发生改变，好像书上是有
     //这部分的，咱们最好加进来，因为旋转自由度我们似乎从未控制过
-    if(ID==agentnum-1)//for leader
+    if(ID==1)//for leader
     {
         //leader无法使用一般的neib_aget判断方式
         //它的neib_agent是单方面的,我们应该在
@@ -87,28 +127,161 @@ void vehicle::sensorfunction()
             if(subject->ID == agentnum)//探测到目标
             {
                 m_e_T=subject->pos_xy-pos_xy-constantmat;
-                m_v_T=subject->vel_xy-vel_xy;
+                m_v_T=subject->vel_xy-vel_xy;//注意原论文中的vt-un的实际含义，对应这里的m_v_t
             }
         }
         m_v_n=vel_xy;
     }
 }
 
-double vehicle::normalize(double angle)
+Eigen::MatrixXd vehicle::predict_Collistion(ClosePoint *clagent)
 {
-    double remainder = fmod(angle, 2 * pi);
-    if(isnan(remainder))
+    //    Eigen::MatrixXd predict_pos=pos_xy;
+    //    Eigen::MatrixXd predict_leader=leader_pos_temp;
+    //    predict_pos+=predicthorizon*0.03*clagent->edg1.normalized()*leader_vel_temp.norm();//沿着边1前进的结果
+    //    predict_leader+=predicthorizon*0.03*leader_vel_temp;
+    //    collison_result2 result=m_service->polygen_line_segment_detect(
+    //        predict_pos, predict_leader,obsbounding_group.value(clagent->obs_ID)->vertex_map);
+    //    if(result.flag==1 && result.collisionnum==2) //被障碍物隔断而且没有进入到障碍物内部
+    //    {
+
+    //    }
+    //    if(result.flag==1 && result.collisionnum==1) //被障碍物隔断而且进入了障碍物内部
+    //    {
+
+    //    }
+    //    if(result.flag==0) //无阻碍
+    //    {
+
+    //    }
+    //    //检测和边2是否存在碰撞
+    //    predict_pos=pos_xy;
+    //    predict_leader=leader_pos_temp;
+    //    predict_pos+=predicthorizon*0.03*clagent->edg2.normalized()*leader_vel_temp.norm();//沿着边1前进的结果
+    //    predict_leader+=predicthorizon*0.03*leader_vel_temp;
+    //    result=m_service->polygen_line_segment_detect(
+    //        predict_pos, predict_leader,obsbounding_group.value(clagent->obs_ID)->vertex_map);
+    //    if(result.flag==1) //和边1存在碰撞
+    //    {
+
+    //    }
+    double distance_1=0;
+    double distance_2=0;
+
+    //遍历障碍物到leader的cp点
+    collison_result result=m_service->polygen_circle_detect(leader_pos_temp(0,0)
+                                                              ,leader_pos_temp(1,0),
+                                                              100,obsbounding_group.value(clagent->obs_ID)->vertex_map);
+    SwarmObstacle *obs=obsbounding_group.value(clagent->obs_ID);
+    Eigen::MatrixXd edge;edge.resize(2,1);edge.setZero();
+    Eigen::MatrixXd startp;startp=edge;
+    Eigen::MatrixXd endp;endp=edge;
+    Eigen::MatrixXd Targetp;Targetp=edge;
+    Targetp<< result.closest_point.x, result.closest_point.y;
+
+    int pointIndex=(clagent->last_vertex+1)%obs->vertex_map.length();
+    //本机近邻顶点的ID，确认一定是这个！
+    if(pointIndex==0)
     {
-        int a=1;
+        pointIndex=obs->vertex_map.length();
     }
-    if (remainder > 0 && remainder > pi) {
-        remainder -= 2 * pi;
+    //首先是增序方向,注意，这里next_vertex和last_vertex相等，因为是顶点
+    for(int i=pointIndex;i<=obs->vertex_map.length();i++)
+    {
+        int head=(i)%obs->vertex_map.length();
+        if(head==0)
+        {
+            head=obs->vertex_map.length();
+        }
+        int tail=(head+1)%obs->vertex_map.length();
+        if(tail==0)
+        {
+            tail=obs->vertex_map.length();
+        }
+        startp<<obs->vertex_map.at(head-1).x(),obs->vertex_map.at(head-1).y();
+        endp<<obs->vertex_map.at(tail-1).x(),obs->vertex_map.at(tail-1).y();
+
+        //这里需要判断目标点是否在线段上面，要包括端点的状态！
+        bool istrue=Point_on_line(startp,endp,Targetp);
+        if(istrue==1)
+        {
+            edge=Targetp-startp;
+            distance_1+=edge.norm();
+            break;
+        }
+        else
+        {
+            edge=endp-startp;
+            distance_1+=edge.norm();
+        }
+
     }
-    if (remainder < 0 && remainder < -pi) {
-        remainder += 2 * pi;
+    //然后是减序列方向
+    for(int i=pointIndex;i<=obs->vertex_map.length();i--)
+    {
+        int head=abs((i)%obs->vertex_map.length());//不知道负数的表现是啥
+        if(head==0)
+        {
+            head=obs->vertex_map.length();
+        }
+        int tail=abs((head-1)%obs->vertex_map.length());
+        if(tail==0)
+        {
+            tail=obs->vertex_map.length();
+        }
+        startp<<obs->vertex_map.at(head-1).x(),obs->vertex_map.at(head-1).y();
+        endp<<obs->vertex_map.at(tail-1).x(),obs->vertex_map.at(tail-1).y();
+
+        //这里需要判断目标点是否在线段上面，要包括端点的状态！
+        bool istrue=Point_on_line(startp,endp,Targetp);
+        if(istrue==1)
+        {
+            edge=Targetp-startp;
+            distance_2+=edge.norm();
+            break;
+        }
+        else
+        {
+            edge=endp-startp;
+            distance_2+=edge.norm();
+        }
+
     }
-    return remainder;
+    if(distance_2>distance_1)
+    {
+        //选择增势方向
+        int head=(pointIndex)%obs->vertex_map.length();
+        if(head==0)
+        {
+            head=obs->vertex_map.length();
+        }
+        int tail=(head+1)%obs->vertex_map.length();
+        if(tail==0)
+        {
+            tail=obs->vertex_map.length();
+        }
+        startp<<obs->vertex_map.at(head-1).x(),obs->vertex_map.at(head-1).y();
+        endp<<obs->vertex_map.at(tail-1).x(),obs->vertex_map.at(tail-1).y();
+        return (endp-startp).normalized();
+    }
+    else
+    {
+        int head=abs((pointIndex)%obs->vertex_map.length());//不知道负数的表现是啥
+        if(head==0)
+        {
+            head=obs->vertex_map.length();
+        }
+        int tail=abs((head-1)%obs->vertex_map.length());
+        if(tail==0)
+        {
+            tail=obs->vertex_map.length();
+        }
+        startp<<obs->vertex_map.at(head-1).x(),obs->vertex_map.at(head-1).y();
+        endp<<obs->vertex_map.at(tail-1).x(),obs->vertex_map.at(tail-1).y();
+        return (endp-startp).normalized();
+    }
 }
+
 
 void vehicle::broadcastfunction()
 {
@@ -119,10 +292,10 @@ void vehicle::broadcastfunction()
         return;
     }
 
-    if(ID==agentnum-1)//如果是Leader
+    if(ID==1)//如果是Leader
     {
         updateleader(pos_xy(0,0),pos_xy(1,0),heading_angle);
-        LeaderBroadcast(m_e_T,m_v_T,m_v_n);
+        LeaderBroadcast(m_e_T,m_v_T,m_v_n,act_vector);
         //上面的值在感知函数中计算
         return;
     }
@@ -134,7 +307,7 @@ void vehicle::controlfunction()
 {
     if(ID==agentnum)//给目标设置一个合适的运动轨迹,目前绕圈比较好，我们设置vel但是不设置act
     {
-        act_vector<<1,0.05;
+        act_vector<<1,0.1;
         //        act_vector.setZero();
         return;
     }
@@ -149,13 +322,18 @@ void vehicle::controlfunction()
         concencus.resize(2,1);
         concencus.setZero();
         Eigen::MatrixXd gradient_term=concencus;
+        Eigen::MatrixXd avergae_pos=concencus;
+        Eigen::MatrixXd avergae_vel=concencus;
+        avergae_vel+=vel_xy;
         for(int j=1;j<=neib_num;j++)
         {
             SwarmAgent *neib_agent=neib_map.value(j);
 
-            if(nearbyagentdistance.contains(neib_agent->ID))//错了！！
+            if(nearbyagentdistance.contains(neib_agent->ID))//这个是relation_matrix
             {
                 double distance=nearbyagentdistance.value(neib_agent->ID);
+                avergae_pos+=neib_agent->pos_xy;
+                avergae_vel+=neib_agent->vel_xy;
                 Eigen::MatrixXd n_ij=neib_agent->pos_xy-pos_xy;
                 concencus+=neib_agent->vel_xy-vel_xy;
                 double norm_2=n_ij.norm();
@@ -166,8 +344,16 @@ void vehicle::controlfunction()
                 //当然，这个距离可以被设计用来编队
                 gradient_term+=grad;
             }
+            if(neib_agent->ID==1)
+            {
+                //记录领导者传达的自身状态:
+                leader_pos_temp=neib_agent->pos_xy;
+                leader_vel_temp=neib_agent->vel_xy;
+
+            }
 
         }
+
         //这里不再有chasing term
         act_vector=(concencus+4*gradient_term);//目前，只有共识和互斥项
         //下面添加避障项:
@@ -177,32 +363,87 @@ void vehicle::controlfunction()
         Eigen::MatrixXd beta_agent_control;
         Eigen::MatrixXd posofcp;
         Eigen::MatrixXd grad;
+
         posofcp.resize(2,1);
+        posofcp.setZero();
         grad=posofcp;
+
         for(int j=1;j<=obs_closet_point_num;j++)
         {
             ClosePoint *close_agent=closepoint_map.value(j);
-            double dot = (vel_xy.transpose() * close_agent->edg1)(0,0);
-            if(dot>=0)
+            //下面计算最小夹角
+
+            //1.计算关联agent的绝对质心,以及绝对平均速度
+            avergae_pos/=neib_num;
+            avergae_vel/=(neib_num+1);
+            //2.计算平均质心在障碍物上的最近点：
+
+            collison_result result=m_service->polygen_circle_detect(avergae_pos(0,0),
+                                                                      avergae_pos(1,0),100,
+                                                                      obsbounding_group.value(close_agent->obs_ID)->vertex_map);
+
+            //4.计算最近点之间的连接向量
+            //            originalvector.resize(2,1);
+            //            originalvector<<result.closest_point.x,result.closest_point.y;
+            //            originalvector=originalvector-close_agent->pos;
+            originalvector=avergae_vel;
+            //5.选取最小夹角
+            //情况1：同边
+            if (close_agent->edg2==-close_agent->edg1)
             {
-                edge0=close_agent->edg1;
+                std::vector<Eigen::MatrixXd> edges = {close_agent->edg1, close_agent->edg2};
+                edge0=*argmin(edges,ValueOperator);
             }
             else
             {
-                edge0=close_agent->edg2;
-            }
-            double vel_mag=vel_xy.norm();
-            edge0.normalize();//vel of beta ganet
-            beta_agent_control=-vel_mag*edge0;//vel of beta ganet
-            close_agent->angle=get_angle(beta_agent_control(0,0),beta_agent_control(1,0));
-            concencus+= concencus+beta_agent_control-vel_xy;
-            posofcp<<close_agent->x,close_agent->y;
-            dot=(posofcp-pos_xy).norm();
+                //情况2：顶点，需要计算四个角度取最小
+                std::vector<Eigen::MatrixXd> edges = {close_agent->edg1, close_agent->edg2,
+                                                      -close_agent->edg1, -close_agent->edg2};
 
-            grad=(dot-communication_range)/pow(dot,2)*(posofcp-pos_xy);
+                edge0=*argmin(edges,ValueOperator);
+                //这里必须区分是开入顶点还是开出顶点
+                //对于后者，取最小化平均速度没有问题
+                //对于前者,则不一样,应当无条件选取距离目标较近的
+                if(edge0==(-close_agent->edg1) ||  edge0==-close_agent->edg2)
+                {
+                    //开出顶点,不做干涉
+                }
+                else
+                {
+                    //开入顶点
+                    //此时应当减少截断,使用预测算法:
+                    if(ID!=1)//非leader需要进行判断
+                    {
+                        edge0=predict_Collistion(close_agent);
+                        //这个项最小化环绕距离;
+                    }
+
+                }
+            }
+            //5.计算一致性和共识性速度
+            double vel_mag=vel_xy.norm();//
+            edge0.normalize();//vel of beta ganet
+            beta_agent_control=vel_mag*edge0;//这个速度一直写反了啊.....
+            close_agent->angle=get_angle(beta_agent_control(0,0),beta_agent_control(1,0));
+            concencus = concencus+beta_agent_control-vel_xy;
+            posofcp<<close_agent->x,close_agent->y;
+            double dot=(posofcp-pos_xy).norm();
+            if(dot<collision_r)
+            {
+                grad=(dot-collision_r)/pow(dot,2)*(posofcp-pos_xy);
+            }
+            else
+            {
+                grad.setZero();
+            }
+            //应该将目标距离尽可能设置为碰撞距离！
+            //不然会使得物体靠近障碍物，被拉到固定距离
+            //也就是说，距离大于collision_r的时候
+            //即使发现也不产生推力！
             gradient_term=gradient_term+grad;
 
         }
+        leader_self_act_vector=(concencus+5*gradient_term);
         act_vector=act_vector+(concencus+5*gradient_term);
         //到此加上了避障项
         //下面添加目标项
@@ -218,15 +459,20 @@ void vehicle::controlfunction()
         //        act_vector+=h;
         //这一项可以保证leader移动到目标附件，但是保证不了全局收敛
 
-        //添加速度误差项
-        if(ID==agentnum-1)
+        //如果本机是leader，需要将本机的一致控制项广播出去
+
+        if(ID==1)
+        {
+            //  act_vector-leader_self_act_vector 这是本机的一致项
+            LeaderBroadcast(m_e_T,m_v_T,m_v_n,act_vector-leader_self_act_vector);
+            //本机控制量只保留目标项和避障项目
+            act_vector+=h;
+
+
+        }
+        else
         {
             act_vector+=h;
-            //            M_logger->log(QString(" ex is ")+QString::number(m_e_T(0,0))+" ev is "+QString::number(m_v_T(0,0))+" control is "+QString::number(act_vector(0,0)),2);
-
-            //有静态误差，说明targetagent对目标施加了力
-            //这个静态误差是哪里来的？
-
         }
     }
 }
@@ -334,9 +580,10 @@ Eigen::MatrixXd vehicle::state_space_equation()
 
 }
 
-void vehicle::Broadcastupdate(Eigen::MatrixXd e_t, Eigen::MatrixXd v_t, Eigen::MatrixXd v_n)
+void vehicle::Broadcastupdate(Eigen::MatrixXd e_t, Eigen::MatrixXd v_t, Eigen::MatrixXd v_n, Eigen::MatrixXd othersignal)
 {
     m_e_T=e_t;
     m_v_T=v_t;
     m_v_n=v_n;
+    leader_act_temp=othersignal;
 }
