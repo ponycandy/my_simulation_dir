@@ -3,6 +3,11 @@
 #include <QPolygonF>
 #include <Eigen/Core>
 #include <QMap>
+#include <Eigen/Dense>
+#include <iostream>
+#include <vector>
+
+
 struct pos_xy
 {
 
@@ -16,23 +21,6 @@ struct pos_xy
     double edge1_y;
     double edge2_x;
     double edge2_y;
-//    Eigen::MatrixXd edg1;
-//    Eigen::MatrixXd edg2;
-//    Eigen::MatrixXd pos;
-//    pos_xy()
-//    {
-//        edg1.resize(2,1);edg1.setZero();
-//        edg2.resize(2,1);edg2.setZero();
-
-//        pos.resize(2,1);pos.setZero();
-
-//    }
-//    void calc_vetor()
-//    {
-//        pos.resize(2,1);
-//        pos(0,0)=x;
-//        pos(1,0)=y;
-//    }
 
 
 };
@@ -45,6 +33,14 @@ struct collison_result
 {
     int flag;
     pos_xy closest_point;
+
+};
+
+struct collison_result2
+{
+    int flag;
+    int collisionnum;
+    std::vector<pos_xy> collision;
 
 };
 struct single_obstacle

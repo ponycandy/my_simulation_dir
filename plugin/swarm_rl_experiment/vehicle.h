@@ -11,6 +11,7 @@ public:
     void broadcastfunction() override;
     void controlfunction() override;
     void fault_set(int option) override;
+    double get_angle(double vx, double vy);
     SwarmAgent* clone_agent() override;
     Eigen::MatrixXd state_space_equation() override;
     Eigen::MatrixXd refpos;

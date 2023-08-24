@@ -50,27 +50,30 @@ namespace ifopt {
  */
 class ConstraintSet : public Component {
 public:
-  using Ptr          = std::shared_ptr<ConstraintSet>;
-  using VariablesPtr = Composite::Ptr;
+    using Ptr          = std::shared_ptr<ConstraintSet>;
+    using VariablesPtr = Composite::Ptr;
 
-  /**
+    /**
    * @brief Creates constraints on the variables @c x.
    * @param n_constraints  The number of constraints.
    * @param name  What these constraints represent.
    */
-  ConstraintSet(int n_constraints, const std::string& name);
-  virtual ~ConstraintSet() = default;
+    ConstraintSet(int n_constraints, const std::string& name);
+    virtual ~ConstraintSet() = default;
 
-  /**
+    /**
    * @brief Connects the constraint with the optimization variables.
    * @param x  A pointer to the current values of the optimization variables.
    *
    * The optimization variable values are necessary for calculating constraint
    * violations and Jacobians.
    */
-  void LinkWithVariables(const VariablesPtr& x);
-
-  /**
+    void LinkWithVariables(const VariablesPtr& x);
+    Jacobian GetHession(double obj_factor,const double *lambuda) const
+    {
+        throw std::runtime_error("GetHession not implemented for ConstraintSet");
+    }
+    /**
    * @brief  The matrix of derivatives for these constraints and variables.
    *
    * Assuming @c n constraints and @c m variables, the returned Jacobian
@@ -80,9 +83,9 @@ public:
    * This function only combines the user-defined jacobians from
    * FillJacobianBlock().
    */
-  Jacobian GetJacobian() const final;
-
-  /**
+    Jacobian GetJacobian() const final;
+    Jacobian GetSingleHession(int irow) const;
+    /**
    * @brief Set individual Jacobians corresponding to each decision variable set.
    * @param var_set  Set of variables the current Jacobian block belongs to.
    * @param jac_block  Columns of the overall Jacobian affected by var_set.
@@ -104,20 +107,20 @@ public:
    * set as follows (which can also be set =0.0 without erros):
    * jac_block.coeffRef(1, 3) = ... 
    */
-  virtual void FillJacobianBlock(std::string var_set, Jacobian& jac_block) const = 0;
-
+    virtual void FillJacobianBlock(std::string var_set, Jacobian& jac_block) const = 0;
+    virtual void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const = 0;
 protected:
-  /**
+    /**
    * @brief Read access to the value of the optimization variables.
    *
    * This must be used to formulate the constraint violation and Jacobian.
    */
-  const VariablesPtr GetVariables() const { return variables_; };
+    const VariablesPtr GetVariables() const { return variables_; };
 
 private:
-  VariablesPtr variables_;
+    VariablesPtr variables_;
 
-  /**
+    /**
    * @brief  Initialize quantities that depend on the optimization variables.
    * @param x  A pointer to the initial values of the optimization variables.
    *
@@ -125,10 +128,10 @@ private:
    * or shorthands to specific variable sets want to be saved for quicker
    * access later. This function can be overwritten for that.
    */
-  virtual void InitVariableDependedQuantities(const VariablesPtr& x_init) {};
+    virtual void InitVariableDependedQuantities(const VariablesPtr& x_init) {};
 
-  // doesn't exist for constraints, generated run-time error when used
-  void SetVariables(const VectorXd& x) final { assert(false); };
+    // doesn't exist for constraints, generated run-time error when used
+    void SetVariables(const VectorXd& x) final { assert(false); };
 };
 
 

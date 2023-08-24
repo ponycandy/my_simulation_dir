@@ -10,8 +10,12 @@ class collisionCalculator : public QObject,public CollisionDetectservice
 public:
     explicit collisionCalculator(QObject *parent = nullptr);
     collison_result polygen_circle_detect(double circle_x, double circle_y, double r, QPolygonF obs) override;
+    collison_result2 polygen_line_segment_detect(Eigen::MatrixXd &Point_a0,Eigen::MatrixXd &Point_a1,QPolygonF &obs) override;
     prj_range circle_projection(double circlex, double circley, double r, Eigen::MatrixXd vec);
     prj_range convex_projection(QPolygonF obs, Eigen::MatrixXd vec);
+    prj_range Line_projection(double startx,double starty,
+                              double endx,double endy,Eigen::MatrixXd vec);
+
     double find_min(Eigen::MatrixXd dis,int num);
     double find_max(Eigen::MatrixXd dis,int num);
     double vector_dot(Eigen::MatrixXd ad,Eigen::MatrixXd bd);

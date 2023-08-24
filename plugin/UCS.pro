@@ -30,3 +30,5 @@ test_NMPC_Plugin \
     SwarmSimulator \
     swarm_path_planning   \
     Test_Use_Hession   \
+    swarm_ETM   \
+    Swarm_obstacle_avoid \

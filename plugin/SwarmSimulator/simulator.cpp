@@ -29,7 +29,7 @@ void Simulator::ode_function(Eigen::MatrixXd act_mat, Eigen::MatrixXd state_mat)
         agent->state_vector=agent->state_vector+0.001*delta_t*agent->state_space_equation();
         agent->state_update();
     }
-//    qDebug()<<thread_ID;
+    //    qDebug()<<thread_ID;
 
 }
 
@@ -45,11 +45,34 @@ void Simulator::sensor(Eigen::MatrixXd state_mat)
 {
     detect_neibor(state_array);
     detect_collision();
-//系统完成默认服务：碰撞检测和邻居识别，然后进入agent环节
+    //系统完成默认服务：碰撞检测和邻居识别，然后进入agent环节
     for(int i=1;i<=agent_num;i++)
     {
         SwarmAgent *agent=Agents_group.value(i);
         agent->sensorfunction();
+    }
+    //上面过程完成后，agent自行选择是否触发自己的数据传感，然后再在
+    //下面进行ETM传感数据的检测
+    for(int i=1;i<=agent_num;i++)
+    {
+        SwarmAgent *agent=Agents_group.value(i);
+        if(agent->ETMflag==1)
+        {
+            //各agent关于自己的ETM用来存储上一次广播的state
+            *(agent->ETM_sensor[agent->ID])=(&(agent->selfETM))->eval();
+            QMap<int, SwarmAgent *>::const_iterator iter2 = agent->neib_map.cbegin();
+            //遍历，将所有这个agent的邻居的ETM状态给更新
+
+            while (iter2 != agent->neib_map.cend())
+            {
+                *(iter2.value()->ETM_sensor[agent->ID])=
+                    (&(agent->selfETM))->eval();
+                //拷贝对应对象的最新状态
+                ++iter2;
+                //ETM_vec和ETM_sensor自行根据需求选取
+            }
+            agent->ETMflag=0;
+        }
     }
 }
 
@@ -76,14 +99,15 @@ void Simulator::detect_neibor(Eigen::MatrixXd state_mat)
         for(int iter2=1;iter2<iter1;iter2++)
         {
             dis=pow(Agents_group.value(iter1)->pos_xy(0,0)-Agents_group.value(iter2)->pos_xy(0,0),2)
-                    +pow(Agents_group.value(iter1)->pos_xy(1,0)-Agents_group.value(iter2)->pos_xy(1,0),2);
+                  +pow(Agents_group.value(iter1)->pos_xy(1,0)-Agents_group.value(iter2)->pos_xy(1,0),2);
             if(dis<pow(Agents_group.value(iter1)->communication_range,2) && dis<pow(Agents_group.value(iter2)->communication_range,2))
             {
-            //这里需要两种判断：1.感知判断，添加appendsensor  2.通讯判断，添加appendneibor
+                //这里需要两种判断：1.感知判断，添加appendsensor  2.真实通讯判断，添加appendneibor
+                // 3.触发通讯判断，添加appendETM，以后还有额外的图，都通过这种范式来添加
                 Agents_group.value(iter1)->appendNeibor(Agents_group.value(iter2),dis);
                 Agents_group.value(iter2)->appendNeibor(Agents_group.value(iter1),dis);
                 //一般认为，只有满足双向连接的通讯才可以作为邻居
-            //不然就会默认：感知=通讯，将会无法适用于目标追踪
+                //不然就会默认：感知=通讯，将会无法适用于目标追踪
             }
             if(dis<pow(Agents_group.value(iter1)->sensor_range,2))
             {
@@ -95,7 +119,6 @@ void Simulator::detect_neibor(Eigen::MatrixXd state_mat)
             }
 
         }
-
     }
     if(neib_seq==1)
     {
@@ -130,7 +153,7 @@ void Simulator::detect_collision()
             if(within_range(Agents_group.value(i)->pos_xy,obs)==1)
             {
                 collison_result result=m_service->polygen_circle_detect(Agents_group.value(i)->pos_xy(0,0),
-                                    Agents_group.value(i)->pos_xy(1,0),Agents_group.value(i)->collision_r,obs->vertex_map);
+                                                                          Agents_group.value(i)->pos_xy(1,0),Agents_group.value(i)->collision_r,obs->vertex_map);
                 if(result.flag==1)
                 {
                     //一般都将collision range设置为communiaction range，涉及到的假设就是，无人车

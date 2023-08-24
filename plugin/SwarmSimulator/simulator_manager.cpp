@@ -127,7 +127,25 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
     m_sim->state_array.setZero();
     m_sim->update_obs();
     m_sim->agent_communication_range=m_sim->Agents_group.value(1)->communication_range;
-    m_sim->collision_r=m_sim->Agents_group.value(1)->collision_r;
+    xmlreader.xmlRead("collision_r",m_sim->collision_r);
+    //确立ETM机制,下面的机制默认是将全局的相对状态储存
+    //所以，实际上需要算法自行管理邻居！
+    //我们还想要考虑吧一个selfETM更新，只有邻居能够收到的场景....
+    for(int i=1;i<=m_sim->agent_num;i++)
+    {
+        SwarmAgent *agent=m_sim->Agents_group.value(i);
+        agent->ETM_vec.resize(m_sim->agent_num+1);
+        agent->ETM_sensor.resize(m_sim->agent_num+1);
+        for(int j=1;j<=m_sim->agent_num;j++)
+        {
+            agent->ETM_vec[j]=&m_sim->Agents_group.value(j)->selfETM;
+            agent->ETM_sensor[j]=new Eigen::MatrixXd;
+            *(agent->ETM_sensor[j])=(( agent->ETM_vec[j]))->eval();
+        }
+
+    }
+
+
 
 }
 

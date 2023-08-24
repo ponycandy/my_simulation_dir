@@ -45,30 +45,35 @@ namespace ifopt {
  */
 class CostTerm : public ConstraintSet {
 public:
-  CostTerm(const std::string& name);
-  virtual ~CostTerm() = default;
+    CostTerm(const std::string& name);
+    virtual ~CostTerm() = default;
 
 private:
-  /**
+    /**
    * @brief  Returns the scalar cost term calculated from the @c variables.
    */
-  virtual double GetCost() const = 0;
+    virtual double GetCost() const = 0;
 
 public:
-  /**
+    /**
    * @brief  Wrapper function that converts double to Eigen::VectorXd.
    */
-  VectorXd GetValues() const final;
+    VectorXd GetValues() const final;
 
-  /**
+    Jacobian GetHession(double obj_factor,double *lambuda) const
+    {
+        throw std::runtime_error("not implemented for CostTerm");
+    };
+
+    /**
    * @brief  Returns infinite bounds (e.g. no bounds).
    */
-  VecBound GetBounds() const final;
+    VecBound GetBounds() const final;
 
-  /**
+    /**
    * Cost term printout slightly different from variables/constraints.
    */
-  void Print (double tol, int& index) const final;
+    void Print (double tol, int& index) const final;
 };
 
 }

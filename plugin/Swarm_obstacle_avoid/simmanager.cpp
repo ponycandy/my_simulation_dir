@@ -7,7 +7,6 @@
 simmanager::simmanager(QObject *parent)
     : QObject{parent}
 {
-    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/testswarm.txt", true);
 
     //    TCPsoc=Swarm_obstacle_avoidActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
     //    Swarm_obstacle_avoidActivator::subscribeslot(this,SLOT(matrecieved(Eigen::MatrixXd))
@@ -30,7 +29,6 @@ simmanager::simmanager(QObject *parent)
     for(int i=1;i<agentnum;i++)
     {
         vehicle *agent=dynamic_cast<vehicle *>( agentgroup[i]);
-        agent->my_logger=my_logger;
     }
     Animateservice *anim=swarmsim->getwidgetoperator();
     anim->register_painter(m_painter);

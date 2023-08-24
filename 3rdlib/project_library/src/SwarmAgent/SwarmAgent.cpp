@@ -7,9 +7,17 @@ SwarmAgent::SwarmAgent()
     pos_xy.setZero();
     vel_xy.resize(2,1);
     vel_xy.setZero();
+    selfETM.resize(1,1);
+    selfETM.setZero();
     neib_num=0;
     sensor_subject_num=0;
     obs_closet_point_num=0;
+    ETMflag=0;
+}
+
+void SwarmAgent::TriggerEvent()
+{
+    ETMflag=1;
 }
 
 void SwarmAgent::appendNeibor(SwarmAgent *agent, double dis)

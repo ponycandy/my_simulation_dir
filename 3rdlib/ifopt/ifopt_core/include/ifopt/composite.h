@@ -115,7 +115,8 @@ public:
    * @li Not sensible for Variable.
    */
   virtual Jacobian GetJacobian() const = 0;
-
+  virtual Jacobian GetHession(double obj_factor,const double *lambuda) const=0;
+  virtual Jacobian GetSingleHession(int irow)  const = 0;
   /**
    * @brief Returns the number of rows of this component.
    */
@@ -178,6 +179,8 @@ public:
   // see Component for documentation
   VectorXd GetValues   () const override;
   Jacobian GetJacobian () const override;
+  Jacobian GetHession(double obj_factor,const  double *lambuda) const override;
+  Jacobian GetSingleHession(int irow)  const override;
   VecBound GetBounds   () const override;
   void SetVariables(const VectorXd& x) override;
   void PrintAll() const;
@@ -213,12 +216,16 @@ public:
    */
   const ComponentVec GetComponents() const;
 
+  size_t GetMvar() const;
+
 private:
   ComponentVec components_;
   bool is_cost_;
   // The number of variables for costs/constraint composites (not set for variables).
   // Is initialized the first the GetJacobian() is called.
-  mutable size_t n_var = -1; 
+  mutable size_t n_var = -1;
+  mutable size_t m_var = -1;
+
 };
 
 

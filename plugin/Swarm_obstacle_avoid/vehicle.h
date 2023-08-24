@@ -4,8 +4,7 @@
 #include "SwarmAgent.h"
 #include "hmagent.h"
 #include "service/SimDynamicsservice.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
+
 
 
 class vehicle:public SwarmAgent
@@ -34,7 +33,6 @@ public:
     int controlhorizon=0;
     QMap<int, SwarmAgent *> agentgroup;
     SimDynamicsservice *dysim;
-    std::shared_ptr<spdlog::logger> my_logger;
 
 };
 
