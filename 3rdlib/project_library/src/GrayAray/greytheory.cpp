@@ -18,7 +18,7 @@ void GreyTheory::flushsignledata(double data)
     {
         data_series[i]=data_series[i+1];
     }
-    data_series[size-2]=data;
+    data_series[size-1]=data;
 }
 
 double GreyTheory::rolloutdata(double data)
@@ -80,9 +80,9 @@ double GreyTheory::predict()
 
 
     double sigma_predict=0;
-    for(int i=0;i<size-1;i++)//尺寸小1,计算求和
+    for(int i=0;i<size;i++)//尺寸小1,计算求和
     {
-        double value=(data_series[i]-b/a)*(1-exp(a))*exp(-a*(i+2-1));
+        double value=(data_series[0]-b/a)*(1-exp(a))*exp(-a*(i+1));
         sigma_predict+=value;
         predict_series.push_back(value);
     }
@@ -95,7 +95,7 @@ double GreyTheory::predict()
     S_1/=size;
 
     double S_2=0;
-    for(int i=2;i<size;i++)//尺寸小1,计算求和
+    for(int i=2;i<=size;i++)//尺寸小1,计算求和
     {
         S_2+=(data_series[i-1]-predict_series[i-2]);
         //请看公式，这里是不一样的
@@ -105,7 +105,7 @@ double GreyTheory::predict()
 
 
     S_2=0;
-    for(int i=2;i<size;i++)//尺寸小1,计算求和
+    for(int i=2;i<=size;i++)//尺寸小1,计算求和
     {
         S_2+=pow(data_series[i-1]-predict_series[i-2]-mean,2);
         //请看公式，这里是不一样的
@@ -115,7 +115,7 @@ double GreyTheory::predict()
     double c=S_2/S_1;
     if(level>c)
     {
-        return predict_series[size-2];
+        return predict_series[size-1];
     }
     else
     {
