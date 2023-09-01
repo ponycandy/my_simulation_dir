@@ -7,7 +7,7 @@ SwarmAgent::SwarmAgent()
     pos_xy.setZero();
     vel_xy.resize(2,1);
     vel_xy.setZero();
-    selfETM.resize(1,1);
+    selfETM.resize(4,1);
     selfETM.setZero();
     neib_num=0;
     sensor_subject_num=0;

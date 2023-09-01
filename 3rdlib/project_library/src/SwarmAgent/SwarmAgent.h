@@ -43,6 +43,8 @@ public:
     QVector<Eigen::MatrixXd *> ETM_vec; //这样的话，执行一遍好像就可以了吧
     QVector<Eigen::MatrixXd *> ETM_sensor; //这样的话，执行一遍好像就可以了吧
     //然后只要各自决定要不要更新就行了
+    QVector<int> ETM_Flag; //用来提示某个状态的量是否更新
+
     Eigen::MatrixXd pos_xy;
     Eigen::MatrixXd vel_xy;
     Eigen::MatrixXd state_vector;
