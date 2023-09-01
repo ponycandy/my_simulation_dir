@@ -3,7 +3,7 @@
 
 #include "SwarmAgent.h"
 #include "QObject"
-//#include "grayaray.h"
+#include "grayaray.h"
 
 class vehicle:public QObject,public SwarmAgent
 {
@@ -23,6 +23,7 @@ public:
     void Getlookaheadpoint();
     void fault_set(int option) override;
     QMap<int , double>  nearbyagentdistance;
+    QVector<GrayAray *>  predictguy;
     SwarmAgent* clone_agent() override;
     Eigen::MatrixXd state_space_equation() override;
     Eigen::MatrixXd refpos;
@@ -38,7 +39,7 @@ public:
     Eigen::MatrixXd leader_act_temp;
     Eigen::MatrixXd leader_pos_temp;
     Eigen::MatrixXd leader_vel_temp;
-//    GrayAray *predictguy;
+
 signals:
     void updatetarget(double x,double y,double phi);
     void LeaderBroadcast(Eigen::MatrixXd e_T,Eigen::MatrixXd v_T,Eigen::MatrixXd v_n,Eigen::MatrixXd othersignal);

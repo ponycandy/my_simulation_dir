@@ -20,8 +20,7 @@ vehicle::vehicle():SwarmAgent()
     cacheOBSclpnum=0;
     status_num=4;
     action_num=2;
-    selfETM.resize(4,1);
-    selfETM.setZero();
+
     TriggerEvent();
     //动力学不变
 
@@ -35,8 +34,6 @@ vehicle::vehicle():SwarmAgent()
     leader_vel_temp=m_v_T;
 
     predictedN=10;
-//    predictguy=new GrayAray;
-//    predictguy->resize(predictedN);
 
 }
 
@@ -91,18 +88,21 @@ void vehicle::sensorfunction()
                 ETMstate=ETM_sensor.value(j);//目标也放在ETMstate里面，不同的是，目标的更新是实时的
                 if(nearbyagentdistance.contains(j))
                 {
-//                    if(ETM_Flag[j]==1)
-//                    {
-//                        //直接使用最新状态,但是，需要将这个状态roll进去
-//                        predictguy->GetreturnState(greystates,*ETMstate);
+                    if(ETM_Flag[j]==1)
+                    {
+                        //直接使用最新状态,但是，需要将这个状态roll进去
+                        predictguy[j]->GetreturnState(greystates,*ETMstate);
 //                        greystates=*ETMstate;
-//                    }
-//                    else
-//                    {
-//                        //灰度预测
-//                        predictguy->GetreturnState(greystates,*ETMstate);
-//                        ETMstate=&greystates;
-//                    }
+                    }
+                    else
+                    {
+                        //灰度预测
+                        predictguy[j]->GetreturnState(greystates,*ETMstate);
+                        ETMstate=&greystates;
+
+                    }
+//                    qDebug()<<greystates(1,0)-ETMstate->coeffRef(1,0);
+                    //这个差值非常小，说明工作状态良好！
                     double c1=0.1;
                     double distance=nearbyagentdistance.value(j);
                     Eigen::MatrixXd n_ij=ETMstate->block(0,0,2,1)-pos_xy;
@@ -138,7 +138,7 @@ void vehicle::sensorfunction()
             if(fault>0)
             {
                 TriggerEvent();
-                qDebug()<<"cacheSigma once "<<cacheSigma;
+//                qDebug()<<"cacheSigma once "<<cacheSigma;
                 cacheSigma=sigmatemp;
             }
             else
@@ -323,13 +323,7 @@ void vehicle::Getlookaheadpoint()
 }
 void vehicle::setsendsig(int order)
 {
-    Eigen::MatrixXd MatHistory;
-    MatHistory.resize(4,predictedN);
-    for(int i=0;i<predictedN;i++)
-    {
-        MatHistory.block(0,i,4,1)=state_vector;
-    }
-//    predictguy->storeInitial(MatHistory);
+
 
     qRegisterMetaType<Eigen::MatrixXd>("Eigen::MatrixXd");
     if(order==0)//也就是本机为target
@@ -341,6 +335,22 @@ void vehicle::setsendsig(int order)
     }
     if(order==1)//也就是本机为agent
     {
+        Eigen::MatrixXd MatHistory;
+        MatHistory.resize(4,predictedN);
+        predictguy.resize(agentnum+1);
+        for(int j=1;j<=agentnum;j++)
+        {
+
+            GrayAray *newgut=new GrayAray;
+            predictguy[j]=newgut;//从0开始
+            MatHistory.setZero();
+            predictguy[j]->resize(4);
+            predictguy[j]->storeInitial(MatHistory);
+
+        }
+
+
+
         swarm_ETMActivator::subscribeslot(this,SLOT(Broadcastupdate(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
                                           ,"LeaderBroadCast",
                                           Qt::DirectConnection);
