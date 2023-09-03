@@ -34,7 +34,7 @@ vehicle::vehicle():SwarmAgent()
     leader_pos_temp=m_v_T;
     leader_vel_temp=m_v_T;
 
-    predictedN=5;
+    predictedN=10;
 
 }
 
@@ -94,7 +94,7 @@ void vehicle::sensorfunction()
                     {
                         //直接使用最新状态,但是，需要将这个状态roll进去
                         predictguy[j]->GetreturnState(greystates,*ETMstate);
-                        Cachegrey[j]=greystates.eval();
+//                        Cachegrey[j]=greystates.eval();
                         //奇怪，这里面混杂了什么数据？
                         //这里是所有agent的数据！
                         for(int ko=0;ko<=3;ko++)
@@ -106,14 +106,16 @@ void vehicle::sensorfunction()
                     else
                     {
                         //灰度预测
-                        Eigen::MatrixXd matcache=Cachegrey[j];
+//                        Eigen::MatrixXd matcache=Cachegrey[j];
                         //假设上一步是更新步，那这一步就直接取上一次的预测值
-                        predictguy[j]->GetreturnState(greystates,matcache);
+//                        predictguy[j]->GetreturnState(greystates,matcache);
+                         predictguy[j]->GetreturnState(greystates,*ETMstate);
                         //这个ETMstate并不是上一个预测时长内的预测结果
                         //而是每次都是全新的，这样当然会出问题
-                        ETMstate=&matcache;
+//                        ETMstate=&matcache;
+                        ETMstate=&greystates;
                         //得把数据塞回到ETM_sensor里面，确保下次取的是预测数据
-                        Cachegrey[j]=greystates.eval();
+//                        Cachegrey[j]=greystates.eval();
 
 
                         for(int ko=0;ko<=3;ko++)
