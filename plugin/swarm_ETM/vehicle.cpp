@@ -135,12 +135,12 @@ void vehicle::sensorfunction()
                     //这个差值非常小，说明工作状态良好！
                     double c1=0.1;
                     double distance=nearbyagentdistance.value(j);
-                    Eigen::MatrixXd n_ij=ETMstate->block(0,0,2,1)-pos_xy;
+                    Eigen::MatrixXd n_ij=ETM_sensor.value(j)->block(0,0,2,1)-pos_xy;
                     double norm_2=n_ij.norm();
                     error+=c1*pow(norm_2-distance,2);
                 }
 
-                Eigen::MatrixXd n_ij=ETMstate->block(2,0,2,1)-vel_xy;
+                Eigen::MatrixXd n_ij=ETM_sensor.value(j)->block(2,0,2,1)-vel_xy;
                 double norm_2=n_ij.norm();
                 double c2=0.1;
                 error+=c2*pow(norm_2,2);
