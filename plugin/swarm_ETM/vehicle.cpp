@@ -4,6 +4,7 @@
 #include <cmath>
 #include <MyMath/MyMathLib.h>
 #include <swarm_ETMActivator.h>
+#include <swarm_ETMActivator.h>
 // Define pi as a constant
 Eigen::MatrixXd originalvector;
 int counter=0;
@@ -33,7 +34,7 @@ vehicle::vehicle():SwarmAgent()
     leader_pos_temp=m_v_T;
     leader_vel_temp=m_v_T;
 
-    predictedN=10;
+    predictedN=5;
 
 }
 
@@ -76,6 +77,7 @@ void vehicle::sensorfunction()
         double error=0;
         if(cacheOBSclpnum==obs_closet_point_num)
         {
+
             //计算综合误差
 
             Eigen::MatrixXd *ETMstate;
@@ -92,16 +94,42 @@ void vehicle::sensorfunction()
                     {
                         //直接使用最新状态,但是，需要将这个状态roll进去
                         predictguy[j]->GetreturnState(greystates,*ETMstate);
-//                        greystates=*ETMstate;
+                        Cachegrey[j]=greystates.eval();
+                        //奇怪，这里面混杂了什么数据？
+                        //这里是所有agent的数据！
+                        for(int ko=0;ko<=3;ko++)
+                        {
+                            logger->log(internalcount,4*j+ko,ETMstate->coeffRef(ko,0));
+                        }
+
                     }
                     else
                     {
                         //灰度预测
-                        predictguy[j]->GetreturnState(greystates,*ETMstate);
-                        ETMstate=&greystates;
+                        Eigen::MatrixXd matcache=Cachegrey[j];
+                        //假设上一步是更新步，那这一步就直接取上一次的预测值
+                        predictguy[j]->GetreturnState(greystates,matcache);
+                        //这个ETMstate并不是上一个预测时长内的预测结果
+                        //而是每次都是全新的，这样当然会出问题
+                        ETMstate=&matcache;
+                        //得把数据塞回到ETM_sensor里面，确保下次取的是预测数据
+                        Cachegrey[j]=greystates.eval();
+
+
+                        for(int ko=0;ko<=3;ko++)
+                        {
+
+                            logger->log(internalcount,4*j+ko,ETMstate->coeffRef(ko,0));
+                        }
+                        //灰色状态
+
 
                     }
-//                    qDebug()<<greystates(1,0)-ETMstate->coeffRef(1,0);
+
+                    //                    if(internalcount>400)
+                    //                    {
+                    //                        logger->savexlsfile();
+                    //                    }
                     //这个差值非常小，说明工作状态良好！
                     double c1=0.1;
                     double distance=nearbyagentdistance.value(j);
@@ -138,13 +166,12 @@ void vehicle::sensorfunction()
             if(fault>0)
             {
                 TriggerEvent();
-//                qDebug()<<"cacheSigma once "<<cacheSigma;
                 cacheSigma=sigmatemp;
             }
             else
             {
                 //不触发
-                //                qDebug()<<"not triggered once "<<counter++;
+
             }
         }
         cacheOBSclpnum=obs_closet_point_num;
@@ -154,7 +181,6 @@ void vehicle::sensorfunction()
         //直接触发
         cacheOBSclpnum=obs_closet_point_num;
         TriggerEvent();
-        //        qDebug()<<"agent trigger once "<<counter++;
     }
 
 
@@ -167,6 +193,27 @@ void vehicle::sensorfunction()
         emit updatetarget(pos_xy(0,0),pos_xy(1,0),heading_angle);
         TriggerEvent();
     }
+    if(ETMflag==1)
+    {
+        logger->log(internalcount,0,pos_xy(0,0));logger->log(internalcount,1,pos_xy(1,0));logger->log(internalcount,2,vel_xy(0,0));logger->log(internalcount,3,vel_xy(1,0));
+        //触发状态
+    }
+    else
+    {
+        logger->log(internalcount,0,0);logger->log(internalcount,1,0);logger->log(internalcount,2,0);logger->log(internalcount,3,0);
+        //非触发状态
+    }
+    logger->log(internalcount,4*(agentnum)+0,pos_xy(0,0));
+    logger->log(internalcount,4*(agentnum)+1,pos_xy(1,0));
+    logger->log(internalcount,4*(agentnum)+2,vel_xy(0,0));
+    logger->log(internalcount,4*(agentnum)+3,vel_xy(1,0));
+    //真实状态
+
+    if(internalcount>400)
+    {
+        logger->savexlsfile();
+    }
+    internalcount++;
 }
 
 void vehicle::broadcastfunction()
@@ -338,6 +385,7 @@ void vehicle::setsendsig(int order)
         Eigen::MatrixXd MatHistory;
         MatHistory.resize(4,predictedN);
         predictguy.resize(agentnum+1);
+        Cachegrey.resize(agentnum+1);
         for(int j=1;j<=agentnum;j++)
         {
 
@@ -346,7 +394,10 @@ void vehicle::setsendsig(int order)
             MatHistory.setZero();
             predictguy[j]->resize(4);
             predictguy[j]->storeInitial(MatHistory);
-
+            Eigen::MatrixXd newmat;
+            newmat.resize(4,1);
+            newmat.setZero();
+            Cachegrey[j]=newmat;
         }
 
 

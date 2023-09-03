@@ -4,9 +4,11 @@
 #include "OSGIEVENT.h"
 #include "service/SwarmSimservice.h"
 #include "mypainter.h"
+#include "service/Datalogservice.h"
 simmanager::simmanager(QObject *parent)
     : QObject{parent}
 {
+    Datalogservice *logger=swarm_ETMActivator::getService<Datalogservice>("Datalogservice");
     QString filename="./config/swarmETM/swarm.xml";
     singleone=new vehicle;
     xmlCore xmlreader(filename.toStdString());
@@ -29,6 +31,9 @@ simmanager::simmanager(QObject *parent)
 
         if(i==agentnum)
         {
+            agent->logger=logger->cloneservice();
+            agent->logger->createlogfile("./log/ETM_Target.txt",6056);
+            agent->logger->createxlsfile("./log/ETM_Target.xls");
             agent->setsendsig(0);//设置目标发送信号
             agent->status_num=3;
             Eigen::MatrixXd mid1;
@@ -40,6 +45,12 @@ simmanager::simmanager(QObject *parent)
 
         else
         {
+            agent->logger=logger->cloneservice();
+            QString filename="./log/ETM_Agent_"+QString::number(i)+".xls";
+
+            agent->logger->createlogfile("./log/ETM_Agent_"+QString::number(i)+".txt",6056+i);
+            agent->logger->createxlsfile(filename);
+
             agent->setsendsig(1);//设置接受信号
         }
         for(int k=0;k<agentnum;k++)

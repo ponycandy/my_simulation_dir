@@ -4,7 +4,7 @@
 #include "SwarmAgent.h"
 #include "QObject"
 #include "grayaray.h"
-
+#include "service/Datalogservice.h"
 class vehicle:public QObject,public SwarmAgent
 {
     Q_OBJECT
@@ -24,6 +24,7 @@ public:
     void fault_set(int option) override;
     QMap<int , double>  nearbyagentdistance;
     QVector<GrayAray *>  predictguy;
+    QVector<Eigen::MatrixXd>  Cachegrey;
     SwarmAgent* clone_agent() override;
     Eigen::MatrixXd state_space_equation() override;
     Eigen::MatrixXd refpos;
@@ -33,12 +34,14 @@ public:
     double cacheSigma;
     double sigma;
     int predictedN;
+    int internalcount=0;
     Eigen::MatrixXd m_e_T;
     Eigen::MatrixXd m_v_T;
     Eigen::MatrixXd m_v_n;
     Eigen::MatrixXd leader_act_temp;
     Eigen::MatrixXd leader_pos_temp;
     Eigen::MatrixXd leader_vel_temp;
+    Datalogservice *logger;
 
 signals:
     void updatetarget(double x,double y,double phi);
