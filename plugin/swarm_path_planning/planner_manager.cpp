@@ -52,13 +52,13 @@ planner_manager::planner_manager(QObject *parent)
     m_service->setuseterminal(false);
     m_service->Use_BuildIn_Dynamics_Cons(true);
 
-//    Obs_Avoidence *newset=new Obs_Avoidence(decnum*agentnum,"Obs_Avoidence");
-//    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
-//    m_service->AddConstraintSet(consptr);
+    //    Obs_Avoidence *newset=new Obs_Avoidence(decnum*agentnum,"Obs_Avoidence");
+    //    std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
+    //    m_service->AddConstraintSet(consptr);
 
-//        TestConstrain *newset=new TestConstrain(12);
-//        std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
-//        m_service->AddConstraintSet(consptr);
+    //        TestConstrain *newset=new TestConstrain(12);
+    //        std::shared_ptr<ifopt::ConstraintSet> consptr(newset);
+    //        m_service->AddConstraintSet(consptr);
 
     //    Collision_Avoidence *newset1=new Collision_Avoidence(decnum*agentnum*(agentnum-1)/2,"Collision_Avoidence");
     //    std::shared_ptr<ifopt::ConstraintSet> consptr1(newset1);
@@ -96,14 +96,11 @@ planner_manager::planner_manager(QObject *parent)
     Eigen::MatrixXd input1;
 
     input1.resize(5*agentnum*decnum,1);
-    input1.setRandom();
-    initilize_Variable(input1);
-    //我们现在使用一个新的，构造初始值的方法
-    //使用生成树算法生成轨迹做第一次优化，然后将第一次优化结果放在下面
-    //简单一点算了，使用目标轨迹作为初始追踪值
-    //先完成，即使做不了对照实验，起码有一个可行的实验
+    input1.setRandom();//初始不能够这么设，会导致碰撞约束失效
+    //setones会直接把变量设置到无变化率的位置上
+    //所以不能这么干
     m_service->init_all_x(0,input1);
-
+    //换一个初始值还真有用......
     //可是不能够一直这样吧，步数继续增长呢？
 
     m_service->solve_problem();

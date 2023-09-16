@@ -1,5 +1,5 @@
 #include "minimize_topology.h"
-#include "swarm_path_planningActivator.h"
+
 
 minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
 {
@@ -20,7 +20,6 @@ minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
     m_jac.resize(1,5*agentnum*decnum);
     m_Hession.resize(5*agentnum*decnum,5*agentnum*decnum);
     readconfig("./config/swarmmpc/swarm.xml");
-    m_service=swarm_path_planningActivator::getService<CollisionDetectservice>("CollisionDetectservice");
 }
 
 void minimize_Topology::readconfig(QString filename)
@@ -75,7 +74,7 @@ double minimize_Topology::GetCost() const
     m_jac.setZero();
     m_Hession.setZero();
     //这才是组队距离
-//我们需要修正所有由于omega位置错误连带的外部错误
+
     unpackvariable(x,5*agentnum,decnum,2*agentnum,3*agentnum,agentnum,actMat,stateMat,var_struct);
     double error=0;
     double koef=100*agentnum*decnum;
@@ -140,7 +139,6 @@ double minimize_Topology::GetCost() const
             }
             else
             {
-                //注意，最后一个是leader，我们减小的是leader到目标的距离！！
                 single_vehicle_data *leader=var_struct.steps[steps]->agents[i];
                 Eigen::Vector2d postarget=Target_Traj[steps];
                 double Dis=pow((var_struct.steps[steps]->agents[i]->posxy-postarget).norm(),2)-Incp*Incp;
@@ -170,62 +168,40 @@ double minimize_Topology::GetCost() const
                 //作为leader的目标是减小和目标物体轨迹的差距
             }
             //下面添加对障碍物避障的最小项
-            //有一个想法，可以试一试
-            //计算距离当前物体的最近点，然后将
-            //这个点的坐标赋予obspos
-            //如果最近点不存在，那么就将z项置100,取消掉error的加值
-            for(int iobs=1;iobs<=obs_num;iobs++)
+            single_vehicle_data *agent=(var_struct.steps[steps])->agents[i];
+            double z=pow((agent->posxy-obspos).norm()/communication_range,2);
+            double first,second;
+
+            //            potential+=(PotentialCalc(z,first,second));
+
+            error+=(20*PotentialCalc(z,first,second));
+
+            double Dzdx=2/(communication_range*communication_range)*(agent->x-obspos(0,0));
+            double Dzdy=2/(communication_range*communication_range)*(agent->y-obspos(1,0));
+
+            m_jac(0,agent->indexofx)+=20*first*Dzdx;
+            m_jac(0,agent->indexofy)+=20*first*Dzdy;
+            if(z<1)
             {
-                SwarmObstacle *obs=obsbounding_group.value(iobs);
-                single_vehicle_data *agent=(var_struct.steps[steps])->agents[i];
-                collison_result result=m_service->polygen_circle_detect(agent->posxy(0,0),
-                                                                          agent->posxy(1,0),collision_r,obs->vertex_map);
-//好的，非常显然，如果我们执意不使用圆，而使用多边形进行躲避
-                //挂掉的可能性非常大
-                //我们又不想把这个问题变成non-convex的
-                //所以很麻烦
-                if (result.flag==1)
-                {
-                    obspos<<result.closest_point.x,result.closest_point.y;
-                    double z=pow((agent->posxy-obspos).norm()/collision_r,2);
-                    double first,second;
-
-                    //            potential+=(PotentialCalc(z,first,second));
-
-                    error+=(20*PotentialCalc(z,first,second));
-
-                    double Dzdx=2/(collision_r*collision_r)*(agent->x-obspos(0,0));
-                    double Dzdy=2/(collision_r*collision_r)*(agent->y-obspos(1,0));
-
-                    m_jac(0,agent->indexofx)+=20*first*Dzdx;
-                    m_jac(0,agent->indexofy)+=20*first*Dzdy;
-                    if(z<1)
-                    {
-                        double valuex =
-                            -6/(collision_r*collision_r)*(z-1)*
-                            (4/(collision_r*collision_r)*pow(agent->x-obspos(0,0),2)
-                             +(z-1));
-                        double valuey =
-                            -6/(collision_r*collision_r)*(z-1)*
-                            (4/(collision_r*collision_r)*pow(agent->y-obspos(1,0),2)
-                             +(z-1));
-                        double valuexy =-24/(pow(collision_r,4))*
-                                         (z-1)*(agent->y-obspos(1,0))*(agent->x-obspos(0,0));
-                        fillsymetrix(m_Hession,agent->indexofx,agent->indexofx,
-                                     20*valuex);
-                        fillsymetrix(m_Hession,agent->indexofy,agent->indexofy,
-                                     20*valuey);
-                        fillsymetrix(m_Hession,agent->indexofx,agent->indexofy,
-                                     20*valuexy);
-                        //他们是连续的
-                    }
-                    //上面添加对障碍物避障的最小项
-                }
-                else
-                {
-
-                }
+                double valuex =
+                    -6/(communication_range*communication_range)*(z-1)*
+                    (4/(communication_range*communication_range)*pow(agent->x-obspos(0,0),2)
+                     +(z-1));
+                double valuey =
+                    -6/(communication_range*communication_range)*(z-1)*
+                    (4/(communication_range*communication_range)*pow(agent->y-obspos(1,0),2)
+                     +(z-1));
+                double valuexy =-24/(pow(communication_range,4))*
+                                 (z-1)*(agent->y-obspos(1,0))*(agent->x-obspos(0,0));
+                fillsymetrix(m_Hession,agent->indexofx,agent->indexofx,
+                             20*valuex);
+                fillsymetrix(m_Hession,agent->indexofy,agent->indexofy,
+                             20*valuey);
+                fillsymetrix(m_Hession,agent->indexofx,agent->indexofy,
+                             20*valuexy);
+                //他们是连续的
             }
+            //上面添加对障碍物避障的最小项
         }
 
 
@@ -238,14 +214,11 @@ void minimize_Topology::FillHessionBlock(std::string var_set, Jacobian &jac_bloc
 {
     GetCost();
     jac_block=m_Hession.sparseView();
-//    std::cout<<jac_block<<std::endl;
 }
 
 void minimize_Topology::FillJacobianBlock(std::string var_set, Jacobian &jac) const
 {
     GetCost();
     jac=m_jac.sparseView();
-//    std::cout<<jac<<std::endl;
-
 }
 

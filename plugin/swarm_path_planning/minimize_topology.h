@@ -4,7 +4,7 @@
 #include "ifopt/cost_term.h"
 #include "CommonstructAndfunction.h"
 #include "SwarmObstacle.h"
-#include "service/CollisionDetectservice.h"
+
 class minimize_Topology:public ifopt::CostTerm
 {
 public:
@@ -26,7 +26,6 @@ public:
     mutable Eigen::MatrixXd m_jac;
     QVector<Eigen::Vector2d> Target_Traj;
     mutable Eigen::MatrixXd m_Hession;
-     QMap<int,SwarmObstacle*> obsbounding_group;
-    CollisionDetectservice *m_service;
+    QMap<int,SwarmObstacle*> obsbounding_group;
 };
 #endif // MINIMIZE_TOPOLOGY_H
