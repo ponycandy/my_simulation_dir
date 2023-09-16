@@ -3,16 +3,17 @@
 
 #include "ifopt/cost_term.h"
 #include "CommonstructAndfunction.h"
-
+#include "SwarmObstacle.h"
 
 class minimize_Topology:public ifopt::CostTerm
 {
 public:
     minimize_Topology(std::string name);
+    void readconfig(QString filename);
     double GetCost() const override;
     void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac) const override;
-
+    int obs_num;
     mutable swarmvehicle var_struct;
     mutable int  agentnum;
     mutable Eigen::Vector2d obspos;
@@ -25,5 +26,6 @@ public:
     mutable Eigen::MatrixXd m_jac;
     QVector<Eigen::Vector2d> Target_Traj;
     mutable Eigen::MatrixXd m_Hession;
+     QMap<int,SwarmObstacle*> obsbounding_group;
 };
 #endif // MINIMIZE_TOPOLOGY_H

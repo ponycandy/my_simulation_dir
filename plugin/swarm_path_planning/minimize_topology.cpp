@@ -4,7 +4,8 @@
 minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
 {
     xmlCore xmlreader("./config/swarmmpc/swarm.xml");
-    obspos<<7.5,12;
+//    obspos<<7.5,12; //这里定义障碍物的位置，实际上因为存在多个障碍物
+    //我们是需要更改代码去适配的，这就是下午的工作
     xmlreader.xmlRead("agent_num",agentnum);
     xmlreader.xmlRead("Incp",Incp);
     xmlreader.xmlRead("decnum",decnum);
@@ -18,7 +19,53 @@ minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
     stateMat.resize(3*agentnum,decnum);
     m_jac.resize(1,5*agentnum*decnum);
     m_Hession.resize(5*agentnum*decnum,5*agentnum*decnum);
+    readconfig("./config/swarmmpc/swarm.xml");
+}
 
+void minimize_Topology::readconfig(QString filename)
+{
+    xmlCore xmlreader("./config/swarmmpc/swarm.xml");
+    xmlreader.xmlRead("obs_num",obs_num);
+
+    Eigen::MatrixXd obs_mat;
+
+    for(int i=1;i<=obs_num;i++)
+    {
+        SwarmObstacle *new_obs=new SwarmObstacle;
+        QString obs_term_name="OBS_"+QString::number(i)+"_vertexnum";
+        xmlreader.xmlRead(obs_term_name.toStdString(),new_obs->vertex_num);
+        new_obs->ID=i;
+        obs_mat.resize(new_obs->vertex_num,2);
+        obs_term_name="OBS_"+QString::number(i)+"_vertexparams";
+        std::vector<double> point_x_vec;
+        std::vector<double> point_y_vec;
+        xmlreader.xmlRead(obs_term_name.toStdString(),obs_mat);
+        for(int j=1;j<=new_obs->vertex_num;j=j+1)
+        {
+            double x= obs_mat(j-1,0);
+            double y= obs_mat(j-1,1);
+            point_x_vec.push_back(x);
+            point_y_vec.push_back(y);
+            new_obs->vertex_map<<QPointF(x,y);
+        }
+
+        double max_x = *max_element(point_x_vec.begin(), point_x_vec.end());
+        double max_y = *max_element(point_y_vec.begin(), point_y_vec.end());
+        double min_x = *min_element(point_x_vec.begin(), point_x_vec.end());
+        double min_y = *min_element(point_y_vec.begin(), point_y_vec.end());
+        double communication_range=0;
+        double collision_r=0;
+
+        xmlreader.xmlRead("communication_range",communication_range);
+        xmlreader.xmlRead("collision_r",collision_r);
+
+        new_obs->x_up=max_x+collision_r;
+        new_obs->x_low=min_x-collision_r;
+        new_obs->y_up=max_y+collision_r;
+        new_obs->y_low=min_y-collision_r;
+
+        obsbounding_group.insert(i,new_obs);
+    }
 }
 
 double minimize_Topology::GetCost() const

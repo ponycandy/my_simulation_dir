@@ -105,12 +105,14 @@ planner_manager::planner_manager(QObject *parent)
 
     m_service->solve_problem();
     Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
-    m_service->createlogfile("./logs/PATHPLAING/test.log",8946);
+    m_service->DeleteFile("./log/PATHPLAING/test.log");
+    m_service->DeleteFile("./log/PATHPLAING/test.xls");
+    m_service->createlogfile("./log/PATHPLAING/test.log",8946);
     newset2->GetCost();
     //    newset2->var_struct;
     QString word;
 
-    m_service->createxlsfile("./log/test.xlsx");
+    m_service->createxlsfile("./log/PATHPLAING/test.xls");
     for(int k=0;k<newset2->decnum;k++)
     {
         for(int i=0;i<newset2->agentnum;i++)
