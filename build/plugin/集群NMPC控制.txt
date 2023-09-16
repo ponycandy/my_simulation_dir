@@ -1,4 +1,5 @@
 <plugins>
+<plugin order="1" name="CollisionDetect" />
 <plugin order="1" name="TCPCommunicator" />
 <plugin order="1" name="DataLogger" />
 

@@ -12,7 +12,7 @@
     </maximumPotential>
 
   <obs_num type="int">
-        <value>0</value>
+        <value>2</value>
     </obs_num>
     <sensor_range type="double">
         <value>0</value>

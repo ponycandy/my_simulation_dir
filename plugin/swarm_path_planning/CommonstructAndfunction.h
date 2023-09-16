@@ -48,7 +48,7 @@ struct swarmvehicle
 };
 inline double PotentialCalc(double z, double &first, double &second);
 inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value);
-
+inline void initilize_Variable(Eigen::MatrixXd &var);
 inline void pack_variable(Eigen::VectorXd &opt_x,int state_num_plus_act_num,
                           int dec_num,int act_num,int state_num,
                           Eigen::MatrixXd &actMat,Eigen::MatrixXd &stateMat);
@@ -207,4 +207,31 @@ inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value
 
     }
 }
+
+inline void initilize_Variable(Eigen::MatrixXd &var)
+{
+
+    xmlCore xmlreader0("./config/swarmmpc/swarm.xml");
+    int agentnum=0;
+    xmlreader0.xmlRead("agent_num",agentnum);
+    int decnum=0;
+    xmlreader0.xmlRead("decnum",decnum);
+    Eigen::MatrixXd trajmat;
+    trajmat.resize(decnum,2);
+    xmlCore xmlreader("./config/swarmmpc/Target.xml");
+
+
+    xmlreader.xmlRead("trajmat",trajmat);
+    //现在将trajmat的值写入到所有agent的状态中
+    for(int i=0;i<decnum;i++)
+    {
+        for(int j=0;j<agentnum;j++)
+        {
+            var(2+5*agentnum*i+j*5+0,0)=trajmat(i,0);
+            var(2+5*agentnum*i+j*5+1,0)=trajmat(i,1);
+        }
+    }
+
+}
+
 #endif // COMMONSTRUCTANDFUNCTION_H

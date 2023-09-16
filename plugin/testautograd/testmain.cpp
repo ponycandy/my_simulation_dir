@@ -9,7 +9,11 @@ Testmain::Testmain(QObject *parent)
 {
     m_service= testautogradActivator::getService<NonlinearSolverservice>("NonlinearSolverservice");
     variablexl *VAR;
+    Eigen::MatrixXd varmat;
+    varmat.resize(5,1);
+    varmat<<0.840899,1.18921,0.840899,0,0;
     VAR=new variablexl(5);
+    VAR->data=varmat;
     std::shared_ptr<ifopt::VariableSet> VARptr(VAR);
     m_service->AddVariableSet(VARptr);
 
@@ -22,8 +26,11 @@ Testmain::Testmain(QObject *parent)
     cstest=new constraintest(2,"asd");
     std::shared_ptr<ifopt::ConstraintSet> Dtcostptr1(cstest);
     m_service->AddConstraintSet(Dtcostptr1);
-
+    varmat.setRandom();
+//    m_service->init_all_x(0,varmat);//这个只有使用内在动力学的时候才能够使用
     m_service->start_crack();
     double v=tcost->GetCost();
-    qDebug()<<v;
+    qDebug()<<"value is "<<v;
+    std::cout<<VAR->GetValues()<<std::endl;
+
 }

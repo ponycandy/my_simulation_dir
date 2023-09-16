@@ -96,9 +96,11 @@ planner_manager::planner_manager(QObject *parent)
     Eigen::MatrixXd input1;
 
     input1.resize(5*agentnum*decnum,1);
-    input1.setRandom();//初始不能够这么设，会导致碰撞约束失效
+    input1.setOnes();//初始不能够这么设，会导致碰撞约束失效
     //setones会直接把变量设置到无变化率的位置上
     //所以不能这么干
+    initilize_Variable(input1);//这一步会导致求解出问题！！就是这一步！！
+    //！！为什么.....
     m_service->init_all_x(0,input1);
     //换一个初始值还真有用......
     //可是不能够一直这样吧，步数继续增长呢？
