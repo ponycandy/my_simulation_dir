@@ -8,3 +8,4 @@ SUBDIRS += \
     SwarmObstacle \
     xmlcore \
     PolyParams   \
+    GrayAray   \

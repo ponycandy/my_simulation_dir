@@ -1,7 +1,7 @@
 #include "dataloggermanager.h"
 #include "DataLoggerActivator.h"
 #include "QDebug"
-
+#include <QFile>
 DataloggerManager::DataloggerManager(QObject *parent)
     : QObject{parent}
 {
@@ -61,6 +61,21 @@ void DataloggerManager::createxlsfile(QString logfilename)
     QByteArray data2=QByteArray::fromStdString(data2send);
     m_serivce->send(data2);
     return;
+}
+
+void DataloggerManager::DeleteFile(QString fileName)
+{
+
+    QFile file(fileName);
+    if (file.exists()) { // Check if the file exists before deleting
+        if (file.remove()) {
+            qDebug() << "File removed successfully";
+        } else {
+            qDebug() << "Failed to remove file";
+        }
+    } else {
+        qDebug() << "File not found";
+    }
 }
 
 void DataloggerManager::savexlsfile()

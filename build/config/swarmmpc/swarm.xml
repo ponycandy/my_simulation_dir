@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameters>
     <agent_num type="int">
-        <value>2</value>
+        <value>1</value>
     </agent_num>
     <decnum type="int">
         <value>6</value>
@@ -12,14 +12,14 @@
     </maximumPotential>
 
   <obs_num type="int">
-        <value>1</value>
+        <value>0</value>
     </obs_num>
     <sensor_range type="double">
         <value>0</value>
     </sensor_range> 	
 
     <Incp type="double">
-        <value>4</value>
+        <value>0</value>
     </Incp> 
     <Edge_num type="int">
         <value>5</value>
@@ -29,8 +29,7 @@
     </Vertex_num> 
     <relationmatrix type="Eigen::MatrixXd">
 	<value>
-	0 5.2
-	5.2 0
+	0
 	</value>
     </relationmatrix>
 
@@ -50,14 +49,12 @@
     </collision_r>
 
 
-
 <agent_mat type="Eigen::MatrixXd">
 	<value>
 	6.0 0.0 0
-	0.0 0.0 0
 	</value>
 </agent_mat>
-<!--目标车辆的初始状态，在最后一行-->
+<!--agent_mat是追踪者的初始状态-->
 
 <!--下面都是障碍物的分布状态-->
 <OBS_1_vertexnum type="int">

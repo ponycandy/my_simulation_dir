@@ -4,6 +4,9 @@ GreyTheory::GreyTheory()
 {
     level=0.35;
     Nsteps=10;//默认数据缓存量
+    data_series.clear();
+    cache_A=0;
+    cache_B=0;
 }
 
 void GreyTheory::setPrecisionLevel(double c)
@@ -21,8 +24,30 @@ void GreyTheory::flushsignledata(double data)
     data_series[size-1]=data;
 }
 
+double GreyTheory::predictSingle()
+{
+    //必须首先使用predictOnce然后再Iterate
+    if(cache_A==0)
+    {
+        Cachsteps++;
+        return data_series[data_series.size()-1];//说明是直线或者其它理由没拟合，返回最后一个
+
+    }
+    double value=(data_series[0]-cache_B/cache_A)*(1-exp(cache_A))*exp(-cache_A*(Cachsteps+1));
+    Cachsteps++;
+    return value;
+}
+
+void GreyTheory::ResetSteps()
+{
+    int size=data_series.size();
+    Cachsteps=size-1;
+}
+
 double GreyTheory::rolloutdata(double data)
 {
+    int size=data_series.size();
+    Cachsteps=size-1;
     flushsignledata(data);
     return predict();
 }
@@ -40,7 +65,10 @@ void GreyTheory::InputData(std::vector<double> data)
 
 double GreyTheory::predict()
 {
+
+
     int size=data_series.size();
+    Cachsteps=size-1;
     std::vector<double> Y_series;
     std::vector<double> Z_series;
     double xiter=0;
@@ -74,8 +102,16 @@ double GreyTheory::predict()
     }
     Eigen::MatrixXd u_value=BmatDet.inverse()*BmatT*sai;
     double a=u_value(0,0);
+    cache_A=a;
+    //这里需要做一下修正，a太过于近于0会出问题，而且有的时候，矩阵秩检测查不到这个问题
+    //这就是矩阵的秩约等于0的情况，bug居然在这里呢....
+    if(abs(a)<1e-7)
+    {
+        cache_A=0;
+        return data_series[size-1];
+    }
     double b=u_value(1,0);
-
+    cache_B=b;
     std::vector<double> predict_series;
 
 

@@ -32,3 +32,4 @@ test_NMPC_Plugin \
     Test_Use_Hession   \
     swarm_ETM   \
     Swarm_obstacle_avoid \
+    swarm_ETM_compare   \

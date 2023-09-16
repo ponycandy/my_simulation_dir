@@ -100,6 +100,9 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
         double min_x = *min_element(point_x_vec.begin(), point_x_vec.end());
         double min_y = *min_element(point_y_vec.begin(), point_y_vec.end());
 
+        xmlreader.xmlRead("communication_range",singleagents->communication_range);
+        xmlreader.xmlRead("collision_r",singleagents->collision_r);
+
         new_obs->x_up=max_x+singleagents->collision_r;
         new_obs->x_low=min_x-singleagents->collision_r;
         new_obs->y_up=max_y+singleagents->collision_r;
@@ -118,6 +121,9 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
             new_agent->state_vector(j,0)=agent_mat(i-1,j);
             new_agent->act_vector.resize(new_agent->action_num,1);
             new_agent->act_vector.setZero();
+            xmlreader.xmlRead("communication_range",new_agent->communication_range);
+            xmlreader.xmlRead("collision_r",new_agent->collision_r);
+
         }
         m_sim->Agents_group.insert(i,new_agent);
     }
@@ -136,10 +142,13 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
         SwarmAgent *agent=m_sim->Agents_group.value(i);
         agent->ETM_vec.resize(m_sim->agent_num+1);
         agent->ETM_sensor.resize(m_sim->agent_num+1);
+        agent->ETM_Flag.resize(m_sim->agent_num+1);
+
         for(int j=1;j<=m_sim->agent_num;j++)
         {
             agent->ETM_vec[j]=&m_sim->Agents_group.value(j)->selfETM;
-            agent->ETM_sensor[j]=new Eigen::MatrixXd;
+            agent->ETM_sensor[j]=new Eigen::MatrixXd;//这里无法赋值
+            agent->ETM_Flag[j]=1;//设置被触发
             *(agent->ETM_sensor[j])=(( agent->ETM_vec[j]))->eval();
         }
 

@@ -96,7 +96,7 @@ planner_manager::planner_manager(QObject *parent)
     Eigen::MatrixXd input1;
 
     input1.resize(5*agentnum*decnum,1);
-    input1.setZero();
+    input1.setRandom();
     initilize_Variable(input1);
     //我们现在使用一个新的，构造初始值的方法
     //使用生成树算法生成轨迹做第一次优化，然后将第一次优化结果放在下面
@@ -106,7 +106,7 @@ planner_manager::planner_manager(QObject *parent)
 
     //可是不能够一直这样吧，步数继续增长呢？
 
-//    m_service->solve_problem();
+    m_service->solve_problem();
     Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
     m_service->DeleteFile("./log/PATHPLAING/test.log");
     m_service->DeleteFile("./log/PATHPLAING/test.xls");

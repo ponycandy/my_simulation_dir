@@ -51,6 +51,14 @@ void Simulator::sensor(Eigen::MatrixXd state_mat)
         SwarmAgent *agent=Agents_group.value(i);
         agent->sensorfunction();
     }
+    for(int i=1;i<=agent_num;i++)
+    {
+        SwarmAgent *agent=Agents_group.value(i);
+        for(int j=1;j<=agent_num;j++)
+        {
+            agent->ETM_Flag[j]=0;
+        }
+    }
     //上面过程完成后，agent自行选择是否触发自己的数据传感，然后再在
     //下面进行ETM传感数据的检测
     for(int i=1;i<=agent_num;i++)
@@ -68,6 +76,8 @@ void Simulator::sensor(Eigen::MatrixXd state_mat)
                 *(iter2.value()->ETM_sensor[agent->ID])=
                     (&(agent->selfETM))->eval();
                 //拷贝对应对象的最新状态
+                iter2.value()->ETM_Flag[agent->ID]=1;//提示状态触发，这部分总是事先清0
+                //
                 ++iter2;
                 //ETM_vec和ETM_sensor自行根据需求选取
             }

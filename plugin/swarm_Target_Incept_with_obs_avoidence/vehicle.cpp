@@ -26,6 +26,7 @@ vehicle::vehicle():SwarmAgent()
     leader_act_temp=m_v_T;
     leader_pos_temp=m_v_T;
     leader_vel_temp=m_v_T;
+
     QString configfilename="./config/swarmInception/swarm.xml";
     xmlCore Xmlreader(configfilename.toStdString());
     Xmlreader.xmlRead("agent_num",agentnum);

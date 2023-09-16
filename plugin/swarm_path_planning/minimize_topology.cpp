@@ -75,7 +75,7 @@ double minimize_Topology::GetCost() const
     m_jac.setZero();
     m_Hession.setZero();
     //这才是组队距离
-
+//我们需要修正所有由于omega位置错误连带的外部错误
     unpackvariable(x,5*agentnum,decnum,2*agentnum,3*agentnum,agentnum,actMat,stateMat,var_struct);
     double error=0;
     double koef=100*agentnum*decnum;
@@ -238,11 +238,14 @@ void minimize_Topology::FillHessionBlock(std::string var_set, Jacobian &jac_bloc
 {
     GetCost();
     jac_block=m_Hession.sparseView();
+//    std::cout<<jac_block<<std::endl;
 }
 
 void minimize_Topology::FillJacobianBlock(std::string var_set, Jacobian &jac) const
 {
     GetCost();
     jac=m_jac.sparseView();
+//    std::cout<<jac<<std::endl;
+
 }
 

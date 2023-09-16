@@ -19,6 +19,7 @@ public:
     void log(int rows,int colums,double value) override;
     void createlogfile(QString logfilename,int port) override;
     void createxlsfile(QString logfilename) override;
+    void DeleteFile( QString fileName) override;
     void savexlsfile() override;
     std::string spdgcreatePacket(const std::string& message, short Id);
     void customAssert(bool condition, const char* message);

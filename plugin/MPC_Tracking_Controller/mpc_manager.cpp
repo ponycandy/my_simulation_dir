@@ -1,4 +1,5 @@
-﻿#include "mpc_manager.h"
+﻿
+#include "mpc_manager.h"
 #include <service/MPC_Trackerservice.h>
 #include <MPC_Tracking_ControllerActivator.h>
 

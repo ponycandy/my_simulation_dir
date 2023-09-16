@@ -1,6 +1,6 @@
 #include "simmanager.h"
 #include "service/SwarmSimservice.h"
-#include "swarm_ETMActivator.h"
+#include "swarm_ETM_compareActivator.h"
 #include "OSGIEVENT.h"
 #include "service/SwarmSimservice.h"
 #include "mypainter.h"
@@ -8,12 +8,12 @@
 simmanager::simmanager(QObject *parent)
     : QObject{parent}
 {
-    Datalogservice *logger=swarm_ETMActivator::getService<Datalogservice>("Datalogservice");
+    Datalogservice *logger=swarm_ETM_compareActivator::getService<Datalogservice>("Datalogservice");
     QString filename="./config/swarmETM/swarm.xml";
     singleone=new vehicle;
     xmlCore xmlreader(filename.toStdString());
     xmlreader.xmlRead("agent_num",agentnum);
-    SwarmSimservice *swarmsim0=swarm_ETMActivator::getService<SwarmSimservice>("SwarmSimservice");
+    SwarmSimservice *swarmsim0=swarm_ETM_compareActivator::getService<SwarmSimservice>("SwarmSimservice");
     SwarmSimservice *swarmsim=swarmsim0->cloneservice();
     swarmsim->init_plant(30,filename,singleone);
     agentgroup=swarmsim->getagentgroup();

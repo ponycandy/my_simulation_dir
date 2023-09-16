@@ -1,8 +1,9 @@
 <plugins>
+<plugin order="1" name="CollisionDetect" />
 <plugin order="1" name="TCPCommunicator" />
 <plugin order="1" name="DataLogger" />
 
-
+<plugin order="1" name="NonlinearSolver" />
 <plugin order="1" name="Animator" />
 <plugin order="1" name="Simulator" />
 <plugin order="1" name="CollisionDetect" />
@@ -10,9 +11,10 @@
 
 
 
+<plugin order="1" name="swarm_path_planning" />
 
 
-                <plugin order="1" name="swarm_Target_Incept_with_obs_avoidence" />
+
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
 </plugins>

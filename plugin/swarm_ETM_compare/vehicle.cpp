@@ -3,8 +3,7 @@
 #include "xmlcore.h"
 #include <cmath>
 #include <MyMath/MyMathLib.h>
-#include <swarm_ETMActivator.h>
-#include <swarm_ETMActivator.h>
+#include <swarm_ETM_compareActivator.h>.h>
 // Define pi as a constant
 Eigen::MatrixXd originalvector;
 int counter=0;
@@ -326,7 +325,8 @@ void vehicle::controlfunction()
 
             pos_close_agent(0,0)=close_agent->x;
             pos_close_agent(1,0)=close_agent->y;
-
+            Eigen::MatrixXd posofcp;
+            posofcp=pos_close_agent;
 
             originalvector=avergae_vel;
             if (close_agent->edg2==-close_agent->edg1)
@@ -352,7 +352,10 @@ void vehicle::controlfunction()
             norm=pos_close_agent-pos_xy;
             dot=norm.norm();
             grad=(dot-communication_range)/pow(dot,2)*norm;
-            gradient_term=gradient_term+grad;
+
+            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy)/sqrt(1+yip*pow((posofcp-pos_xy).norm(),2));
+             gradient_term=gradient_term+phibeta((posofcp-pos_xy).norm())*n_i_j_hat;
+//            gradient_term=gradient_term+grad;
         }
         act_vector=act_vector+(concencus+0.55*gradient_term);
         return;
@@ -398,9 +401,9 @@ void vehicle::setsendsig(int order)
     qRegisterMetaType<Eigen::MatrixXd>("Eigen::MatrixXd");
     if(order==0)//也就是本机为target
     {
-        swarm_ETMActivator::publishsignal(this,SIGNAL(updatetarget(double,double,double))
+        swarm_ETM_compareActivator::publishsignal(this,SIGNAL(updatetarget(double,double,double))
                                           ,"Targetstateupdatesig",Qt::QueuedConnection);
-        swarm_ETMActivator::publishsignal(this,SIGNAL(LeaderBroadcast(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
+        swarm_ETM_compareActivator::publishsignal(this,SIGNAL(LeaderBroadcast(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
                                           ,"LeaderBroadCast",Qt::DirectConnection);
     }
     if(order==1)//也就是本机为agent
@@ -426,7 +429,7 @@ void vehicle::setsendsig(int order)
 
 
 
-        swarm_ETMActivator::subscribeslot(this,SLOT(Broadcastupdate(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
+        swarm_ETM_compareActivator::subscribeslot(this,SLOT(Broadcastupdate(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
                                           ,"LeaderBroadCast",
                                           Qt::DirectConnection);
     }
@@ -479,4 +482,32 @@ void vehicle::Broadcastupdate(Eigen::MatrixXd e_t, Eigen::MatrixXd v_t, Eigen::M
     m_v_T=v_t-vel_xy;//得出相对于自身的相对速度
     m_v_n=v_n;//没用
     leader_act_temp=othersignal;//没用
+}
+double vehicle::sigmanorm(Eigen::MatrixXd &vec)
+{
+    return 1/yip*(-1+sqrt(1+yip*pow(vec.norm(),2)));
+}
+
+double vehicle::sigma_1_norm(double value)
+{
+    return 1/sqrt(1+pow(value,2));
+}
+
+double vehicle::phibeta(double normnow)
+{
+    return nuoh(normnow/dbeta)*(sigma_1_norm(normnow-dbeta)-1);
+}
+
+double vehicle::nuoh(double value)
+{
+    double h=0.5;
+    if(value >=0 && value <=h)
+    {
+        return 1;
+    }
+    if(value >=h && value <=1)
+    {
+        return 0.5*(1+cos(3.1415926535*(value-h)/(1-h)));
+    }
+    return 0;
 }
