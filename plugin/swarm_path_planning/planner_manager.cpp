@@ -96,14 +96,17 @@ planner_manager::planner_manager(QObject *parent)
     Eigen::MatrixXd input1;
 
     input1.resize(5*agentnum*decnum,1);
-    input1.setRandom();//初始不能够这么设，会导致碰撞约束失效
-    //setones会直接把变量设置到无变化率的位置上
-    //所以不能这么干
+    input1.setZero();
+    initilize_Variable(input1);
+    //我们现在使用一个新的，构造初始值的方法
+    //使用生成树算法生成轨迹做第一次优化，然后将第一次优化结果放在下面
+    //简单一点算了，使用目标轨迹作为初始追踪值
+    //先完成，即使做不了对照实验，起码有一个可行的实验
     m_service->init_all_x(0,input1);
-    //换一个初始值还真有用......
+
     //可是不能够一直这样吧，步数继续增长呢？
 
-    m_service->solve_problem();
+//    m_service->solve_problem();
     Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
     m_service->DeleteFile("./log/PATHPLAING/test.log");
     m_service->DeleteFile("./log/PATHPLAING/test.xls");
