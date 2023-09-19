@@ -4,7 +4,7 @@
         <value>ma57</value>
     </linear_solver>
     <tol type="double">
-        <value>0.0001</value>
+        <value>0.1</value>
     </tol>
     <jacobian_approximation type="string">
         <value>exact</value>
@@ -21,7 +21,7 @@
         <value>5</value>
     </print_level>
     <acceptable_obj_change_tol type="double">
-        <value>0.0001</value>
+        <value>0.01</value>
     </acceptable_obj_change_tol>
     <hessian_approximation type="string">
         <value>exact</value>

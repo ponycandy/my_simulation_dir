@@ -16,11 +16,12 @@ public:
     void registerODEJacob(NMPC_Dynamic_Jacob *Dynamic_Jacob) override;
     void register_constrain(NMPC_Extra_Constrain *constrain) override;
     void init_num(int statenum, int actnum, int decisionnum) override;
-    void init_all_x(int method, Eigen::MatrixXd input) override;
+    void init_all_x(int method, std::shared_ptr<Eigen::MatrixXd> input) override;
     void init_state(Eigen::MatrixXd initstate, Eigen::MatrixXd terminalstate) override;
     void init_steptime(double time) override;
     void setuseterminal(bool strue) override;
     void constructNLP() override;
+    void ReinitState(Eigen::MatrixXd &initstate,Eigen::MatrixXd &terminalstate) override;
     NonlinearSolverservice * clone_service() override;
     Eigen::VectorXd solve_problem() override;
     Eigen::VectorXd solve_problem(QString name) override;

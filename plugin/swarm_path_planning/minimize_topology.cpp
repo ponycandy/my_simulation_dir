@@ -35,34 +35,19 @@ void minimize_Topology::readconfig(QString filename)
         QString obs_term_name="OBS_"+QString::number(i)+"_vertexnum";
         xmlreader.xmlRead(obs_term_name.toStdString(),new_obs->vertex_num);
         new_obs->ID=i;
-        obs_mat.resize(new_obs->vertex_num,2);
+        obs_mat.resize(1,3);
         obs_term_name="OBS_"+QString::number(i)+"_vertexparams";
-        std::vector<double> point_x_vec;
-        std::vector<double> point_y_vec;
+
         xmlreader.xmlRead(obs_term_name.toStdString(),obs_mat);
-        for(int j=1;j<=new_obs->vertex_num;j=j+1)
-        {
-            double x= obs_mat(j-1,0);
-            double y= obs_mat(j-1,1);
-            point_x_vec.push_back(x);
-            point_y_vec.push_back(y);
-            new_obs->vertex_map<<QPointF(x,y);
-        }
 
-        double max_x = *max_element(point_x_vec.begin(), point_x_vec.end());
-        double max_y = *max_element(point_y_vec.begin(), point_y_vec.end());
-        double min_x = *min_element(point_x_vec.begin(), point_x_vec.end());
-        double min_y = *min_element(point_y_vec.begin(), point_y_vec.end());
-        double communication_range=0;
-        double collision_r=0;
+        double x= obs_mat(0,0);
+        double y= obs_mat(0,1);
+        double r= obs_mat(0,2);
 
-        xmlreader.xmlRead("communication_range",communication_range);
-        xmlreader.xmlRead("collision_r",collision_r);
+        new_obs->x_low=x;
+        new_obs->y_low=y;
+        new_obs->y_up=r;
 
-        new_obs->x_up=max_x+collision_r;
-        new_obs->x_low=min_x-collision_r;
-        new_obs->y_up=max_y+collision_r;
-        new_obs->y_low=min_y-collision_r;
 
         obsbounding_group.insert(i,new_obs);
     }
@@ -168,40 +153,46 @@ double minimize_Topology::GetCost() const
                 //作为leader的目标是减小和目标物体轨迹的差距
             }
             //下面添加对障碍物避障的最小项
-            single_vehicle_data *agent=(var_struct.steps[steps])->agents[i];
-            double z=pow((agent->posxy-obspos).norm()/communication_range,2);
-            double first,second;
-
-            //            potential+=(PotentialCalc(z,first,second));
-
-            error+=(20*PotentialCalc(z,first,second));
-
-            double Dzdx=2/(communication_range*communication_range)*(agent->x-obspos(0,0));
-            double Dzdy=2/(communication_range*communication_range)*(agent->y-obspos(1,0));
-
-            m_jac(0,agent->indexofx)+=20*first*Dzdx;
-            m_jac(0,agent->indexofy)+=20*first*Dzdy;
-            if(z<1)
+            for(int io=1;io<=obs_num;io++)
             {
-                double valuex =
-                    -6/(communication_range*communication_range)*(z-1)*
-                    (4/(communication_range*communication_range)*pow(agent->x-obspos(0,0),2)
-                     +(z-1));
-                double valuey =
-                    -6/(communication_range*communication_range)*(z-1)*
-                    (4/(communication_range*communication_range)*pow(agent->y-obspos(1,0),2)
-                     +(z-1));
-                double valuexy =-24/(pow(communication_range,4))*
-                                 (z-1)*(agent->y-obspos(1,0))*(agent->x-obspos(0,0));
-                fillsymetrix(m_Hession,agent->indexofx,agent->indexofx,
-                             20*valuex);
-                fillsymetrix(m_Hession,agent->indexofy,agent->indexofy,
-                             20*valuey);
-                fillsymetrix(m_Hession,agent->indexofx,agent->indexofy,
-                             20*valuexy);
-                //他们是连续的
+                SwarmObstacle *obs=obsbounding_group.value(io);
+                obspos<<obs->x_low,obs->y_low;//障碍物位置
+                double colliR=obs->y_up;//障碍物等效半径
+                single_vehicle_data *agent=(var_struct.steps[steps])->agents[i];
+                double z=pow((agent->posxy-obspos).norm()/colliR,2);
+                double first,second;
+
+                //            potential+=(PotentialCalc(z,first,second));
+
+                error+=(20*PotentialCalc(z,first,second));
+
+                double Dzdx=2/(colliR*colliR)*(agent->x-obspos(0,0));
+                double Dzdy=2/(colliR*colliR)*(agent->y-obspos(1,0));
+
+                m_jac(0,agent->indexofx)+=20*first*Dzdx;
+                m_jac(0,agent->indexofy)+=20*first*Dzdy;
+                if(z<1)
+                {
+                    double valuex =
+                        -6/(colliR*colliR)*(z-1)*
+                        (4/(colliR*colliR)*pow(agent->x-obspos(0,0),2)
+                         +(z-1));
+                    double valuey =
+                        -6/(colliR*colliR)*(z-1)*
+                        (4/(colliR*colliR)*pow(agent->y-obspos(1,0),2)
+                         +(z-1));
+                    double valuexy =-24/(pow(colliR,4))*
+                                     (z-1)*(agent->y-obspos(1,0))*(agent->x-obspos(0,0));
+                    fillsymetrix(m_Hession,agent->indexofx,agent->indexofx,
+                                 20*valuex);
+                    fillsymetrix(m_Hession,agent->indexofy,agent->indexofy,
+                                 20*valuey);
+                    fillsymetrix(m_Hession,agent->indexofx,agent->indexofy,
+                                 20*valuexy);
+                    //他们是连续的
+                }
+                //上面添加对障碍物避障的最小项
             }
-            //上面添加对障碍物避障的最小项
         }
 
 

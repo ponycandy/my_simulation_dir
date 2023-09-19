@@ -69,9 +69,9 @@ void ProblemConstruct::init_num(int statenum, int actnum, int decisionnum)
 
 }
 
-void ProblemConstruct::init_all_x(int method, Eigen::MatrixXd input)
+void ProblemConstruct::init_all_x(int method, std::shared_ptr<Eigen::MatrixXd> input)
 {
-    m_vars->SetVariables(input);//这里保留
+    m_vars->all_variable=input->eval();
     //如果没有调用，将以0开始
     //如果调用了，也不会从头开始构建问题
     //可以说是比较节省cpu的一种做法
@@ -130,6 +130,12 @@ void ProblemConstruct::constructNLP()
     {
 
     }
+}
+
+void ProblemConstruct::ReinitState(Eigen::MatrixXd &initstate, Eigen::MatrixXd &terminalstate)
+{
+    m_cons->initState=initstate.eval();
+    m_cons->TerminalState=terminalstate.eval();
 }
 
 NonlinearSolverservice *ProblemConstruct::clone_service()

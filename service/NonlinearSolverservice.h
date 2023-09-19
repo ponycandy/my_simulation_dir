@@ -23,7 +23,7 @@ public:
     virtual Eigen::VectorXd solve_problem(QString varname)=0;
     virtual void start_crack()=0;
     virtual void init_steptime(double time)=0;
-    virtual void init_all_x(int method,Eigen::MatrixXd input)=0;
+    virtual void init_all_x(int method,std::shared_ptr<Eigen::MatrixXd> input)=0;
     virtual NonlinearSolverservice* clone_service()=0;
     virtual Eigen::MatrixXd get_actMat()=0;
     virtual Eigen::MatrixXd get_stateMat()=0;
@@ -34,6 +34,7 @@ public:
     virtual void AddCostSet(ifopt::CostTerm::Ptr cost_set)=0;
     virtual void setuseterminal(bool strue)=0;
     virtual void constructNLP()=0;
+    virtual void ReinitState(Eigen::MatrixXd &initstate,Eigen::MatrixXd &terminalstate)=0;
 };
 #define NonlinearSolverservice_iid "NonlinearSolverservice"
 

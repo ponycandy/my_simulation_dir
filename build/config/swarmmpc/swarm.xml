@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <parameters>
     <agent_num type="int">
-        <value>1</value>
+        <value>4</value>
     </agent_num>
     <decnum type="int">
         <value>6</value>
@@ -12,8 +12,11 @@
     </maximumPotential>
 
   <obs_num type="int">
-        <value>2</value>
+        <value>0</value>
     </obs_num>
+  <circle_num type="int">
+        <value>2</value>
+    </circle_num>
     <sensor_range type="double">
         <value>0</value>
     </sensor_range> 	
@@ -29,7 +32,10 @@
     </Vertex_num> 
     <relationmatrix type="Eigen::MatrixXd">
 	<value>
-	0
+	0 3.46 3.46 2
+	3.46 0 3.46 2
+	3.46 3.46 0 2
+	2 2 2 0
 	</value>
     </relationmatrix>
 
@@ -42,16 +48,21 @@
     </leadercommunication_r>
 
     <communication_range type="double">
-        <value>5</value>
+        <value>20</value>
     </communication_range>
     <collision_r type="double">
         <value>2</value>
     </collision_r>
-
+   <states_num type="int">
+        <value>3</value>
+    </states_num>
 
 <agent_mat type="Eigen::MatrixXd">
 	<value>
 	6.0 0.0 0
+	0.0 0.0 0
+	3.0 1.0 0
+	5.0 2.0 0
 	</value>
 </agent_mat>
 <!--agent_mat是追踪者的初始状态-->
@@ -64,14 +75,7 @@
 </OBS_1_vertexnum>
 <OBS_1_vertexparams type="Eigen::MatrixXd">
 	<value>
-	9.5 0
-	9 -1
-	8 -1.5
-	7 -1
-	6.5 0
-	7 1
-	8 1.5
-	9 1
+	9.5 0 2
 	</value>
 </OBS_1_vertexparams>
 <OBS_2_vertexnum type="int">
@@ -81,9 +85,7 @@
 </OBS_2_vertexnum>
 <OBS_2_vertexparams type="Eigen::MatrixXd">
 	<value>
-	8 9
-	8 13
-	6 12
+	8 9 1
 	</value>
 </OBS_2_vertexparams>
 </parameters>

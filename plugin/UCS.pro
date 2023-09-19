@@ -33,3 +33,4 @@ test_NMPC_Plugin \
     swarm_ETM   \
     Swarm_obstacle_avoid \
     swarm_ETM_compare   \
+    swarm_path_planning_FeedBack   \

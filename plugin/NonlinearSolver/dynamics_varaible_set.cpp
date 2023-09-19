@@ -8,7 +8,7 @@ Dynamics_varaible_Set::Dynamics_varaible_Set(int num):VariableSet(num, "action_s
 
 void Dynamics_varaible_Set::SetVariables(const VectorXd &x)
 {
-    all_variable=x;
+    all_variable=x.eval();
 }
 
 void Dynamics_varaible_Set::init_parents()

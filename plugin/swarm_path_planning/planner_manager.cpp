@@ -67,7 +67,7 @@ planner_manager::planner_manager(QObject *parent)
 
     minimize_Topology *newset2=new minimize_Topology("minimize_Topology");
     std::shared_ptr<ifopt::ConstraintSet> consptr2(newset2);
-    m_service->AddCostSet(consptr2);
+//    m_service->AddCostSet(consptr2);
 
     //    swarmvehicle var_struct;
     //    common_initialize(var_struct);
@@ -96,41 +96,57 @@ planner_manager::planner_manager(QObject *parent)
     Eigen::MatrixXd input1;
 
     input1.resize(5*agentnum*decnum,1);
-    input1.setOnes();//初始不能够这么设，会导致碰撞约束失效
+    input1.setZero();//初始不能够这么设，会导致碰撞约束失效
+//    input1=input1*10;
     //setones会直接把变量设置到无变化率的位置上
     //所以不能这么干
-    initilize_Variable(input1);//这一步会导致求解出问题！！就是这一步！！
+//    initilize_Variable(input1,initstate);//这一步会导致求解出问题！！就是这一步！！
+    //卧槽，问题还是在init_all_x里面，必须使用eval方法复制内存！，然后就OK了？
     //！！为什么.....
-    m_service->init_all_x(0,input1);
+    //已经证明，重新编译或者本机编译无法解决这个问题，也就是说不是编译的问题！
+    std::shared_ptr<Eigen::MatrixXd> initptr = std::make_shared<Eigen::MatrixXd>(input1);
+    //最后尝试，所有相关值都通过指针传入
+    m_service->init_all_x(0,initptr);
+    //也不会是init_all_x造成的问题，因为这一步对于其它的初始值是OK的
+    //所以唯一的问题就是初始的具体值
     //换一个初始值还真有用......
     //可是不能够一直这样吧，步数继续增长呢？
 
+    //ipopt的所有输入和输出都必须用smartponter，还不能是普通指针
+    //根据github上的作者页，这个bug可能会延伸到ifopt的所有相关依赖上面
+    //这就是为什么，当我们把矩阵的初始值赋值从等号改为eval就好了
+    //注意，只要没有restoration的前提下发生了崩溃
+    //那就一定不是因为问题本身性质导致的
+    //而是因为API的指针释放导致的
+
+    //惊了，求解器的问题，mumps和ma57都不行，但是ma27可以完美求解，不会报错
     m_service->solve_problem();
-    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
-    m_service->DeleteFile("./log/PATHPLAING/test.log");
-    m_service->DeleteFile("./log/PATHPLAING/test.xls");
-    m_service->createlogfile("./log/PATHPLAING/test.log",8946);
-    newset2->GetCost();
-    //    newset2->var_struct;
-    QString word;
 
-    m_service->createxlsfile("./log/PATHPLAING/test.xls");
-    for(int k=0;k<newset2->decnum;k++)
-    {
-        for(int i=0;i<newset2->agentnum;i++)
-        {
-            word=" time : "+QString::number(k)+"agent "+
-                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
-                   + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
-                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
+//    Datalogservice *m_service=swarm_path_planningActivator::getService<Datalogservice>("Datalogservice");
+//    m_service->DeleteFile("./log/PATHPLAING/test.log");
+//    m_service->DeleteFile("./log/PATHPLAING/test.xls");
+//    m_service->createlogfile("./log/PATHPLAING/test.log",8946);
+//    newset2->GetCost();
+//    //    newset2->var_struct;
+//    QString word;
+
+//    m_service->createxlsfile("./log/PATHPLAING/test.xls");
+//    for(int k=0;k<newset2->decnum;k++)
+//    {
+//        for(int i=0;i<newset2->agentnum;i++)
+//        {
+//            word=" time : "+QString::number(k)+"agent "+
+//                   QString::number(i)+" status: " + QString::number(newset2->var_struct.steps[k]->agents[i]->x)
+//                   + " " + QString::number(newset2->var_struct.steps[k]->agents[i]->y) + " "
+//                   + QString::number(newset2->var_struct.steps[k]->agents[i]->phi);
 
 
-            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
-            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
-            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
+//            m_service->log(k,3*i+0,newset2->var_struct.steps[k]->agents[i]->x);
+//            m_service->log(k,3*i+1,newset2->var_struct.steps[k]->agents[i]->y);
+//            m_service->log(k,3*i+2,newset2->var_struct.steps[k]->agents[i]->phi);
 
-        }
-    }
+//        }
+//    }
 
-    m_service->savexlsfile();
+//    m_service->savexlsfile();
 }

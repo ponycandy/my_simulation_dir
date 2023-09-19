@@ -3,6 +3,7 @@
 #include "Eigen/core"
 #include "QVector"
 #include "xmlcore.h"
+#include "include/MyMath/MyMathLib.h"
 struct edge
 {
     int start_Node_ID;
@@ -208,7 +209,7 @@ inline void fillsymetrix(Eigen::MatrixXd &mat,int xindex,int yindex,double value
     }
 }
 
-inline void initilize_Variable(Eigen::MatrixXd &var)
+inline void initilize_Variable(Eigen::MatrixXd &var,Eigen::MatrixXd &initstate)
 {
 
     xmlCore xmlreader0("./config/swarmmpc/swarm.xml");
@@ -222,6 +223,7 @@ inline void initilize_Variable(Eigen::MatrixXd &var)
 
 
     xmlreader.xmlRead("trajmat",trajmat);
+    double dt=0.03;
     //现在将trajmat的值写入到所有agent的状态中
     for(int i=0;i<decnum;i++)
     {
@@ -229,6 +231,22 @@ inline void initilize_Variable(Eigen::MatrixXd &var)
         {
             var(2+5*agentnum*i+j*5+0,0)=trajmat(i,0);
             var(2+5*agentnum*i+j*5+1,0)=trajmat(i,1);
+            double vel=0;
+            if(i==0)
+            {
+
+                 vel=sqrt(pow((trajmat(i,0)-initstate(3*j+0))/dt,2)
+                                  +pow((trajmat(i,1)-initstate(3*j+1))/dt,2));
+                //                double omega=normalize();
+                //这里只能假设omega很小
+            }
+            else
+            {
+                 vel=sqrt(pow((trajmat(i,0)-trajmat(i-1,0))/dt,2)
+                                  +pow((trajmat(i,1)-trajmat(i-1,1))/dt,2));
+            }
+            var(5*agentnum*i+j*5+0,0)=vel;
+            var(5*agentnum*i+j*5+1,0)=0.15;
         }
     }
 
