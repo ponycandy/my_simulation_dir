@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters>
+    <agent_num type="int">
+        <value>2</value>
+    </agent_num>
+    <states_num type="int">
+        <value>3</value>
+    </states_num>
+    <portnum1 type="int">
+        <value>8451</value>
+    </portnum1>
+    <shiftgate type="double">
+        <value>100</value>
+    </shiftgate>
+
+
+  <obs_num type="int">
+        <value>3</value>
+    </obs_num>
+  <decnum type="int">
+        <value>4</value>
+    </decnum>
+    <sensor_range type="double">
+        <value>0</value>
+    </sensor_range> 
+    <IP type="std::string">
+        <value>192.168.1.65</value>
+    </IP> 	
+
+    <portnum_self type="int">
+        <value>8451</value>
+    </portnum_self> 
+    <selfID type="int">
+        <value>1</value>
+    </selfID> 
+    <relationmatrix type="Eigen::MatrixXd">
+	<value>
+	0 3
+	3 0
+	</value>
+    </relationmatrix>
+<!--这里关联矩阵定义的是节点N到M的距离--> 
+    <steptime type="int">
+        <value>30</value>
+    </steptime>
+
+    <communication_range type="double">
+        <value>10</value>
+    </communication_range>
+    <collision_r type="double">
+        <value>5</value>
+    </collision_r>
+
+
+
+<agent_mat type="Eigen::MatrixXd">
+	<value>
+	1.0 2.0 0
+	1.2 2.4 0
+	</value>
+</agent_mat>
+<!--目标车辆的初始状态，在最后一行-->
+
+<!--下面都是障碍物的分布状态-->
+<OBS_1_vertexnum type="int">
+	<value>
+	8
+	</value>
+</OBS_1_vertexnum>
+<OBS_1_vertexparams type="Eigen::MatrixXd">
+	<value>
+	9.5 0
+	9 -1
+	8 -1.5
+	7 -1
+	6.5 0
+	7 1
+	8 1.5
+	9 1
+	</value>
+</OBS_1_vertexparams>
+<OBS_2_vertexnum type="int">
+	<value>
+	4
+	</value>
+</OBS_2_vertexnum>
+<OBS_2_vertexparams type="Eigen::MatrixXd">
+	<value>
+	8 9
+	8 13
+	5 18
+	6 12
+	</value>
+</OBS_2_vertexparams>
+<OBS_3_vertexnum type="int">
+	<value>
+	3
+	</value>
+</OBS_3_vertexnum>
+<OBS_3_vertexparams type="Eigen::MatrixXd">
+	<value>
+	10 4
+	11 6
+	12 1
+	</value>
+</OBS_3_vertexparams>
+</parameters>

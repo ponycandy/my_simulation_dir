@@ -6,6 +6,12 @@
     <tol type="double">
         <value>0.1</value>
     </tol>
+    <max_iter type="int">
+        <value>50</value>
+    </max_iter>
+    <constr_viol_tol type="double">
+        <value>0.001</value>
+    </constr_viol_tol>
     <jacobian_approximation type="string">
         <value>exact</value>
     </jacobian_approximation>
