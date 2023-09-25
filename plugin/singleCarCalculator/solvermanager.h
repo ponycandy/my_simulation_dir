@@ -17,10 +17,13 @@ public:
     Jacobiancalc *Jac;
     minimize_Topology *costset;
     Eigen::MatrixXd cached_x;
+    Eigen::MatrixXd cached_control;
+    double shiftgate;
     int decnum;
     int selfID;
     int initflag=0;
     void optimize(Eigen::MatrixXd &input,Eigen::MatrixXd &output);
+    void TradintionControl(Eigen::MatrixXd &control,Eigen::MatrixXd &input);
 
 public slots:
     void solvenow(Eigen::MatrixXd Dataseries);

@@ -14,6 +14,7 @@ public:
     void FillHessionBlock(std::string var_set, Jacobian& jac_block,int irow) const override;
     void FillJacobianBlock (std::string var_set, Jacobian& jac) const override;
     int obs_num;
+    mutable double costNow;
     mutable swarmvehicle var_struct;
     mutable Eigen::MatrixXd relationMatrix;
     mutable Eigen::MatrixXd PredictMat;

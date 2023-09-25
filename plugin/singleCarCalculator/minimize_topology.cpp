@@ -20,6 +20,7 @@ minimize_Topology::minimize_Topology(std::string name):ifopt::CostTerm(name)
     m_jac.resize(1,5*decnum);
     m_Hession.resize(5*decnum,5*decnum);
     TriggerSur=1;
+    costNow=0;
 }
 
 
@@ -45,8 +46,56 @@ double minimize_Topology::GetCost() const
         m_Hession(steps*5+1,steps*5+1)=2*c2;
 
     }
-    //第二，最小化未来拓扑
-    if(obs_num<1)
+    //第二避障项,z的大小决定目标追踪任务是否执行
+    int TargetTrackingflag=0;
+    //可以的，这一项决定项，在前几个iter里面表现得还行
+    //需要规定最大iteration，然后根据返回值，如果没有得到最优解，就按照先前的方式运行
+    for(int steps=0;steps<decnum;steps++)
+    {
+        for(int io=1;io<=obs_num;io++)
+        {
+            obspos<<ObstripR(io-1,0),ObstripR(io-1,1);//障碍物位置
+            double colliR=ObstripR(io-1,2);//障碍物等效半径
+
+            Eigen::MatrixXd posself;
+            posself.resize(2,1);
+            posself=stateMat.block(0,steps,2,1);
+            double z=pow((posself-obspos).norm()/colliR,2);
+            if(z<0.5)
+            {
+                TargetTrackingflag=1;//只要有一个时刻，一个障碍物触发了此项，就会不考虑维持拓扑
+            }
+
+            double first,second;
+            double coef=1;//避障完全无反应！！
+            double value=PotentialCalc(z,first,second);
+            error+=(coef*value);
+            //可以考虑把势场换成更光滑的cos对底函数
+
+            //不行,比起光滑,更重要的是保证目标函数是凸的
+
+            double Dzdx=2/(colliR*colliR)*(posself(0,0)-obspos(0,0));
+            double Dzdy=2/(colliR*colliR)*(posself(1,0)-obspos(1,0));
+
+            m_jac(0,5*steps+2)+=coef*first*Dzdx;
+            m_jac(0,5*steps+3)+=coef*first*Dzdy;
+            if(z<1)
+            {
+                double valuex =2/(colliR*colliR)*first+second*pow(Dzdx,2);
+                double valuey =2/(colliR*colliR)*first+second*pow(Dzdy,2);
+                double valuexy =second*Dzdx*Dzdy;
+                fillsymetrix(m_Hession,5*steps+2,5*steps+2,
+                             coef*valuex);
+                fillsymetrix(m_Hession,5*steps+3,5*steps+3,
+                             coef*valuey);
+                fillsymetrix(m_Hession,5*steps+2,5*steps+3,
+                             coef*valuexy);
+                //他们是连续的
+            }
+        }
+    }
+    //第三，最小化未来拓扑
+    if(TargetTrackingflag==0)
     {
 
         for(int j=0;j<totalNum;j++)
@@ -76,45 +125,10 @@ double minimize_Topology::GetCost() const
             }
         }
     }
-    //第三避障项
-    for(int steps=0;steps<decnum;steps++)
-    {
-        for(int io=1;io<=obs_num;io++)
-        {
-            obspos<<ObstripR(io-1,0),ObstripR(io-1,1);//障碍物位置
-            double colliR=ObstripR(io-1,2);//障碍物等效半径
+//可能需要包含速度一致项,也就是说，尽量减小agent之间的速度差或者方向差
+    //更确切的来说，是到leader的速度方向差，
+    //尽量为凸！！
 
-            Eigen::MatrixXd posself;
-            posself.resize(2,1);
-            posself=stateMat.block(0,steps,2,1);
-            double z=pow((posself-obspos).norm()/colliR,2);
-            double first,second;
-            double coef=1;//避障完全无反应！！
-            double value=PotentialCalc(z,first,second);
-            error+=(coef*value);
-            //可以考虑把势场换成更光滑的cos对底函数
-
-            //不行,比起光滑,更重要的是保证目标函数是凸的
-            double Dzdx=2/(colliR*colliR)*(posself(0,0)-obspos(0,0));
-            double Dzdy=2/(colliR*colliR)*(posself(1,0)-obspos(1,0));
-
-            m_jac(0,5*steps+2)+=coef*first*Dzdx;
-            m_jac(0,5*steps+3)+=coef*first*Dzdy;
-            if(z<1)
-            {
-                double valuex =2/(colliR*colliR)*first+second*pow(Dzdx,2);
-                double valuey =2/(colliR*colliR)*first+second*pow(Dzdy,2);
-                double valuexy =second*Dzdx*Dzdy;
-                fillsymetrix(m_Hession,5*steps+2,5*steps+2,
-                             coef*valuex);
-                fillsymetrix(m_Hession,5*steps+3,5*steps+3,
-                             coef*valuey);
-                fillsymetrix(m_Hession,5*steps+2,5*steps+3,
-                             coef*valuexy);
-                //他们是连续的
-            }
-        }
-    }
     //备用项,追踪障碍物环绕
     if(TriggerSur==1)
     {
@@ -153,6 +167,7 @@ double minimize_Topology::GetCost() const
 
 
     }
+    costNow=error;
     return error;
 }
 
