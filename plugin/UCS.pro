@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
-
+CONFIG += console
 
 SUBDIRS += \
     launcher \
@@ -34,3 +34,5 @@ test_NMPC_Plugin \
     Swarm_obstacle_avoid \
     swarm_ETM_compare   \
     swarm_path_planning_FeedBack   \
+    singleCarCalculator   \
+    singlCarcalculatorCompare   \

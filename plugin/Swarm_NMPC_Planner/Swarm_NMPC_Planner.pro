@@ -5,6 +5,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(../../3rdlib/ifopt/Ifopt_dependency.pri)
 include(../../3rdlib/ATGlib/ATGlib_dependency.pri)
 CONFIG += c++17
+CONFIG += console
 
 
 INCLUDEPATH += ../../3rdlib/project_library/src/Matrix_sparser

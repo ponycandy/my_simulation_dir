@@ -3,6 +3,7 @@ QT       += core gui testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+CONFIG += console
 INCLUDEPATH += ../../3rdlib/project_library/src/ClosePoint
 LIBS += -L../../3rdlib/project_library/bin -lClosePoint
 INCLUDEPATH += ../../3rdlib/project_library/src/SwarmAgent

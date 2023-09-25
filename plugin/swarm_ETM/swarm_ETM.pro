@@ -14,6 +14,7 @@ INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
 LIBS += -L../../3rdlib/project_library/bin -lxmlcore
 
 CONFIG += c++17
+CONFIG += console
 
 
 QMAKE_CXXFLAGS += /arch:AVX

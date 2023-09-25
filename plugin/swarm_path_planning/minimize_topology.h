@@ -24,6 +24,7 @@ public:
     mutable  Eigen::MatrixXd stateMat;//状态矩阵，尺寸为：state_num*dec_num
     mutable  Eigen::MatrixXd actMat;//控制量矩阵，尺寸为：act_num*dec_num
     mutable Eigen::MatrixXd m_jac;
+    mutable int edge_num;
     QVector<Eigen::Vector2d> Target_Traj;
     mutable Eigen::MatrixXd m_Hession;
     QMap<int,SwarmObstacle*> obsbounding_group;

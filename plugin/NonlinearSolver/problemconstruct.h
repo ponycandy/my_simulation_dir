@@ -13,6 +13,7 @@ class ProblemConstruct : public QObject,public NonlinearSolverservice
 public:
     explicit ProblemConstruct(QObject *parent = nullptr);
     void registerODE(NMPC_ODE *odefunction) override;
+    int crack_and_return() override;
     void registerODEJacob(NMPC_Dynamic_Jacob *Dynamic_Jacob) override;
     void register_constrain(NMPC_Extra_Constrain *constrain) override;
     void init_num(int statenum, int actnum, int decisionnum) override;
@@ -21,6 +22,7 @@ public:
     void init_steptime(double time) override;
     void setuseterminal(bool strue) override;
     void constructNLP() override;
+    void GetVariable(QString name,Eigen::MatrixXd &returnvalue) override;
     void ReinitState(Eigen::MatrixXd &initstate,Eigen::MatrixXd &terminalstate) override;
     NonlinearSolverservice * clone_service() override;
     Eigen::VectorXd solve_problem() override;
@@ -28,6 +30,7 @@ public:
     void start_crack() override;
     Eigen::MatrixXd get_actMat() override;
     Eigen::MatrixXd get_stateMat() override;
+    int returstatus;
     void set_control_bound(Eigen::MatrixXd lower,Eigen::MatrixXd higher) override;
 
     void Use_BuildIn_Dynamics_Cons(bool istrue) override;
@@ -36,6 +39,7 @@ public:
     void AddVariableSet(ifopt::Component::Ptr variable_set) override;
     void AddConstraintSet(ifopt::ConstraintSet::Ptr constraint_set) override;
     void AddCostSet(ifopt::ConstraintSet::Ptr cost_set) override;
+
     //第三部分接口，我们考虑使用自动梯度求解器进行梯度计算
     //这部分再说，现在比较难实现
 

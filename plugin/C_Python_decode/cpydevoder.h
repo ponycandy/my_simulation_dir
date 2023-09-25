@@ -20,9 +20,14 @@ public:
     void sendMAT(Eigen::MatrixXd mat,Tcpcommunicateservice * usingservice) override;
     void sendMAT(Eigen::MatrixXd &mat,TCPserverservice * usingservice) override;
     void execute( CPYDATA::mat_trans ptopic, QByteArray &sending_data);
+    void Server_mode_connect(int portnum) override;
+    void sendMAT(Eigen::MatrixXd &mat) override;
+    void Client_mode_connect(QString IP,int portnum) override;
     CPYcoderservice* cloneservice() override;
-    Tcpcommunicateservice *m_service;
+    Tcpcommunicateservice *m_clientservice;
+    TCPserverservice *m_serverservice;
     Eigen::MatrixXd returnmat;
+    int sendingmode;
     char m_preassigned_mat[4000];//最大允许值,也就是一次最多传输五百个左右元素
 signals:
     void matrecieved(Eigen::MatrixXd mat);

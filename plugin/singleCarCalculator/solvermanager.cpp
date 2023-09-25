@@ -1,5 +1,5 @@
 #include "solvermanager.h"
-#include "singleCarCalculatorActivator.h"
+#include "singleCarCalculatorActivator.h".h"
 #include "xmlcore.h"
 Solvermanager::Solvermanager()
 {

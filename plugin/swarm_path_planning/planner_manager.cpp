@@ -97,10 +97,11 @@ planner_manager::planner_manager(QObject *parent)
 
     input1.resize(5*agentnum*decnum,1);
     input1.setZero();//初始不能够这么设，会导致碰撞约束失效
-//    input1=input1*10;
+
     //setones会直接把变量设置到无变化率的位置上
     //所以不能这么干
-//    initilize_Variable(input1,initstate);//这一步会导致求解出问题！！就是这一步！！
+    initilize_Variable(input1,initstate);//这一步会导致求解出问题！！就是这一步！！
+    input1=input1*1.2;
     //卧槽，问题还是在init_all_x里面，必须使用eval方法复制内存！，然后就OK了？
     //！！为什么.....
     //已经证明，重新编译或者本机编译无法解决这个问题，也就是说不是编译的问题！

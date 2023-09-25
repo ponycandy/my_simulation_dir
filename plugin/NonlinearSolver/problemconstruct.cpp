@@ -6,7 +6,7 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
 {
     use_internal_dynamics=false;
     set_Terminal=false;
-
+    returstatus=0;
     QString configfiename="./config/Ipopt/Ipoptconfig.xml";
     xmlCore xml_reader(configfiename.toStdString());
     std::string linear_solver;
@@ -17,14 +17,19 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     double acceptable_obj_change_tol;
     int print_level;
     double tol;
+    double constr_viol_tol;
+    int max_iter;
     xml_reader.xmlRead("linear_solver",linear_solver);
     xml_reader.xmlRead("hessian_approximation",hessian_approximation);
     xml_reader.xmlRead("acceptable_obj_change_tol",acceptable_obj_change_tol);
     xml_reader.xmlRead("jacobian_approximation",jacobian_approximation);
     xml_reader.xmlRead("print_level",print_level);
     xml_reader.xmlRead("tol",tol);
+    xml_reader.xmlRead("constr_viol_tol",constr_viol_tol);
     xml_reader.xmlRead("nlp_scaling_method",nlp_scaling_method);
     xml_reader.xmlRead("check_derivatives_for_naninf",check_derivatives_for_naninf);
+    xml_reader.xmlRead("max_iter", max_iter);
+    ipopt.SetOption("max_iter", max_iter);
     ipopt.SetOption("linear_solver", linear_solver);
     ipopt.SetOption("nlp_scaling_method", nlp_scaling_method);
     ipopt.SetOption("jacobian_approximation", jacobian_approximation);
@@ -33,12 +38,39 @@ ProblemConstruct::ProblemConstruct(QObject *parent)
     ipopt.SetOption("check_derivatives_for_naninf",check_derivatives_for_naninf);
     ipopt.SetOption("acceptable_obj_change_tol",acceptable_obj_change_tol);
     ipopt.SetOption("hessian_approximation",hessian_approximation);
+    ipopt.SetOption("constr_viol_tol", constr_viol_tol); // or any value you prefer
 }
 
 void ProblemConstruct::registerODE(NMPC_ODE *odefunction)
 {
     selfodefunction=odefunction;
     //    m_cons->registerODE(odefunction);
+}
+
+int ProblemConstruct::crack_and_return()
+{
+    ipopt.Solve(nlp);
+    returstatus=ipopt.GetReturnStatus();
+    return returstatus;
+//    0.Solve_Succeeded
+//        -1.Maximum_Iterations_Exceeded
+//    1: Solved_To_Acceptable_Level
+//        2: Infeasible_Problem_Detected
+//            3: Search_Direction_Becomes_Too_Small
+//                4: Diverging_Iterates
+//                    5: User_Requested_Stop
+//                        6: Feasible_Point_Found
+//                            -2: Restoration_Failed
+//                                  -3: Error_In_Step_Computation
+//                                        -4: Maximum_CpuTime_Exceeded
+//                                              -10: Not_Enough_Degrees_Of_Freedom
+//                                                     -11: Invalid_Problem_Definition
+//                                                            -12: Invalid_Option
+//                                                                   -13: Invalid_Number_Detected
+//                                                                          -100: Unrecoverable_Exception
+//                                                                                  -101: NonIpopt_Exception_Thrown
+//                                                                                          -102: Insufficient_Memory
+//                                                                                                  -199: Internal_Error
 }
 
 void ProblemConstruct::registerODEJacob(NMPC_Dynamic_Jacob *Dynamic_Jacob)
@@ -132,6 +164,11 @@ void ProblemConstruct::constructNLP()
     }
 }
 
+void ProblemConstruct::GetVariable(QString name, Eigen::MatrixXd &returnvalue)
+{
+    returnvalue=nlp.GetOptVariables()->GetComponent(name.toStdString())->GetValues();
+}
+
 void ProblemConstruct::ReinitState(Eigen::MatrixXd &initstate, Eigen::MatrixXd &terminalstate)
 {
     m_cons->initState=initstate.eval();
@@ -160,6 +197,7 @@ Eigen::VectorXd ProblemConstruct::solve_problem(QString name)
 void ProblemConstruct::start_crack()
 {
     ipopt.Solve(nlp);
+    returstatus=ipopt.GetReturnStatus();
 }
 
 Eigen::MatrixXd ProblemConstruct::get_actMat()

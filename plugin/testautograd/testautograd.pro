@@ -5,6 +5,7 @@ include(../../3rdlib/ATGlib/ATGlib_dependency.pri)
 include(../../3rdlib/ifopt/Ifopt_dependency.pri)
 CONFIG += console
 CONFIG += c++17
+CONFIG += console
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 

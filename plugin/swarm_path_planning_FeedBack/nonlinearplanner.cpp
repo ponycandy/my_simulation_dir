@@ -75,7 +75,7 @@ void NonlinearPlanner::plan(Eigen::MatrixXd &statesOfall, Eigen::MatrixXd &Targe
 
     //这里初始化所有的变量
     Eigen::MatrixXd input2;
-    input2.resize(5*agentnum*decnum,1);input2.setZero();
+    input2.resize(5*agentnum*decnum,1);input2.setRandom();
 
     for(int i=0;i<decnum;i++)
     {
@@ -85,8 +85,9 @@ void NonlinearPlanner::plan(Eigen::MatrixXd &statesOfall, Eigen::MatrixXd &Targe
             input2(2+5*agentnum*i+j*5+1,0)=Target(i,1);
             input2(2+5*agentnum*i+j*5+2,0)=Target(i,2);
         }
-//        newset2->copymatvalue(Target(i,0),Target(i,1),i);
+        newset2->copymatvalue(Target(i,0),Target(i,1),i);
     }
+//    input2=input2*1.2;
     std::shared_ptr<Eigen::MatrixXd> initptr = std::make_shared<Eigen::MatrixXd>(input2);
 
     m_service->init_all_x(0,initptr);

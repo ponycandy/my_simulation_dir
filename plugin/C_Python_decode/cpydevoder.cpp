@@ -154,6 +154,37 @@ void CPyDevoder::execute( CPYDATA::mat_trans ptopic, QByteArray &sending_data)
     sending_data.setRawData(m_preassigned_mat,size);
 }
 
+void CPyDevoder::Server_mode_connect(int portnum)
+{
+    m_serverservice=C_Python_decodeActivator::getService<TCPserverservice>("TCPserverservice");
+    m_serverservice=m_serverservice->cloneservice();
+    m_serverservice->Bind_Slot(this,SLOT(datarecieved(QByteArray)));
+    m_serverservice->startlisten(portnum);
+    sendingmode=0;//servermode
+}
+
+void CPyDevoder::sendMAT(Eigen::MatrixXd &mat)
+{
+    if(sendingmode==0)
+    {
+        sendMAT(mat,m_serverservice);
+    }
+    else
+    {
+        sendMAT(mat,m_clientservice);
+    }
+}
+
+void CPyDevoder::Client_mode_connect(QString IP, int portnum)
+{
+    m_clientservice=C_Python_decodeActivator::getService<Tcpcommunicateservice>("Tcpcommunicateservice");
+    m_clientservice=m_clientservice->cloneservice();
+    m_clientservice->Bind_Slot(this,SLOT(datarecieved(QByteArray)));
+    m_clientservice->setport(QString::number(portnum),IP);
+    m_clientservice->connectport();
+    sendingmode=1;//clientmode
+}
+
 CPYcoderservice *CPyDevoder::cloneservice()
 {
     CPyDevoder *newservice=new CPyDevoder;
