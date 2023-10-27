@@ -15,10 +15,10 @@
 #include <stdlib.h>
 #include <vector>
 #include <fstream>
-
 #include <sstream>
 #include <iostream>
-#include "qopenglshaderprogram.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 static const GLfloat g_vertex_buffer_data[] = {
     -1.0f, -1.0f, 0.0f,
@@ -117,24 +117,40 @@ class glwidget3D: public QOpenGLWidget,protected QOpenGLFunctions
 public:
     glwidget3D(QWidget *parent);
     void set_glpainter(glpainter3D *m_paint);
+    void rotateCams(int x, int y);
     void resizeGLwidget(int w,int h);
     void mouseMoveEvent(QMouseEvent *event) override;
     GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
+
+
+    glm::mat4 ViewMatrix;
+    glm::mat4 ProjectionMatrix;
+    glm::vec3 direction;
+    glm::vec3 right;
+    glm::vec3 up;
 public slots:
     void animate();
 
 protected:
 //    void paintEvent(QPaintEvent *event) override;
     void initializeGL()override;
-    void resizeGL(int, int) override;
+    void resizeGL(int w, int h) override;
     void paintGL() override;
 private:
     int elapsed;
     glpainter3D *m_painter;
     int m_width;
     int m_height;
+    float FOV;
+    float nearplanedis;
+    float farplanedis;
     QOpenGLVertexArrayObject *vao;// 所谓的VAO，就是openGL例子里面，我写的就是要创建出来即使后面没什么用
     GLuint programID; //这个全局都要用
+    glm::vec3 position;
+    float horizontalAngle;
+    float verticalAngle;
+    float speed;
+    float mousespeed;
     //除掉vao的创建需要借助Qt wrapper外，其余的部分都可以用纯openGL解决掉了
 };
 

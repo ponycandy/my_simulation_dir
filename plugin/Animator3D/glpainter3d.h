@@ -23,7 +23,7 @@ public:
     void zoomin();
     void zoomout();
     void calc_bounder();
-    void move_the_bound(double x,double y);
+    void rotateCams(int x,int y);
     void record_pressed_mouse(int x,int y);
     base_widget *m_widget;
     glwidget3D *m_glwidget;
@@ -31,8 +31,8 @@ public:
     QGridLayout *layout;
     QBrush background;
 
-    double mousex;
-    double mousey;
+    int mousex;
+    int mousey;
     double recorded_mouse_x;
     double recorded_mouse_y;
     double factorin;

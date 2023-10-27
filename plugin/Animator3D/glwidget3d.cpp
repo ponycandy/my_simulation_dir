@@ -8,7 +8,18 @@ glwidget3D::glwidget3D(QWidget *parent)
     m_height=600;
     //    setFixedSize(m_width, m_height);
     setAutoFillBackground(false);
+    nearplanedis=0.1;
+    farplanedis=100;
+    FOV=45;
 
+    position = glm::vec3(0, 0, 10);
+    horizontalAngle = 3.14f;
+    // vertical angle : 0, look at the horizon
+    verticalAngle = 0.0f;
+    // Initial Field of View
+    speed = 3.0f; // 3 units / second
+    mousespeed = 0.005f;
+    ViewMatrix=glm::mat4(1.0f);
 }
 
 void glwidget3D::set_glpainter(glpainter3D *m_paint)
@@ -16,11 +27,39 @@ void glwidget3D::set_glpainter(glpainter3D *m_paint)
     m_painter=m_paint;
 }
 
+void glwidget3D::rotateCams(int x, int y)
+{
+    horizontalAngle += mousespeed * float(m_width / 2 - x);
+    verticalAngle += mousespeed * float(m_height / 2 - y);
+
+    direction=glm::vec3(
+        cos(verticalAngle) * sin(horizontalAngle),
+        sin(verticalAngle),
+        cos(verticalAngle) * cos(horizontalAngle)
+      );
+
+    // Right vector
+    right = glm::vec3(
+        sin(horizontalAngle - 3.14f / 2.0f),
+        0,
+        cos(horizontalAngle - 3.14f / 2.0f)
+        );
+    // Up vector
+    up = glm::cross(right, direction);
+    ViewMatrix = glm::lookAt(
+        position,           // Camera is here
+        position + direction, // and looks here : at the same position, plus "direction"
+        up                  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+}
+
 void glwidget3D::resizeGLwidget(int w, int h)
 {
     resize(w,h);
     m_width=w;
     m_height=h;
+    //默认视场角度为45不可更改
+    ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/float(m_height),nearplanedis, farplanedis);
 }
 
 void glwidget3D::mouseMoveEvent(QMouseEvent *event)
@@ -145,7 +184,7 @@ void glwidget3D::initializeGL()
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     // 将vertex数据塞进来
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
 
     GLuint vertexcolorbuffer;
     glGenBuffers(1, &vertexcolorbuffer);
@@ -154,7 +193,7 @@ void glwidget3D::initializeGL()
     glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
     // Create a shader program
-    programID = LoadShaders("vertex.shader", "Frag.shader");
+    programID = LoadShaders("vertexview.shader", "Fragcolorset.shader");
 
 
     // Specify the layout of the vertex data
@@ -165,25 +204,36 @@ void glwidget3D::initializeGL()
     glBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
 
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
+    // Accept fragment if it closer to the camera than the former one
+    glDepthFunc(GL_LESS);
 }
 
-void glwidget3D::resizeGL(int, int)
+void glwidget3D::resizeGL(int w, int h)
 {
-    // m_projection.setToIdentity();
-    //   m_projection.perspective(45.0f, w / float(h), 0.01f, 100.0f);
+    glViewport(0, 0, w, h);
+    m_width=w;
+    m_height=h;
 
 }
 
 void glwidget3D::paintGL()
 {
-
-    // Clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Use the shader program
     glUseProgram(programID);
 
+    //计算MVP矩阵
+    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model;
+    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     // Draw the triangle
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    //呃，有点儿奇怪...
+    //好像是窗口本身的压缩问题
+    //看起来的视角有一点儿....不正？
 }

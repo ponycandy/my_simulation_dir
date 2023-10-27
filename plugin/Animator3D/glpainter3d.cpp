@@ -35,18 +35,23 @@ void glpainter3D::setupUI()
     //    layout->setContentsMargins();
     m_widget->setLayout(layout);
     //    m_widget->show();
+//    m_widget->resize(m_width,m_height);
 }
 
 void glpainter3D::get_mouse_pos(int x, int y)
 {
     if(mouse_is_pressed==0)
     {
-        mousex=x/pixel_per_meter+x_min;
-        mousey=y_max-y/pixel_per_meter;
+        //xy是从左上角为原点的坐标系下的坐标
+
+        //什么都不做
     }
     else
     {
-     //   move_the_bound(x/pixel_per_meter+x_min,y_max-y/pixel_per_meter);
+        //这里执行旋转摄像头的操作
+        int delta_x=x-mousex;//偏离原点的量
+        int delta_y=y-mousey;//偏离原点的量
+        rotateCams(delta_x, delta_y);
         //我们要仔细思考三维场景下的变换公式
         //我们的鼠标移动的始终是视角
     }
@@ -72,7 +77,13 @@ void glpainter3D::calc_bounder()
 
 }
 
+void glpainter3D::rotateCams(int x, int y)
+{
+    m_glwidget->rotateCams( x,  y);
+}
+
 void glpainter3D::record_pressed_mouse(int x, int y)
 {
-
+    mousex=x;
+    mousey=y;
 }
