@@ -118,6 +118,7 @@ public:
     glwidget3D(QWidget *parent);
     void set_glpainter(glpainter3D *m_paint);
     void rotateCams(int x, int y);
+    void move_in_direction(glm::vec3 direc);
     void resizeGLwidget(int w,int h);
     void mouseMoveEvent(QMouseEvent *event) override;
     GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);

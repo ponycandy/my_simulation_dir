@@ -23,11 +23,11 @@ void base_widget::wheelEvent(QWheelEvent *event)
 {
     if(event->angleDelta().y()>0)
     {
-        m_painter->zoomin();
+        m_painter->movein();
     }
     else
     {
-        m_painter->zoomout();
+        m_painter->moveout();
 
     }
 }
@@ -42,4 +42,30 @@ void base_widget::mousePressEvent(QMouseEvent *event)
 void base_widget::mouseReleaseEvent(QMouseEvent *event)
 {
     m_painter->mouse_is_pressed=0;
+}
+
+void base_widget::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Up)
+    {
+        m_painter->moveup();
+    }
+    else if(event->key() == Qt::Key_Down)
+    {
+        m_painter->movedown();
+    }
+    else if(event->key() == Qt::Key_Left)
+    {
+        m_painter->moveleft();
+
+    }
+    else if(event->key() == Qt::Key_Right)
+    {
+        m_painter->moveright();
+
+    }
+    else
+    {
+
+    }
 }

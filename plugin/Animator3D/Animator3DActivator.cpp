@@ -15,7 +15,7 @@ void Animator3DActivator::start()
 {
     m_painter=new glpainter3D;
     m_painter->m_widget->show();
-//    m_painter->timer->start(10);
+    m_painter->timer->start(10);
 }
 void Animator3DActivator::stop()
 {

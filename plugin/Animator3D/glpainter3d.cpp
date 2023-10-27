@@ -35,7 +35,7 @@ void glpainter3D::setupUI()
     //    layout->setContentsMargins();
     m_widget->setLayout(layout);
     //    m_widget->show();
-//    m_widget->resize(m_width,m_height);
+    //    m_widget->resize(m_width,m_height);
 }
 
 void glpainter3D::get_mouse_pos(int x, int y)
@@ -49,8 +49,11 @@ void glpainter3D::get_mouse_pos(int x, int y)
     else
     {
         //这里执行旋转摄像头的操作
-        int delta_x=x-mousex;//偏离原点的量
-        int delta_y=y-mousey;//偏离原点的量
+        int delta_x=mousex-x;//偏离原点的量
+        int delta_y=mousey-y;//偏离原点的量
+        qDebug()<<"delta x is "<<delta_x;
+        qDebug()<<"delta y is "<<delta_y;
+        //这里没问题，那就只能是旋转有问题了
         rotateCams(delta_x, delta_y);
         //我们要仔细思考三维场景下的变换公式
         //我们的鼠标移动的始终是视角
@@ -74,6 +77,38 @@ void glpainter3D::zoomout()
 
 void glpainter3D::calc_bounder()
 {
+
+}
+
+void glpainter3D::moveup()
+{
+    m_glwidget->move_in_direction(m_glwidget->up);
+}
+
+void glpainter3D::movedown()
+{
+    m_glwidget->move_in_direction(-m_glwidget->up);
+
+}
+
+void glpainter3D::moveright()
+{
+    m_glwidget->move_in_direction(m_glwidget->right);
+}
+
+void glpainter3D::moveleft()
+{
+    m_glwidget->move_in_direction(-m_glwidget->right);
+}
+
+void glpainter3D::movein()
+{
+    m_glwidget->move_in_direction(m_glwidget->direction);
+}
+
+void glpainter3D::moveout()
+{
+    m_glwidget->move_in_direction(-m_glwidget->direction);
 
 }
 

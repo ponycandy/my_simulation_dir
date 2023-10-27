@@ -23,6 +23,12 @@ public:
     void zoomin();
     void zoomout();
     void calc_bounder();
+    void moveup();
+    void movedown();
+    void moveright();
+    void moveleft();
+    void movein();
+    void moveout();
     void rotateCams(int x,int y);
     void record_pressed_mouse(int x,int y);
     base_widget *m_widget;

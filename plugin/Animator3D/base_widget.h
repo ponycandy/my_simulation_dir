@@ -21,7 +21,7 @@ public:
     void wheelEvent(QWheelEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-
+    void keyPressEvent(QKeyEvent *event) override;
 private:
     Ui::base_widget *ui;
     glpainter3D *m_painter;

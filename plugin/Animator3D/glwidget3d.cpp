@@ -12,14 +12,16 @@ glwidget3D::glwidget3D(QWidget *parent)
     farplanedis=100;
     FOV=45;
 
-    position = glm::vec3(0, 0, 10);
+    position = glm::vec3(0, 0, 5);
     horizontalAngle = 3.14f;
     // vertical angle : 0, look at the horizon
     verticalAngle = 0.0f;
     // Initial Field of View
     speed = 3.0f; // 3 units / second
-    mousespeed = 0.005f;
-    ViewMatrix=glm::mat4(1.0f);
+    mousespeed = 0.00005f;
+    rotateCams(0,0);
+    ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/ float(m_height), nearplanedis, farplanedis);
+
 }
 
 void glwidget3D::set_glpainter(glpainter3D *m_paint)
@@ -29,14 +31,15 @@ void glwidget3D::set_glpainter(glpainter3D *m_paint)
 
 void glwidget3D::rotateCams(int x, int y)
 {
-    horizontalAngle += mousespeed * float(m_width / 2 - x);
-    verticalAngle += mousespeed * float(m_height / 2 - y);
+    horizontalAngle += mousespeed * float(x);
+    verticalAngle += mousespeed * float(y);
 
+    //本来就是deltax了，不需要再加2/1量
     direction=glm::vec3(
         cos(verticalAngle) * sin(horizontalAngle),
         sin(verticalAngle),
         cos(verticalAngle) * cos(horizontalAngle)
-      );
+        );
 
     // Right vector
     right = glm::vec3(
@@ -53,13 +56,24 @@ void glwidget3D::rotateCams(int x, int y)
         );
 }
 
+void glwidget3D::move_in_direction(glm::vec3 direc)
+{
+    float deltaTime=0.01;
+    position += direc * deltaTime * speed;
+    ViewMatrix = glm::lookAt(
+        position,           // Camera is here
+        position + direction, // and looks here : at the same position, plus "direction"
+        up                  // Head is up (set to 0,-1,0 to look upside-down)
+        );
+}
+
 void glwidget3D::resizeGLwidget(int w, int h)
 {
     resize(w,h);
     m_width=w;
     m_height=h;
     //默认视场角度为45不可更改
-    ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/float(m_height),nearplanedis, farplanedis);
+    ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/ float(m_height), nearplanedis, farplanedis);
 }
 
 void glwidget3D::mouseMoveEvent(QMouseEvent *event)
@@ -226,8 +240,19 @@ void glwidget3D::paintGL()
     glUseProgram(programID);
 
     //计算MVP矩阵
+    //    glm::mat4 Model = glm::mat4(1.0f);
+    //    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model;
+
+
+
+    glm::mat4 View = glm::lookAt(
+        glm::vec3(4, 3, -3), // Camera is at (4,3,3), in World Space
+        glm::vec3(0, 0, 0), // and looks at the origin
+        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
+        );
     glm::mat4 Model = glm::mat4(1.0f);
-    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model;
+    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model; // Remember, matrix multiplication is the other way around
+
     GLuint MatrixID = glGetUniformLocation(programID, "MVP");
     glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
     // Draw the triangle
