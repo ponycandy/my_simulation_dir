@@ -2,7 +2,7 @@
 #define GLWIDGET3D_H
 
 #pragma once
-//#include <GL/glew.h>
+
 #include <windows.h>//没有这个绝对不行！！
 #include <qobject.h>
 #include <QOpenGLWidget>
@@ -10,9 +10,14 @@
 #include <QTimer>
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
-  #include <QOpenGLVertexArrayObject>
-//#include <gl/GLU.h> //这两个算是系统库，不要试图去配置他
-//#include <gl/GL.h> //这两个算是系统库，不要试图去配置他
+ #include <QOpenGLVertexArrayObject>
+#include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+#include <fstream>
+
+#include <sstream>
+#include <iostream>
 #include "qopenglshaderprogram.h"
 
 static const GLfloat g_vertex_buffer_data[] = {
@@ -114,7 +119,7 @@ public:
     void set_glpainter(glpainter3D *m_paint);
     void resizeGLwidget(int w,int h);
     void mouseMoveEvent(QMouseEvent *event) override;
-    void Loadshader();//一般来说，我们不会自己写这玩意，照旧使用就行
+    GLuint LoadShaders(const char* vertex_file_path, const char* fragment_file_path);
 public slots:
     void animate();
 
@@ -128,12 +133,9 @@ private:
     glpainter3D *m_painter;
     int m_width;
     int m_height;
-    QOpenGLShaderProgram *program;
-    QOpenGLVertexArrayObject *vao;
-    GLuint m_vbo; // Vertex buffer object
-    GLuint m_vao; // Vertex array object
-    GLuint m_program; // Shader program
-
+    QOpenGLVertexArrayObject *vao;// 所谓的VAO，就是openGL例子里面，我写的就是要创建出来即使后面没什么用
+    GLuint programID; //这个全局都要用
+    //除掉vao的创建需要借助Qt wrapper外，其余的部分都可以用纯openGL解决掉了
 };
 
 
