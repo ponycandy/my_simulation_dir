@@ -14,11 +14,13 @@ void Animator3DActivator::init(PluginContext *CONTEXT)
 void Animator3DActivator::start()
 {
     m_painter=new glpainter3D;
-    m_painter->m_widget->show();
-    m_painter->timer->start(10);
+    Animator3DActivator::registerservice(m_painter,"Animateservice3Dservice");
+    //下面两行是测试代码
+//    m_painter->m_widget->show();
+//    m_painter->timer->start(10);
 }
 void Animator3DActivator::stop()
 {
-delete this;
+    delete this;
 
 }

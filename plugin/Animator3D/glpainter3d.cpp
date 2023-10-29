@@ -60,9 +60,54 @@ void glpainter3D::get_mouse_pos(int x, int y)
     }
 }
 
-void glpainter3D::paint(QPainter *painter, QPaintEvent *event, int elapsed)
+void glpainter3D::drawcube(float Dx, float Dy, float Dz, float centerx, float centery, float centerz, float alpha, float beta, float gama)
 {
 
+}
+
+void glpainter3D::resizeWindow(int width, int height)
+{
+
+}
+
+void glpainter3D::start_animate()
+{
+    timer->start(10);
+}
+
+void glpainter3D::stop_animate()
+{
+    timer->stop();
+}
+
+void glpainter3D::register_painter(Drawer3D *painter)
+{
+    operation_num+=1;
+    DrawOperation_map.insert(operation_num,painter);
+    painter->m_animator=this;
+}
+
+Animateservice3Dservice *glpainter3D::cloneservice()
+{
+    glpainter3D *servicenew=new glpainter3D;
+    return servicenew;
+}
+
+QWidget *glpainter3D::getwidget()
+{
+     return m_widget;
+}
+
+void glpainter3D::paint()
+{
+//    brush_painter=painter;//
+//    painter->setBrush(background);
+//    painter->fillRect(event->rect(), background);
+    //上面三行是执行背景填充的，现在来说，完全不需要
+    for(int i=1;i<=operation_num;i++)
+    {
+        DrawOperation_map.value(i)->draw();
+    }
 }
 
 void glpainter3D::zoomin()

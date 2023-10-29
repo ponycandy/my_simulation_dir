@@ -10,16 +10,26 @@
 #include "base_widget.h"
 #include <QTimer>
 #include "QGridLayout"
+#include "service/Animateservice3Dservice.h"
 class glwidget3D;
 class base_widget;
-class glpainter3D: public QObject//,public Animateservice，这个移植到osgi框架下再说
+class glpainter3D: public QObject,public Animateservice3Dservice//，这个移植到osgi框架下再说
 {
     Q_OBJECT
 public:
     explicit glpainter3D(QObject *parent = nullptr);
     void setupUI();
     void get_mouse_pos(int x, int y);
-    void paint(QPainter *painter, QPaintEvent *event, int elapsed);
+    void drawcube(float Dx,float Dy,float Dz,
+                  float centerx,float centery,float centerz,
+                  float alpha,float beta,float gama) override;
+    void resizeWindow(int width,int height) override;
+    void start_animate() override;
+    void stop_animate() override;
+    void register_painter(Drawer3D *painter) override;
+    Animateservice3Dservice* cloneservice() override;
+    QWidget *getwidget() override;
+    void paint();
     void zoomin();
     void zoomout();
     void calc_bounder();
@@ -53,6 +63,9 @@ public:
     int m_width;
     int operation_num;
     int m_height;
+
+    QMap<int,Drawer3D*>    DrawOperation_map;
+
 
 };
 

@@ -234,22 +234,12 @@ void glwidget3D::resizeGL(int w, int h)
 
 void glwidget3D::paintGL()
 {
+    //有点麻烦，假设在这里调用glpainter3d paint，就对不上openGL的逻辑
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     // Use the shader program
     glUseProgram(programID);
+    m_painter->paint();
 
-    //计算MVP矩阵
-    //    glm::mat4 Model = glm::mat4(1.0f);
-    //    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model;
-
-
-
-    glm::mat4 View = glm::lookAt(
-        glm::vec3(4, 3, -3), // Camera is at (4,3,3), in World Space
-        glm::vec3(0, 0, 0), // and looks at the origin
-        glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-        );
     glm::mat4 Model = glm::mat4(1.0f);
     glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model; // Remember, matrix multiplication is the other way around
 
