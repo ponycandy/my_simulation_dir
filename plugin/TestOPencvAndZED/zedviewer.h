@@ -3,7 +3,10 @@
 
 #include "service/Animateservice3Dservice.h"
 #include "QWidget"
-#include "cubedrawer.h"
+//#include "cubedrawer.h"
+#include "pointclouddrawer.h"
+#include "testcuda.h"
+
 class ZEDviewer
 {
 public:
@@ -11,7 +14,9 @@ public:
 
     Animateservice3Dservice *m_anim;
     QWidget *Mwidget;
-    cubedrawer *m_painter;
+  //  cubedrawer *m_painter;
+  //  PointClouddrawer *cloudpainter;
+    TestCuda *m_cuda;
 };
 
 #endif // ZEDVIEWER_H
