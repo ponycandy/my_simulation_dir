@@ -2,13 +2,11 @@
 #define TESTCUDA_H
 
 #include "GL_3D/Drawer3D.h"
-#include "cubedrawer.h"
 #include <QOpenGLFunctions>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "opencv2/calib3d.hpp"
 #include "sl/Camera.hpp"
-#include "cubedrawer.h"
 
 #include <cuda.h>
 #include <cuda_gl_interop.h>

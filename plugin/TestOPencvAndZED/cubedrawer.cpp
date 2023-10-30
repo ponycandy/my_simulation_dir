@@ -12,7 +12,7 @@ void cubedrawer::draw()
 
 
 
-    m_animator->GLDrawArrays(GL_POINTS, 0, 36);
+    m_animator->GLDrawArrays(GL_TRIANGLES, 0, 36);
     //点尺寸的设定在shader里面
 
 

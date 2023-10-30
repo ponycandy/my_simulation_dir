@@ -41,10 +41,10 @@ void TestCuda::draw()
     //        //retrieve之前要先grab！！我真是傻瓜
     //        if (zed->grab(runParameters) == sl::ERROR_CODE::SUCCESS)
     //        {
-//    m_animator->GLUseProgram(programID);
-//    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-//    //            sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
-//    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
+    //    m_animator->GLUseProgram(programID);
+    //    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    //    //            sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
+    //    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
 
     //            //下面获取一帧图像到matGPU_中,但是好像不能够直接放matGPU_，得先放point_cloud里面
     //            //            zed->retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA, sl::MEM::GPU, res);
@@ -67,16 +67,28 @@ void TestCuda::draw()
     //            m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
     //这里和一般的OpenGL绘图一样，指定此时送入的数据（数据实际上没有发生拷贝，是shader去找数据）
 
-//    m_animator->GLVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-//    m_animator->GLEnableVertexAttribArray(0);
-//    //这一步。传递数据，我不太理解，理论上不是第一次就行了吗....
-//    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-//    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+    //    m_animator->GLVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    //    m_animator->GLEnableVertexAttribArray(0);
+    //    //这一步。传递数据，我不太理解，理论上不是第一次就行了吗....
+    //    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    //    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
-//    //            cudaMemcpy(colorMappedBuf_, g_color_buffer_data, 36 * sizeof(float), cudaMemcpyHostToDevice);
-//    m_animator->GLVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-//    m_animator->GLEnableVertexAttribArray(1);
+    //    //            cudaMemcpy(colorMappedBuf_, g_color_buffer_data, 36 * sizeof(float), cudaMemcpyHostToDevice);
+    //    m_animator->GLVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    //    m_animator->GLEnableVertexAttribArray(1);
     //            qDebug()<<matGPU_.getResolution().area();
+    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    //    m_animator->GLBufferData(GL_ARRAY_BUFFER, 600 * sizeof(float), 0, GL_DYNAMIC_DRAW);
+    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+
+    //    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//一定要这一步
+    //    checkError(cudaGraphicsGLRegisterBuffer(&bufferCudacolorID_, colorbuffer, cudaGraphicsRegisterFlagsNone));
+    //    checkError(cudaGraphicsMapResources(1, &bufferCudacolorID_, 0));
+    //    checkError(cudaGraphicsResourceGetMappedPointer((void**) &colorMappedBuf_, &numcolorBytes_, bufferCudacolorID_));
+    m_animator->GLEnableVertexAttribArray(1);
+    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+
+    m_animator->GLVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
     m_animator->GLDrawArrays(GL_POINTS, 0, 36);//绘图，不解释
     //下面这两步的含义：解除对vertexbuffer的绑定，解除对programID的使用
     //            m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -93,7 +105,7 @@ void TestCuda::initialization()
     //    programID = m_animator->LoadShaders("ZEDvertex.shader", "ZEDfrag.shader");
     //这里我们使用不同的shader，不然无法处理zed的mat(我们无法在CPU中iterate然后整理为新的矩阵)
     m_animator->SetPainterID(programID);
-     m_animator->GLUseProgram(programID);
+
     //我们在头文件中已经创建了指向cudabuffer的指针，接下来需要将cudabuffer与
     //openGL的buffer绑定，也就是共享一片GPU储存
 
@@ -105,21 +117,21 @@ void TestCuda::initialization()
     //只要大于等于可能输入的数据的尺寸就行（不要求一定等于）
     //设置第三项输入为0，意味着此时先不分配CPU上的内存
     //第四项输入指明为GL_DYNAMIC_DRAW，也就是说GPU上的内容会动态修改
-//    m_animator->GLBufferData(GL_ARRAY_BUFFER, 600 * 4 * sizeof(float), 0, GL_DYNAMIC_DRAW);
+    //    m_animator->GLBufferData(GL_ARRAY_BUFFER, 600 * 4 * sizeof(float), 0, GL_DYNAMIC_DRAW);
     m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
 
-//    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//一定要这一步
+    //    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//一定要这一步
     //接着，绑定两个buffer:
-//    checkError(cudaGraphicsGLRegisterBuffer(&bufferCudaID_, vertexbuffer, cudaGraphicsRegisterFlagsNone));
+    //    checkError(cudaGraphicsGLRegisterBuffer(&bufferCudaID_, vertexbuffer, cudaGraphicsRegisterFlagsNone));
     //上面这个是绑定buffer,但是实际上没有执行任何内存操作，仅仅是添加了一个flag，允许cuda访问vertexbuffer指向的内存
-//    checkError(cudaGraphicsMapResources(1, &bufferCudaID_, 0));
+    //    checkError(cudaGraphicsMapResources(1, &bufferCudaID_, 0));
     //上面这个在GPU内存中给这个buffer开辟内存了
     //通过上面这两步骤，但是bufferCudaID_并不是指向GPU内存的指针，它更类似于一个flag
     //你可以简单的把bufferCudaID_理解为和VAO一样的东西：它必须要被创建，但是后面再也不会用到了
     //唯一会使用bufferCudaID_的地方就是cudaGraphicsMapResources和cudaGraphicsunMapResources
     //也就是只有程序开始和结束的时候会使用，所以，我们完全无视
     //我们需要通过下面这个函数获取指向GPU的指针：
-//    checkError(cudaGraphicsResourceGetMappedPointer((void**) &xyzrgbaMappedBuf_, &numBytes_, bufferCudaID_));
+    //    checkError(cudaGraphicsResourceGetMappedPointer((void**) &xyzrgbaMappedBuf_, &numBytes_, bufferCudaID_));
     //上面这个函数xyzrgbaMappedBuf_和numBytes_是返回值，它们分别是指向GPU内存的指针和内存区域的大小
     //通过上面的步骤，我们只要向xyzrgbaMappedBuf_填充数据就可以实现向vertexbuffer中填充数据了
     //填充数据的方法是如下的：
@@ -139,7 +151,7 @@ void TestCuda::initialization()
 
         //接下来做的倒是和之前差不多，使能向shader传递数据的通道
     m_animator->GLEnableVertexAttribArray(0);
-     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
 
 
     m_animator->GLVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, nullptr);
@@ -147,25 +159,27 @@ void TestCuda::initialization()
 
     m_animator->GLGenBuffers(1, &colorbuffer);
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
-//    m_animator->GLBufferData(GL_ARRAY_BUFFER, 600 * sizeof(float), 0, GL_DYNAMIC_DRAW);
+    //    m_animator->GLBufferData(GL_ARRAY_BUFFER, 600 * sizeof(float), 0, GL_DYNAMIC_DRAW);
     m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
-//    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//一定要这一步
-//    checkError(cudaGraphicsGLRegisterBuffer(&bufferCudacolorID_, colorbuffer, cudaGraphicsRegisterFlagsNone));
-//    checkError(cudaGraphicsMapResources(1, &bufferCudacolorID_, 0));
-//    checkError(cudaGraphicsResourceGetMappedPointer((void**) &colorMappedBuf_, &numcolorBytes_, bufferCudacolorID_));
+    //    m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//一定要这一步
+    //    checkError(cudaGraphicsGLRegisterBuffer(&bufferCudacolorID_, colorbuffer, cudaGraphicsRegisterFlagsNone));
+    //    checkError(cudaGraphicsMapResources(1, &bufferCudacolorID_, 0));
+    //    checkError(cudaGraphicsResourceGetMappedPointer((void**) &colorMappedBuf_, &numcolorBytes_, bufferCudacolorID_));
     m_animator->GLEnableVertexAttribArray(1);
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 
-    m_animator->GLVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, nullptr);
+    m_animator->GLVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
 
     //初始化model矩阵
     //我们这里不会修改它
-
+    m_animator->GLUseProgram(programID);
     glm::mat4 Model = glm::mat4(1.0f);
     GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
     m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
-    //默认不运动的矩阵
+    //默认不运动的矩阵,draw里面好像不能够重新bind和buffer了
+    //不存在的，主程序依然可以这么干
+    //我感觉核心的错误就是必须在GLUseProgram(programID)后面追加Model矩阵
 }
 
 void TestCuda::printpointcloud(int i, int j, sl::Mat pointcloud)

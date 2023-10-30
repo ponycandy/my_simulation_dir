@@ -1,21 +1,21 @@
 #include "pointclouddrawer.h"
-
+#include "GL_3D/GL3Dcommon.h"
 PointClouddrawer::PointClouddrawer()
 {
     // Create a ZED camera object
-    zed=new sl::Camera ;
+//    zed=new sl::Camera ;
 
-    // Open the camera
-    sl::ERROR_CODE returned_state = zed->open();
-    if (returned_state != sl::ERROR_CODE::SUCCESS) {
-        std::cout << "Error " << returned_state << ", exit program.\n";
-        return ;
-    }
+//    // Open the camera
+//    sl::ERROR_CODE returned_state = zed->open();
+//    if (returned_state != sl::ERROR_CODE::SUCCESS) {
+//        std::cout << "Error " << returned_state << ", exit program.\n";
+//        return ;
+//    }
 
-    // Get camera information (ZED serial number)
-    auto camera_infos = zed->getCameraInformation();
-    qDebug()<<"camera connected";
-    printf("Hello! This is my serial number: %d\n", camera_infos.serial_number);
+//    // Get camera information (ZED serial number)
+//    auto camera_infos = zed->getCameraInformation();
+//    qDebug()<<"camera connected";
+//    printf("Hello! This is my serial number: %d\n", camera_infos.serial_number);
 
     // Close the camera
 //    zed.close();
@@ -57,7 +57,7 @@ void PointClouddrawer::draw()
 {
 
     //绑定到shader里边
-    m_animator->GLDrawArrays(GL_POINTS, 0, 720*1280*3);
+    m_animator->GLDrawArrays(GL_POINTS, 0, 36);
 
 }
 
@@ -65,20 +65,18 @@ void PointClouddrawer::initialization()
 {
     programID = m_animator->LoadShaders("vertexview.shader", "Fragcolorset.shader");
     m_animator->SetPainterID(programID);
-    glm::mat4 Model = glm::mat4(1.0f);
-    GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
-    m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
+
 
 
     m_animator->GLGenBuffers(1, &vertexbuffer);
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);
+    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
 
 
     m_animator->GLGenBuffers(1, &vertexcolorbuffer);
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
     // 将vertex颜色数据塞进来
-    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(vertexcolor), vertexcolor, GL_STATIC_DRAW);
+    m_animator->GLBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
     m_animator->GLEnableVertexAttribArray(0);
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
@@ -88,5 +86,9 @@ void PointClouddrawer::initialization()
     m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
     m_animator->GLVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
     m_animator->GLUseProgram(programID);
-
+    //矩阵塞入得放在GLUseProgram(programID)的后面！！
+    //以及主循环中不允许使用GLBindBuffer和GLBufferData修改数据！！
+    glm::mat4 Model = glm::mat4(1.0f);
+    GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
+    m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
 }

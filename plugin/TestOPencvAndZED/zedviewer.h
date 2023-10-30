@@ -3,7 +3,7 @@
 
 #include "service/Animateservice3Dservice.h"
 #include "QWidget"
-//#include "cubedrawer.h"
+#include "cubedrawer.h"
 #include "pointclouddrawer.h"
 #include "testcuda.h"
 #include "GL_3D/GL3Dcommon.h"
