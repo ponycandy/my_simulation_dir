@@ -76,16 +76,17 @@ void TestCuda::draw()
     }
     if(flag==1)
     {
-        float* data;
-        size_t size;
-        cudaGraphicsMapResources(1, &resource);
-        cudaGraphicsResourceGetMappedPointer((void**)&data, &size, resource);
+//        m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-        cudaMemcpy(resource, cubebuffer_vec4, 12*4*3 * sizeof(float), cudaMemcpyHostToDevice);
+        //    cudaMemcpy(resource, cubebuffer_vec4, 12*4*3 * sizeof(float), cudaMemcpyHostToDevice);
 
-        // Unmap buffer object
-        cudaGraphicsUnmapResources(1, &resource);
+        cudaMemcpy(xyzrgbaMappedBuf_, cubebuffer_vec4, 12*4*3 * sizeof(float), cudaMemcpyHostToDevice);
 
+//        cudaMemcpy(cubebuffer_vec4_test, xyzrgbaMappedBuf_, 12*4*3 * sizeof(float), cudaMemcpyDeviceToHost);
+
+        //  通过上面这一步，我们能够确认数据确实被拷贝到GPU里面了，cubebuffer_vec4_test一直是对的
+        //因为能够拷贝回来
+        //剩下的问题就是，为什么没有被openGL读取到了
         // Render from buffer object
         m_animator->GLDrawArrays(GL_POINTS, 0, 12*4*3);
     }
@@ -159,10 +160,15 @@ void TestCuda::initialization()
         m_animator->SetPainterID(programID);
         m_animator->GLGenBuffers(1, &vbo);
         m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
-        m_animator->GLBufferData(GL_ARRAY_BUFFER, numPoints * sizeof(float), NULL, GL_DYNAMIC_DRAW);
-        cudaGraphicsGLRegisterBuffer(&resource, vbo, cudaGraphicsMapFlagsWriteDiscard);
-
-        m_animator->GLUseProgram(programID);
+        m_animator->GLBufferData(GL_ARRAY_BUFFER, 12*4*3 * sizeof(float), 0, GL_DYNAMIC_DRAW);
+        //数据拷贝经过检查没有问题，我很确定问题在下面这三行
+        cudaGraphicsGLRegisterBuffer(&resource, vbo, cudaGraphicsRegisterFlagsNone);
+        cudaGraphicsMapResources(1, &resource);
+        cudaGraphicsResourceGetMappedPointer((void**)&xyzrgbaMappedBuf_, &numBytes_, resource);
+        //老是忘记下面两行，这两行和gl::mat model一个德行！！
+        //现在可以了，确认能够从cuda里面使用数据了
+        m_animator->GLEnableVertexAttribArray(0);
+        m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
     }
     if(flag==2)
     {

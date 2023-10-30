@@ -29,10 +29,10 @@ public:
     size_t numcolorBytes_;
 
     GLuint vertexbuffer;//OpenGL存储顶点数据所用的buffer
-     GLuint colorbuffer;//OpenGL存储顶点数据所用的buffer
+    GLuint colorbuffer;//OpenGL存储顶点数据所用的buffer
     //这个xyzrgbaMappedBuf_是实际干活的buffer:
     float* xyzrgbaMappedBuf_;
-     float* colorMappedBuf_;
+    float* colorMappedBuf_;
     int flag;
     //创建从摄像机获取图像的buff:
     sl::Mat matGPU_;
@@ -43,6 +43,7 @@ public:
     sl::Camera *zed;
     //摄像机的配置参数：
     sl::Resolution res;
+    float cubebuffer_vec4_test[144];
     sl::Mat point_cloud;
     CUstream strm;
 };
