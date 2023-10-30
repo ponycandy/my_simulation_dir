@@ -33,9 +33,12 @@ public:
     //这个xyzrgbaMappedBuf_是实际干活的buffer:
     float* xyzrgbaMappedBuf_;
      float* colorMappedBuf_;
-
+    int flag;
     //创建从摄像机获取图像的buff:
     sl::Mat matGPU_;
+    int numPoints=1000;
+    GLuint vbo;
+    cudaGraphicsResource_t resource;
     //摄像机对象创建：
     sl::Camera *zed;
     //摄像机的配置参数：
