@@ -18,15 +18,72 @@ glwidget3D::glwidget3D(QWidget *parent)
     verticalAngle = 0.0f;
     // Initial Field of View
     speed = 3.0f; // 3 units / second
-    mousespeed = 0.00005f;
+    mousespeed = 0.0005f;
     rotateCams(0,0);
     ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/ float(m_height), nearplanedis, farplanedis);
+    //    initializeGL();
+}
 
+void glwidget3D::GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void *data)
+{
+    glBufferSubData(target,offset,size,data);
+}
+
+void glwidget3D::SetModelmat(glm::mat4 &Model)
+{
+    glUseProgram(m_programID);
+    GLuint MatrixID = glGetUniformLocation(m_programID, "Modelmat");
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
 }
 
 void glwidget3D::set_glpainter(glpainter3D *m_paint)
 {
     m_painter=m_paint;
+}
+
+unsigned int glwidget3D::GLGetUniformLocation(unsigned int programID, const char *name)
+{
+    return glGetUniformLocation(programID, name);
+}
+
+void glwidget3D::GLUniformMatrix4fv(int MatrixID, int count, unsigned char transpose, const float *value)
+{
+    glUniformMatrix4fv(MatrixID, count, transpose, value);
+}
+
+void glwidget3D::GLUseProgram(unsigned int programID)
+{
+    glUseProgram(programID);
+}
+
+void glwidget3D::GLVertexAttribPointer(unsigned int indx, int size, unsigned int type, unsigned char normalized, int stride, const void *ptr)
+{
+    glVertexAttribPointer(indx,size, type, normalized,stride, ptr);
+}
+
+void glwidget3D::GLEnableVertexAttribArray(int index)
+{
+    glEnableVertexAttribArray(index);
+}
+
+void glwidget3D::GLBindBuffer(unsigned int target, unsigned int buffer)
+{
+    glBindBuffer(target, buffer);
+}
+
+void glwidget3D::GLBufferData(unsigned int target, ptrdiff_t size, const void *data, unsigned int usage)
+{
+    glBufferData(target,size, data, usage);
+}
+
+void glwidget3D::GLGenBuffers(int num, unsigned int *buf)
+{
+    glGenBuffers(num, buf);
+}
+
+void glwidget3D::GLDrawArrays(unsigned int glmode,  int start,  int length)
+{
+    glDrawArrays(glmode, start, length);
 }
 
 void glwidget3D::rotateCams(int x, int y)
@@ -183,45 +240,57 @@ void glwidget3D::initializeGL()
 
     // Set the clear color to black
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
     // 生成VAO，如果不加是不是也行呢....
     //因为就算在教程中，VAO好像也没有用
     vao = new QOpenGLVertexArrayObject;
     bool iscreta=vao->create();
     vao->bind();
+
     //这两句话等效于下面的这两句？
     //    glGenVertexArrays(1, &m_vao);
     //    glBindVertexArray(m_vao);
-
-    // 下面这一步和opengl里面是一样的，绑定数据容器
-    GLuint vertexbuffer;
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    // 将vertex数据塞进来
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
-
-    GLuint vertexcolorbuffer;
-    glGenBuffers(1, &vertexcolorbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
-    // 将vertex颜色数据塞进来
-    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
+    //以后很有可能出现需要改shader的情况
+    //所以最好的方式是，将所有的基础接口都公共化，然后提供一些复合接口
+    //        m_programID = LoadShaders("vertexview.shader", "Fragcolorset.shader");
+    // 不行，这些步骤只能在initialize里面部署......
+    //我们能够做的就是运行时修改buffer里面的数据
+    //换言之，下面这些函数全部不是我们这一层能用的
+    //    GLuint vertexbuffer;
+    //    glGenBuffers(1, &vertexbuffer);
+    //    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    //    // 将vertex数据塞进来
+    //    glBufferData(GL_ARRAY_BUFFER, sizeof(cubebuffer), cubebuffer, GL_STATIC_DRAW);
+    m_painter->initialization();
+    //    GLuint vertexcolorbuffer;
+    //    glGenBuffers(1, &vertexcolorbuffer);
+    //    glBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
+    //    // 将vertex颜色数据塞进来
+    //    glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
 
     // Create a shader program
-    programID = LoadShaders("vertexview.shader", "Fragcolorset.shader");
+
 
 
     // Specify the layout of the vertex data
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, nullptr);
-    glEnableVertexAttribArray(1);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
-
+    //    glEnableVertexAttribArray(0);
+    //    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    //    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, nullptr);
+    //    glEnableVertexAttribArray(1);
+    //    glBindBuffer(GL_ARRAY_BUFFER, vertexcolorbuffer);
+    //    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,0, nullptr);
     // Enable depth test
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+//绘制点的尺寸，在shader里面更改
+    //点尺寸的设定在shader里面
+    //有一些无法在这里进行的设定都在shader里面执行
     glEnable(GL_DEPTH_TEST);
     // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
+
+    glUseProgram(m_programID);
+    glm::mat4 Model = glm::mat4(1.0f);
+    GLuint MatrixID = glGetUniformLocation(m_programID, "Modelmat");
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
 }
 
 void glwidget3D::resizeGL(int w, int h)
@@ -237,18 +306,22 @@ void glwidget3D::paintGL()
     //有点麻烦，假设在这里调用glpainter3d paint，就对不上openGL的逻辑
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Use the shader program
-    glUseProgram(programID);
-    m_painter->paint();
+    //        glUseProgram(m_programID);
 
-    glm::mat4 Model = glm::mat4(1.0f);
-    glm::mat4 MVP = ProjectionMatrix * ViewMatrix * Model; // Remember, matrix multiplication is the other way around
 
-    GLuint MatrixID = glGetUniformLocation(programID, "MVP");
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    //    glm::mat4 Model = glm::mat4(1.0f);
+    glm::mat4 ViewProjmat = ProjectionMatrix * ViewMatrix; // Remember, matrix multiplication is the other way around
+    //如果想要使用视角矩阵，那么公用programID就是必然的
+    //不然的话，就必须要求每个program单独输入视角矩阵
+    //后者的灵活度更高，前者的封装更好
+    //考虑到我们本来就很少使用多个shader，我想应该OK？
+    //但是不要删除这里的comment，以便于以后需要的时候做更改
+    GLuint MatrixID = glGetUniformLocation(m_programID, "ViewProjmat");
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &ViewProjmat[0][0]);
     // Draw the triangle
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-
-    //呃，有点儿奇怪...
-    //好像是窗口本身的压缩问题
-    //看起来的视角有一点儿....不正？
+    //            glDrawArrays(GL_TRIANGLES, 0, 36);
+    m_painter->paint();
+        //呃，有点儿奇怪...
+        //好像是窗口本身的压缩问题
+        //看起来的视角有一点儿....不正？
 }

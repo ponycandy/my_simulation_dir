@@ -36,3 +36,7 @@ test_NMPC_Plugin \
     swarm_path_planning_FeedBack   \
     singleCarCalculator   \
     singlCarcalculatorCompare   \
+    swarm_NMPC_trajectory_planner   \
+    OpenCVGraph   \
+    TestOPencvAndZED   \
+    Animator3D   \

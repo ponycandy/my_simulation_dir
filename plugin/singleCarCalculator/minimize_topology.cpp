@@ -95,12 +95,22 @@ double minimize_Topology::GetCost() const
         }
     }
     //第三，最小化未来拓扑
+    koef=0.3;
     if(TargetTrackingflag==0)
     {
 
         for(int j=0;j<totalNum;j++)
         {
             int ID=j+1;
+            //我们希望优先追踪leader
+            if(ID==agentnum)
+            {
+                koef=0.1;
+            }
+            else
+            {
+                koef=0.3;
+            }
             double length=PredictMat(3*(ID-1)+2,0);//拓扑图邻居
             if(length>0)
             {
@@ -125,7 +135,7 @@ double minimize_Topology::GetCost() const
             }
         }
     }
-//可能需要包含速度一致项,也就是说，尽量减小agent之间的速度差或者方向差
+    //可能需要包含速度一致项,也就是说，尽量减小agent之间的速度差或者方向差
     //更确切的来说，是到leader的速度方向差，
     //尽量为凸！！
 
@@ -159,8 +169,8 @@ double minimize_Topology::GetCost() const
                 //it's really error prone!
 
                 //第二部分,提高速度一致性
-//                double vxself=actMat(0,steps)*cos(stateMat(2,steps));
-//                double vyself=actMat(0,steps)*sin(stateMat(2,steps));
+                //                double vxself=actMat(0,steps)*cos(stateMat(2,steps));
+                //                double vyself=actMat(0,steps)*sin(stateMat(2,steps));
 
             }
         }

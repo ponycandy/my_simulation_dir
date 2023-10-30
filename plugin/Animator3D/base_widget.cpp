@@ -34,7 +34,7 @@ void base_widget::wheelEvent(QWheelEvent *event)
 
 void base_widget::mousePressEvent(QMouseEvent *event)
 {
-    m_painter->record_pressed_mouse(event->x(),event->y());
+//    m_painter->record_pressed_mouse(event->x(),event->y());
     m_painter->mouse_is_pressed=1;
 
 }

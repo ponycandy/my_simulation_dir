@@ -152,15 +152,6 @@ void TestCuda::initialization()
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
         //这里数据是4个一组送到shader里面
         matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
-        //初始化model矩阵
-        //我们这里不会修改它
-        m_animator->GLUseProgram(programID);
-        glm::mat4 Model = glm::mat4(1.0f);
-        GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
-        m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
-        //默认不运动的矩阵,draw里面好像不能够重新bind和buffer了
-        //不存在的，主程序依然可以这么干
-        //我感觉核心的错误就是必须在GLUseProgram(programID)后面追加Model矩阵
     }
     if(flag==1)
     {
@@ -172,9 +163,6 @@ void TestCuda::initialization()
         cudaGraphicsGLRegisterBuffer(&resource, vbo, cudaGraphicsMapFlagsWriteDiscard);
 
         m_animator->GLUseProgram(programID);
-        glm::mat4 Model = glm::mat4(1.0f);
-        GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
-        m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
     }
     if(flag==2)
     {
@@ -187,12 +175,6 @@ void TestCuda::initialization()
 
         m_animator->GLEnableVertexAttribArray(0);
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
-
-
-        m_animator->GLUseProgram(programID);
-        glm::mat4 Model = glm::mat4(1.0f);
-        GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
-        m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
     }
 }
 

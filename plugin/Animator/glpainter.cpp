@@ -16,7 +16,7 @@ glpainter::glpainter(QObject *parent) : QObject(parent),m_glwidget(NULL),m_widge
 
     m_width=1000;
     m_height=600;
-    background.setColor(Qt::white);
+    background.setColor(Qt::black);
     background.setStyle(Qt::SolidPattern);
     agent_brush.setColor(Qt::red);
     agent_brush.setStyle(Qt::SolidPattern);

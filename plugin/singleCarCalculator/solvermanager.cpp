@@ -70,7 +70,7 @@ void Solvermanager::optimize(Eigen::MatrixXd &input, Eigen::MatrixXd &output)
     {
         costset->ObstripR(j-1,0)=input(totalnum+j,0);
         costset->ObstripR(j-1,1)=input(totalnum+j,1);
-        costset->ObstripR(j-1,2)=3;//设计的回避半径,应该足够看出回避效果了
+        costset->ObstripR(j-1,2)=10;//设计的回避半径,应该足够看出回避效果了
         costset->ObstripR(j-1,3)=input(totalnum+j,2);//速度x
         costset->ObstripR(j-1,4)=input(totalnum+j,3);//速度y
     }
