@@ -2,7 +2,7 @@
 #include "GL_3D/GL3Dcommon.h"
 TestCuda::TestCuda()
 {
-    flag=1;
+    flag=0;
     //初始化摄像机：
     // Create a ZED camera object
     if(flag==0)
@@ -38,11 +38,6 @@ void TestCuda::draw()
     {
         //冷静，图片是能够显示的,if也是能够进去的
         //我们需要更小的子问题
-        m_animator->GLUseProgram(programID);
-        glm::mat4 Model = glm::mat4(1.0f);
-        GLuint MatrixID = m_animator->GLGetUniformLocation(programID, "Modelmat");
-        m_animator->GLUniformMatrix4fv(MatrixID, 1, GL_FALSE, &Model[0][0]);
-
         sl::RuntimeParameters runParameters;
         // Setting the depth confidence parameters
         runParameters.confidence_threshold = 50;
@@ -51,24 +46,47 @@ void TestCuda::draw()
             //        //retrieve之前要先grab！！
             if (zed->grab(runParameters) == sl::ERROR_CODE::SUCCESS)
             {
-                m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);//使用cuda转移数据之前先绑定buffer!!很重要不要漏
 
+                sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::CPU);
                 //下面获取一帧图像到matGPU_中,但是好像不能够直接放matGPU_，得先放point_cloud里面
-                sl::ERROR_CODE err= zed->retrieveMeasure(matGPU_, sl::MEASURE::XYZRGBA, sl::MEM::GPU, res);
-                //            matGPU_.setFrom(point_cloud, sl::COPY_TYPE::GPU_GPU,strm);
+                sl::ERROR_CODE err= zed->retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA, sl::MEM::CPU, res);
+                matGPU_.setFrom(point_cloud, sl::COPY_TYPE::CPU_CPU);
                 //和initialization说的一样，将数据拷贝到xyzrgbaMappedBuf_里面，strm是摄像机的操作流
-                checkError(cudaMemcpyAsync(xyzrgbaMappedBuf_, matGPU_.getPtr<sl::float4>(sl::MEM::GPU), numBytes_, cudaMemcpyDeviceToDevice, strm));
 
+                //下面这一步有问题，sl::float4并不是一个float4指针，它是一个带有成员的类
+                //因此内存空间不可能是连续的,核心在下面的拷贝函数，我不觉得这是正确的方法
+                //问题在ZED不在cuda.这已经是一个难度极大的下降了的版本了
+                //但是我们可能得不到任何能够帮助我们解决问题的资源了....
+                const void *test=matGPU_.getPtr<sl::float4>(sl::MEM::CPU);
+                cudaMemcpy(xyzrgbaMappedBuf_, test, res.area() * 4 * sizeof(float), cudaMemcpyHostToDevice);
+                //                cudaMemcpy(cubebuffer_vec4_test, matGPU_.getPtr<sl::float4>(sl::MEM::GPU), res.area() * 4 * sizeof(float), cudaMemcpyDeviceToHost);
+                //看了一下cudaMemcpy出来的东西，鉴定cubebuffer_vec4_test里面确实全部都是nan,也就是什么都没有....
+                //如何check sl::mat里面的东东呢
+                //float4是vector!!
+                //这里唯一多了的变量就是matGPU了
+                //我们不确定它是不是在cuda上面
+                //                sl::float4 point3D;//它并不等效于float!!
+                //                int height=point_cloud.getHeight();
+                //                int width=point_cloud.getWidth();
+                //                for(int i=0;i<width;i++)
+                //                {
+                //                    for(int j=0;j<height;j++)
+                //                    {
+                //                        point_cloud.getValue(i,j,&point3D,sl::MEM::CPU);
+                //                        float x = point3D.x;
+                //                        float y = point3D.y;
+                //                        float z = point3D.z;
+                //                        float color = point3D.w;
+                //                        if(x!=NAN || y!=NAN || z!=NAN || color!=NAN)
+                //                        {
+                //                            qDebug()<<"; x : "<<x<<"; y : "<<y<<"; z : "<<z<<"; color : "<<color;
+                //                        }
+                //                    }
+                //                }
 
-                // Allocate memory for the VBO
-                //            glBufferData(GL_ARRAY_BUFFER, point_cloud.getStepBytes(sl::MEM::GPU), NULL, GL_STATIC_DRAW);
-
-                // Copy the data from point_cloud to the VBO
-                //            m_animator->GLBufferSubData(GL_ARRAY_BUFFER, 0, point_cloud.getStepBytes(sl::MEM::GPU), point_cloud.getPtr<sl::uchar1>(sl::MEM::GPU));
-
-                m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-                m_animator->GLEnableVertexAttribArray(0);
+                //不用怀疑,matGPU_里面就是好多nan值
+                //临时创建的pointcloud也是好多nan值
+                //但是绝对是有正常数据的！
                 m_animator->GLDrawArrays(GL_POINTS, 0, matGPU_.getResolution().area());
                 //不要被干扰,unbind其实不影响啥
             }
@@ -76,14 +94,8 @@ void TestCuda::draw()
     }
     if(flag==1)
     {
-//        m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-        //    cudaMemcpy(resource, cubebuffer_vec4, 12*4*3 * sizeof(float), cudaMemcpyHostToDevice);
-
         cudaMemcpy(xyzrgbaMappedBuf_, cubebuffer_vec4, 12*4*3 * sizeof(float), cudaMemcpyHostToDevice);
-
-//        cudaMemcpy(cubebuffer_vec4_test, xyzrgbaMappedBuf_, 12*4*3 * sizeof(float), cudaMemcpyDeviceToHost);
-
+        //        cudaMemcpy(cubebuffer_vec4_test, xyzrgbaMappedBuf_, 12*4*3 * sizeof(float), cudaMemcpyDeviceToHost);
         //  通过上面这一步，我们能够确认数据确实被拷贝到GPU里面了，cubebuffer_vec4_test一直是对的
         //因为能够拷贝回来
         //剩下的问题就是，为什么没有被openGL读取到了
@@ -119,19 +131,18 @@ void TestCuda::initialization()
         //第四项输入指明为GL_DYNAMIC_DRAW，也就是说GPU上的内容会动态修改
         m_animator->GLBufferData(GL_ARRAY_BUFFER, res.area() * 4 * sizeof(float), 0, GL_DYNAMIC_DRAW);
 
-        m_animator->GLBindBuffer(GL_ARRAY_BUFFER, 0);//解除绑定
         //    接着，绑定openGL和cudabuffer:
         //     cudaGLSetGLDevice(0);
-        checkError(cudaGraphicsGLRegisterBuffer(&bufferCudaID_, vertexbuffer, cudaGraphicsRegisterFlagsNone));
+        cudaGraphicsGLRegisterBuffer(&bufferCudaID_, vertexbuffer, cudaGraphicsRegisterFlagsNone);
         //上面这个是绑定buffer,但是实际上没有执行任何内存操作，仅仅是添加了一个flag，允许cuda访问vertexbuffer指向的内存
-        checkError(cudaGraphicsMapResources(1, &bufferCudaID_, 0));
+        cudaGraphicsMapResources(1, &bufferCudaID_);
         //上面这个在GPU内存中给这个buffer开辟内存了
         //通过上面这两步骤，但是bufferCudaID_并不是指向GPU内存的指针，它更类似于一个flag
         //你可以简单的把bufferCudaID_理解为和VAO一样的东西：它必须要被创建，但是后面再也不会用到了
         //唯一会使用bufferCudaID_的地方就是cudaGraphicsMapResources和cudaGraphicsunMapResources
         //也就是只有程序开始和结束的时候会使用，所以，我们完全无视
         //我们需要通过下面这个函数获取指向GPU的指针：
-        checkError(cudaGraphicsResourceGetMappedPointer((void**) &xyzrgbaMappedBuf_, &numBytes_, bufferCudaID_));
+        cudaGraphicsResourceGetMappedPointer((void**) &xyzrgbaMappedBuf_, &numBytes_, bufferCudaID_);
         //上面这个函数xyzrgbaMappedBuf_和numBytes_是返回值，它们分别是指向GPU内存的指针和内存区域的大小
         //通过上面的步骤，我们只要向xyzrgbaMappedBuf_填充数据就可以实现向vertexbuffer中填充数据了
         //填充数据的方法是如下的：
@@ -148,11 +159,11 @@ void TestCuda::initialization()
         //然后头两个输入就是指针了，形式和CPU上的指针是一模一样的，没有区别（都是char*）
         //然后为什么用Async，这是为了不发生阻塞，可以直接回到主程序中，拷贝由GPU完成
         //接下来做的倒是和之前差不多，使能向shader传递数据的通道
-        m_animator->GLBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+
         m_animator->GLEnableVertexAttribArray(0);
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
         //这里数据是4个一组送到shader里面
-        matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
+        matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::CPU);
     }
     if(flag==1)
     {
@@ -169,6 +180,8 @@ void TestCuda::initialization()
         //现在可以了，确认能够从cuda里面使用数据了
         m_animator->GLEnableVertexAttribArray(0);
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
+        //没办法，只能先留在这里，这一句话经常忘记...
+        //只能希望以后做高级封装的时候别忘了
     }
     if(flag==2)
     {
