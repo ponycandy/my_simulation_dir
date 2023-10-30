@@ -6,7 +6,7 @@
 //#include "cubedrawer.h"
 #include "pointclouddrawer.h"
 #include "testcuda.h"
-
+#include "GL_3D/GL3Dcommon.h"
 class ZEDviewer
 {
 public:
@@ -14,8 +14,8 @@ public:
 
     Animateservice3Dservice *m_anim;
     QWidget *Mwidget;
-  //  cubedrawer *m_painter;
-  //  PointClouddrawer *cloudpainter;
+    cubedrawer *m_painter;
+    PointClouddrawer *cloudpainter;
     TestCuda *m_cuda;
 };
 
