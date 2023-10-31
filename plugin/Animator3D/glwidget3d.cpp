@@ -9,7 +9,7 @@ glwidget3D::glwidget3D(QWidget *parent)
     //    setFixedSize(m_width, m_height);
     setAutoFillBackground(false);
     nearplanedis=0.1;
-    farplanedis=100;
+    farplanedis=1000;
     FOV=45;
 
     position = glm::vec3(0, 0, 5);
@@ -22,6 +22,10 @@ glwidget3D::glwidget3D(QWidget *parent)
     rotateCams(0,0);
     ProjectionMatrix = glm::perspective(glm::radians(FOV), float(m_width)/ float(m_height), nearplanedis, farplanedis);
     //    initializeGL();
+    Channel_R=0;
+    Channel_G=0;
+    Channel_B=0;
+    Channel_A=1;
 }
 
 void glwidget3D::GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void *data)
@@ -238,8 +242,7 @@ void glwidget3D::initializeGL()
 {
     initializeOpenGLFunctions();
 
-    // Set the clear color to black
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     // 生成VAO，如果不加是不是也行呢....
     //因为就算在教程中，VAO好像也没有用
     vao = new QOpenGLVertexArrayObject;
@@ -269,7 +272,8 @@ void glwidget3D::initializeGL()
 
     // Create a shader program
 
-
+    // Set the clear color to black
+    glClearColor(Channel_R, Channel_G,Channel_B, Channel_A);
 
     // Specify the layout of the vertex data
     //    glEnableVertexAttribArray(0);

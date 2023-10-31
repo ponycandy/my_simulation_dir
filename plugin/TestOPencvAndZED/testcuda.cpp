@@ -7,6 +7,7 @@ TestCuda::TestCuda()
     // Create a ZED camera object
     if(flag==0)
     {
+
         zed=new sl::Camera ;
 
         // Open the camera
@@ -36,6 +37,11 @@ void TestCuda::draw()
 {
     if(flag==0)
     {
+        glm::vec3 axis(0.0f, 0.0f, 1.0f); // 绕Z轴旋转
+        glm::mat4 rotationMatrix= glm::mat4(1.0f);
+        rotationMatrix=glm::rotate(rotationMatrix, 3.14f, axis);//旋转180度
+        m_animator->SetModelmat(rotationMatrix);
+
         //冷静，图片是能够显示的,if也是能够进去的
         //我们需要更小的子问题
         sl::RuntimeParameters runParameters;
@@ -46,7 +52,7 @@ void TestCuda::draw()
             //        //retrieve之前要先grab！！
             if (zed->grab(runParameters) == sl::ERROR_CODE::SUCCESS)
             {
-
+//从这个摄像机到实际世界的xyz还有一个沿着z轴的旋转变化要做大概是沿着z轴做180度的旋转
                 sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
                 //下面获取一帧图像到matGPU_中,但是好像不能够直接放matGPU_，得先放point_cloud里面
                 //                sl::uchar1 op;
@@ -127,6 +133,8 @@ void TestCuda::initialization()
 {
     if(flag==0)
     {
+        m_animator->setbackgroundColor(1,1,1,1);
+        m_animator->setCameraParms(0.1,15000,3000);
         //这里开始写我们的cuda测试程序
         //下面这两行创建shader程序
         programID = m_animator->LoadShaders("ZEDvertex.shader", "ZEDfrag.shader");
@@ -179,6 +187,8 @@ void TestCuda::initialization()
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
         //这里数据是4个一组送到shader里面
         matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
+
+
     }
     if(flag==1)
     {

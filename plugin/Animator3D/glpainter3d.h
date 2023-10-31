@@ -19,6 +19,7 @@ class glpainter3D: public QObject,public Animateservice3Dservice//，这个移�
 public:
     explicit glpainter3D(QObject *parent = nullptr);
     void setupUI();
+    void setbackgroundColor(float R,float G,float B,float A) override;
     void SetModelmat(glm::mat4 &Model) override;
     void GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void* data) override;
     void SetPainterID(unsigned int programID);
@@ -29,12 +30,14 @@ public:
     void GLVertexAttribPointer(unsigned int indx, int size, unsigned int type, unsigned char normalized, int stride, const void* ptr) override;
     void GLBufferData(unsigned int target, ptrdiff_t size, const void* data, unsigned int usage) override;
     void GLGenBuffers(int num,unsigned int *buf) override;
+    void setCameraPOS(float x,float y,float z) override;
     void GLBindBuffer(unsigned int target,unsigned int buffer) override;
     void drawcube(float Dx,float Dy,float Dz,
                   float centerx,float centery,float centerz,
                   float alpha,float beta,float gama) override;
     void resizeWindow(int width,int height) override;
     void GLDrawArrays(unsigned int glmode,  int start,  int length) override;
+    void setCameraParms(float nearP,float farP,float LinearSpeed=3.0f,float RotSpeed=0.0005f) override;
     void start_animate() override;
     void stop_animate() override;
     unsigned int LoadShaders(const char* vertex_file_path, const char* fragment_file_path) override;

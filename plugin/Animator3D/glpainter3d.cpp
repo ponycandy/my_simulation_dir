@@ -26,6 +26,8 @@ glpainter3D::glpainter3D(QObject *parent)
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, m_glwidget, &glwidget3D::animate);
+
+
 }
 
 void glpainter3D::setupUI()
@@ -36,6 +38,14 @@ void glpainter3D::setupUI()
     m_widget->setLayout(layout);
     //    m_widget->show();
     //    m_widget->resize(m_width,m_height);
+}
+
+void glpainter3D::setbackgroundColor(float R, float G, float B, float A)
+{
+    m_glwidget->Channel_A=A;
+    m_glwidget->Channel_R=R;
+    m_glwidget->Channel_G=G;
+    m_glwidget->Channel_B=B;
 }
 
 void glpainter3D::SetModelmat(glm::mat4 &Model)
@@ -69,12 +79,12 @@ void glpainter3D::get_mouse_pos(int x, int y)
         int delta_y=y-mousey;//偏离原点的量
         //这里没问题，那就只能是旋转有问题了
         rotateCams(-delta_x, -delta_y);
-//        qDebug()<<"delta_x is "<<delta_x;
-//        qDebug()<<"mousex is "<<mousex;
-//        qDebug()<<"x is "<<x;
-//        qDebug()<<"delta_y is "<<delta_y;
-//        qDebug()<<"mousey is "<<mousey;
-//        qDebug()<<"y is "<<y;
+        //        qDebug()<<"delta_x is "<<delta_x;
+        //        qDebug()<<"mousex is "<<mousex;
+        //        qDebug()<<"x is "<<x;
+        //        qDebug()<<"delta_y is "<<delta_y;
+        //        qDebug()<<"mousey is "<<mousey;
+        //        qDebug()<<"y is "<<y;
         //我们要仔细思考三维场景下的变换公式
         //我们的鼠标移动的始终是视角
         mousex=x;
@@ -112,6 +122,11 @@ void glpainter3D::GLGenBuffers(int num, unsigned int *buf)
     m_glwidget->GLGenBuffers(num,buf);
 }
 
+void glpainter3D::setCameraPOS(float x, float y, float z)
+{
+    m_glwidget->position = glm::vec3(x, y, z);
+}
+
 void glpainter3D::GLBindBuffer(unsigned int target, unsigned int buffer)
 {
     m_glwidget->GLBindBuffer(target,buffer);
@@ -130,6 +145,19 @@ void glpainter3D::resizeWindow(int width, int height)
 void glpainter3D::GLDrawArrays(unsigned int glmode, int start, int length)
 {
     m_glwidget->GLDrawArrays(glmode,start,length);
+}
+
+void glpainter3D::setCameraParms(float nearP, float farP, float LinearSpeed, float RotSpeed)
+{
+    m_glwidget->nearplanedis=nearP;
+    m_glwidget->farplanedis=farP;
+    m_glwidget->speed=LinearSpeed;
+    m_glwidget->mousespeed=RotSpeed;
+    m_glwidget->ProjectionMatrix = glm::perspective(
+        glm::radians(m_glwidget->FOV),
+        float(m_glwidget->m_width)/ float(m_height),
+        m_glwidget->nearplanedis, m_glwidget->farplanedis);
+
 }
 
 void glpainter3D::start_animate()
@@ -244,6 +272,6 @@ void glpainter3D::rotateCams(int x, int y)
 
 void glpainter3D::record_pressed_mouse(int x, int y)
 {
-//    mousex=x;
-//    mousey=y;
+    //    mousex=x;
+    //    mousey=y;
 }

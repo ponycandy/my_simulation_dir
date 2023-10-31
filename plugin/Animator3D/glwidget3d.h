@@ -10,7 +10,7 @@
 #include <QTimer>
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
- #include <QOpenGLVertexArrayObject>
+#include <QOpenGLVertexArrayObject>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -51,30 +51,38 @@ public:
     glm::vec3 direction;
     glm::vec3 right;
     glm::vec3 up;
-     GLuint m_programID; //这个全局都要用
+    GLuint m_programID; //这个全局都要用
+    float Channel_R;
+    float Channel_G;
+    float Channel_B;
+    float Channel_A;
+    float nearplanedis;
+    float farplanedis;
+    float speed;
+    float mousespeed;
+    glm::vec3 position;
+    int m_width;
+    int m_height;
+    float FOV;
 public slots:
     void animate();
 
 protected:
-//    void paintEvent(QPaintEvent *event) override;
+    //    void paintEvent(QPaintEvent *event) override;
     void initializeGL()override;
     void resizeGL(int w, int h) override;
     void paintGL() override;
 private:
     int elapsed;
     glpainter3D *m_painter;
-    int m_width;
-    int m_height;
-    float FOV;
-    float nearplanedis;
-    float farplanedis;
+
+
     QOpenGLVertexArrayObject *vao;// 所谓的VAO，就是openGL例子里面，我写的就是要创建出来即使后面没什么用
 
-    glm::vec3 position;
+
     float horizontalAngle;
     float verticalAngle;
-    float speed;
-    float mousespeed;
+
     //除掉vao的创建需要借助Qt wrapper外，其余的部分都可以用纯openGL解决掉了
 };
 
