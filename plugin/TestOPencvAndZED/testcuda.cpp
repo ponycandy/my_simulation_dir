@@ -47,20 +47,32 @@ void TestCuda::draw()
             if (zed->grab(runParameters) == sl::ERROR_CODE::SUCCESS)
             {
 
-                sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::CPU);
+                sl::Mat point_cloud(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
                 //下面获取一帧图像到matGPU_中,但是好像不能够直接放matGPU_，得先放point_cloud里面
-                sl::ERROR_CODE err= zed->retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA, sl::MEM::CPU, res);
-                matGPU_.setFrom(point_cloud, sl::COPY_TYPE::CPU_CPU);
+                //                sl::uchar1 op;
+                sl::ERROR_CODE err= zed->retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA, sl::MEM::GPU, res);
+
+                //                sl::ERROR_CODE err= zed->retrieveMeasure(point_cloud, sl::MEASURE::XYZRGBA, sl::MEM::GPU, res);
+                matGPU_.setFrom(point_cloud, sl::COPY_TYPE::GPU_GPU,strm);
                 //和initialization说的一样，将数据拷贝到xyzrgbaMappedBuf_里面，strm是摄像机的操作流
 
                 //下面这一步有问题，sl::float4并不是一个float4指针，它是一个带有成员的类
                 //因此内存空间不可能是连续的,核心在下面的拷贝函数，我不觉得这是正确的方法
                 //问题在ZED不在cuda.这已经是一个难度极大的下降了的版本了
                 //但是我们可能得不到任何能够帮助我们解决问题的资源了....
-                const void *test=matGPU_.getPtr<sl::float4>(sl::MEM::CPU);
-                cudaMemcpy(xyzrgbaMappedBuf_, test, res.area() * 4 * sizeof(float), cudaMemcpyHostToDevice);
-                //                cudaMemcpy(cubebuffer_vec4_test, matGPU_.getPtr<sl::float4>(sl::MEM::GPU), res.area() * 4 * sizeof(float), cudaMemcpyDeviceToHost);
-                //看了一下cudaMemcpy出来的东西，鉴定cubebuffer_vec4_test里面确实全部都是nan,也就是什么都没有....
+
+                checkError(cudaMemcpyAsync(xyzrgbaMappedBuf_, matGPU_.getPtr<sl::float4>(sl::MEM::GPU), numBytes_, cudaMemcpyDeviceToDevice, strm));
+                //                checkError(cudaMemcpyAsync(cubebuffer_vec4_test, xyzrgbaMappedBuf_, numBytes_, cudaMemcpyDeviceToDevice, strm));
+
+                //看了一下cudaMemcpy出来的东西，鉴定cubebuffer_vec4_test里面确实全部都是nan,或者大部分是nan
+                //通过下面打印出来的结果，也是几乎都是nan
+                //一个float数组从-XXX（初始值）变为nan，说明值确实被复制进去了
+                //也就是说cuda确实有按照正确的顺序将pointcloud复制进去，sl::float4类型转化是没有问题的
+                //接下来的可能问题有两个
+                //一是openGL接收到NAN就死机（我们可以在flag=1里面试一下）,不是，NAN会跳过去
+                //而是摄像机视觉范围不对，因为我们打印的值普遍在1000以上，所以应该重设视觉远端平面
+                //同时视野里面大部分点是黑色的，我们应该设置背景为白色
+                //成了！！！果然就是摄像机设置的不对，场景在背面呢！！
                 //如何check sl::mat里面的东东呢
                 //float4是vector!!
                 //这里唯一多了的变量就是matGPU了
@@ -72,7 +84,7 @@ void TestCuda::draw()
                 //                {
                 //                    for(int j=0;j<height;j++)
                 //                    {
-                //                        point_cloud.getValue(i,j,&point3D,sl::MEM::CPU);
+                //                        point_cloud.getValue(i,j,&point3D,sl::MEM::GPU);
                 //                        float x = point3D.x;
                 //                        float y = point3D.y;
                 //                        float z = point3D.z;
@@ -86,7 +98,7 @@ void TestCuda::draw()
 
                 //不用怀疑,matGPU_里面就是好多nan值
                 //临时创建的pointcloud也是好多nan值
-                //但是绝对是有正常数据的！
+                //但是绝对是有正常数据的！并且不少，可以认为就是能用
                 m_animator->GLDrawArrays(GL_POINTS, 0, matGPU_.getResolution().area());
                 //不要被干扰,unbind其实不影响啥
             }
@@ -100,11 +112,14 @@ void TestCuda::draw()
         //因为能够拷贝回来
         //剩下的问题就是，为什么没有被openGL读取到了
         // Render from buffer object
-        m_animator->GLDrawArrays(GL_POINTS, 0, 12*4*3);
+        m_animator->GLDrawArrays(GL_POINTS, 0, 6);
+        //这里的1是指送1批数据进去
+        //在下面vertexattrib里面定义了一批数据是4个
+        //所以这里写1就应该是送数组里面的四个数进去！！而不是一个数！
     }
     if(flag==2)
     {
-        m_animator->GLDrawArrays(GL_TRIANGLES, 0, 12*3*4);
+        m_animator->GLDrawArrays(GL_POINTS, 0, 12*3*4);
     }
 }
 
@@ -163,7 +178,7 @@ void TestCuda::initialization()
         m_animator->GLEnableVertexAttribArray(0);
         m_animator->GLVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE,0, nullptr);
         //这里数据是4个一组送到shader里面
-        matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::CPU);
+        matGPU_.alloc(res, sl::MAT_TYPE::F32_C4, sl::MEM::GPU);
     }
     if(flag==1)
     {
