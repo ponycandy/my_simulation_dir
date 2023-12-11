@@ -47,6 +47,8 @@ public:
 
 
     glm::mat4 ViewMatrix;
+    glm::mat4 Transformworld2worldMat;
+    //从正交XYZ坐标（上Z右x前y）向屏幕XYZ坐标转化（上y右x后Z）
     glm::mat4 ProjectionMatrix;
     glm::vec3 direction;
     glm::vec3 right;

@@ -34,7 +34,9 @@ public:
     virtual void AddCostSet(ifopt::CostTerm::Ptr cost_set)=0;
     virtual void setuseterminal(bool strue)=0;
     virtual void constructNLP()=0;
+    virtual int crack_and_return()=0;
     virtual void ReinitState(Eigen::MatrixXd &initstate,Eigen::MatrixXd &terminalstate)=0;
+    virtual void GetVariable(QString name,Eigen::MatrixXd &returnvalue)=0;
 };
 #define NonlinearSolverservice_iid "NonlinearSolverservice"
 

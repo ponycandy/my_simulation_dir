@@ -128,7 +128,7 @@ void Solvermanager::optimize(Eigen::MatrixXd &input, Eigen::MatrixXd &output)
     std::shared_ptr<Eigen::MatrixXd> initptr = std::make_shared<Eigen::MatrixXd>(cached_x);
     //看来，解太过于接近目标也不行
     m_solver->ReinitState(selfinitstate,selfinitstate);
-    m_solver->init_all_x(0,initptr);
+    m_solver->init_all_x(0,initptr);//尝试取消掉这个看看性能
     //好的，现在将预测轨迹输入到x的所有初始值中
     int status=0;
     status=m_solver->crack_and_return();
@@ -142,15 +142,16 @@ void Solvermanager::optimize(Eigen::MatrixXd &input, Eigen::MatrixXd &output)
     }
     if (status == 0)
     {
-        printf("\n\n*** The problem was successfully solved!\n");
+//        printf("\n\n*** The problem was successfully solved!\n");
         //这里还需要识别local minimum的情况
         //也就是虽然接出来最优，但是无法维持编队的情况
         //一个可行方法是观测cost，如果cost过大，说明就是局部最优
         //这个时候切换到传统控制方法
         if(costset->costNow>shiftgate)//这个判定的参数需要仔细调节
         {
+            qDebug()<<"tradintion control trigger "<<costset->costNow;
             TradintionControl(output,input);
-//            output=cached_control.eval();
+            //            output=cached_control.eval();
             return;
         }
         else
@@ -166,7 +167,7 @@ void Solvermanager::optimize(Eigen::MatrixXd &input, Eigen::MatrixXd &output)
     }
     if (status == -2) //restoration failed
     {
-        printf("\n\n*** The problem was successfully solved!\n");
+//        printf("\n\n*** The problem was successfully solved!\n");
         Eigen::MatrixXd temp=m_solver->get_actMat();
         m_solver->GetVariable("action_state_set1",cached_x);
 
@@ -176,6 +177,22 @@ void Solvermanager::optimize(Eigen::MatrixXd &input, Eigen::MatrixXd &output)
         return;
     }
 
+}
+
+double Solvermanager::Saturation(double input, double lowerbound, double upperbound)
+{
+    if(input<lowerbound)
+    {
+        return lowerbound;
+    }
+    else if(input>upperbound)
+    {
+        return upperbound;
+    }
+    else
+    {
+        return input;
+    }
 }
 
 void Solvermanager::TradintionControl(Eigen::MatrixXd &control, Eigen::MatrixXd &input)
@@ -222,7 +239,7 @@ void Solvermanager::TradintionControl(Eigen::MatrixXd &control, Eigen::MatrixXd 
                 Eigen::MatrixXd n_ij=postemp-posself;
                 concencus+=veltemp-velself;
                 double norm_2=n_ij.norm();
-                qDebug()<<norm_2-distance;
+               // qDebug()<<norm_2-distance;
                 Eigen::MatrixXd grad=(norm_2-distance)*n_ij.normalized();
                 gradient_term+=10*grad;
             }
@@ -233,7 +250,8 @@ void Solvermanager::TradintionControl(Eigen::MatrixXd &control, Eigen::MatrixXd 
 
     act_vector_1storder=(gradient_term);
     act_vector_2ndorder=(concencus+gradient_term);
-    control(0,0)=act_vector_1storder(0,0)*cos(input(selfID,3))+act_vector_1storder(1,0)*sin(input(selfID,3));
+    control(0,0)=Saturation(act_vector_1storder(0,0)*cos(input(selfID,3))
+                               +act_vector_1storder(1,0)*sin(input(selfID,3)),-2.5,2.5);
     //第一个控制量
     double dux=act_vector_2ndorder(0,0);
     double duy=act_vector_2ndorder(1,0);
@@ -252,7 +270,8 @@ void Solvermanager::TradintionControl(Eigen::MatrixXd &control, Eigen::MatrixXd 
                    -dux*uy/(pow(ux,2)+pow(uy,2));
     }
 
-    control(1,0)=-4*angleerror;
+    control(1,0)=Saturation(-4*angleerror,-2,2);
+
 
 }
 void Solvermanager::solvenow(Eigen::MatrixXd targetmat)

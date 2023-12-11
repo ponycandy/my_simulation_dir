@@ -12,7 +12,7 @@ glwidget3D::glwidget3D(QWidget *parent)
     farplanedis=1000;
     FOV=45;
 
-    position = glm::vec3(0, 0, 5);
+    position = glm::vec3(0, 0, 0);
     horizontalAngle = 3.14f;
     // vertical angle : 0, look at the horizon
     verticalAngle = 0.0f;
@@ -26,6 +26,14 @@ glwidget3D::glwidget3D(QWidget *parent)
     Channel_G=0;
     Channel_B=0;
     Channel_A=1;
+
+    glm::vec3 axisz(0.0f, 0.0f, 1.0f); // 绕Z轴旋转
+    glm::mat4 rotationMatrix= glm::mat4(1.0f);
+    Transformworld2worldMat=glm::rotate(rotationMatrix, 3.14f, axisz);//旋转180度
+    glm::vec3 axisy(0.0f, 1.0f, 0.0f); // 绕Y轴旋转
+    Transformworld2worldMat=glm::rotate(Transformworld2worldMat, 3.14f, axisy);//旋转180度
+    //通过上面两步实现了 从正交XYZ坐标（上Z右x前y）向屏幕XYZ坐标转化（上y右x后Z）
+    //接下来要制作动画，只要按照 正交XYZ坐标（上Z右x前y）的基座标 添加元素就可以了
 }
 
 void glwidget3D::GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void *data)
@@ -115,6 +123,7 @@ void glwidget3D::rotateCams(int x, int y)
         position + direction, // and looks here : at the same position, plus "direction"
         up                  // Head is up (set to 0,-1,0 to look upside-down)
         );
+
 }
 
 void glwidget3D::move_in_direction(glm::vec3 direc)
@@ -314,7 +323,7 @@ void glwidget3D::paintGL()
 
 
     //    glm::mat4 Model = glm::mat4(1.0f);
-    glm::mat4 ViewProjmat = ProjectionMatrix * ViewMatrix; // Remember, matrix multiplication is the other way around
+    glm::mat4 ViewProjmat = ProjectionMatrix * ViewMatrix*Transformworld2worldMat; // Remember, matrix multiplication is the other way around
     //如果想要使用视角矩阵，那么公用programID就是必然的
     //不然的话，就必须要求每个program单独输入视角矩阵
     //后者的灵活度更高，前者的封装更好

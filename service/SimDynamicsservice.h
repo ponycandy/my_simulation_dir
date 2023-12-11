@@ -12,6 +12,12 @@ public:
     virtual void start_sim()=0;
     virtual void set_ODE(ODE_functor *functor)=0;
     virtual void step_in()=0;
+    virtual void step_in_control()=0;
+    virtual void step_in_ode()=0;
+    virtual void step_in_sensor()=0;
+
+    virtual void step_in_broadcast()=0;
+
     virtual void set_step_in_mode(int flag)=0;
     virtual SimDynamicsservice* cloneservice()=0;
 

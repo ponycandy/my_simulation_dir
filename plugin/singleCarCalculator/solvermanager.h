@@ -23,6 +23,7 @@ public:
     int selfID;
     int initflag=0;
     void optimize(Eigen::MatrixXd &input,Eigen::MatrixXd &output);
+    double Saturation(double input,double lowerbound,double upperbound);
     void TradintionControl(Eigen::MatrixXd &control,Eigen::MatrixXd &input);
 
 public slots:

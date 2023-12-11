@@ -31,7 +31,7 @@ double minimize_Topology::GetCost() const
     m_Hession.setZero();
     //初始化
     double error=0;
-    double koef=0.3;
+    double koef=1;
     pack_variable(x,5,decnum,2,3,actMat,stateMat);
     //第一，最小控制量
     for(int steps=0;steps<decnum;steps++)
@@ -103,13 +103,15 @@ double minimize_Topology::GetCost() const
         {
             int ID=j+1;
             //我们希望优先追踪leader
+            //防止agent躺平这个参数需要多调下
+            //或者其他agent超出范围之后，完全不考虑和该agent的拓扑，只考虑和leader的拓扑！
             if(ID==agentnum)
             {
                 koef=0.1;
             }
             else
             {
-                koef=0.3;
+                koef=0.1;
             }
             double length=PredictMat(3*(ID-1)+2,0);//拓扑图邻居
             if(length>0)
@@ -118,6 +120,13 @@ double minimize_Topology::GetCost() const
                 {
 
                     double Dis=pow((stateMat.block(0,steps,2,1)-PredictMat.block(3*(ID-1),steps,2,1)).norm(),2)-length*length;
+                    //根据这个距离判定！
+                    //                    if(Dis>10*length && ID<agentnum)
+                    //                    {
+                    //距离过大了，而且邻居不是leader，那就没有这一项！
+                    //                    }
+                    //                    else
+                    //                    {
                     double xi=stateMat(0,steps);
                     double yi=stateMat(1,steps);
                     double xj=PredictMat(3*(ID-1),steps);
@@ -130,6 +139,7 @@ double minimize_Topology::GetCost() const
                     fillsymetrix(m_Hession,5*steps+2,5*steps+2,2/koef*(4*(xi-xj)*(xi-xj)+2*Dis));
                     fillsymetrix(m_Hession,5*steps+3,5*steps+3,2/koef*(4*(yi-yj)*(yi-yj)+2*Dis));
                     fillsymetrix(m_Hession,5*steps+2,5*steps+3,2/koef*(4*(xi-xj)*(yi-yj)));//xiyi
+                    //                    }
                     //it's really error prone!
                 }
             }
@@ -139,10 +149,10 @@ double minimize_Topology::GetCost() const
     //更确切的来说，是到leader的速度方向差，
     //尽量为凸！！
 
-    //备用项,追踪障碍物环绕
+    //第四项,追踪障碍物环绕
     if(TriggerSur==1)
     {
-        koef=0.005;
+        koef=0.1;
         Eigen::MatrixXd predict;
         predict.resize(2,decnum);
         predict.setZero();
@@ -177,6 +187,58 @@ double minimize_Topology::GetCost() const
 
 
     }
+    //第五项，内部避障项，重复障碍物拓扑即可
+
+    for(int steps=0;steps<decnum;steps++)
+    {
+        for(int j=0;j<totalNum;j++)
+        {
+            int ID=j+1;
+            double xj=PredictMat(3*(ID-1),0);
+            double yj=PredictMat(3*(ID-1)+1,0);
+            //只取当前时刻的邻居位置做虚拟障碍物！
+
+            obspos<<xj,yj;//邻居障碍物位置
+            double colliR=1;//邻居障碍物等效半径
+
+            Eigen::MatrixXd posself;
+            posself.resize(2,1);
+            posself=stateMat.block(0,steps,2,1);
+            double z=pow((posself-obspos).norm()/colliR,2);
+
+            double first,second;
+            double coef=1;//避障完全无反应！！
+            double value=PotentialCalc(z,first,second);
+            error+=(coef*value);
+            //可以考虑把势场换成更光滑的cos对底函数
+
+            //不行,比起光滑,更重要的是保证目标函数是凸的
+
+            double Dzdx=2/(colliR*colliR)*(posself(0,0)-obspos(0,0));
+            double Dzdy=2/(colliR*colliR)*(posself(1,0)-obspos(1,0));
+
+            m_jac(0,5*steps+2)+=coef*first*Dzdx;
+            m_jac(0,5*steps+3)+=coef*first*Dzdy;
+            if(z<1)
+            {
+                double valuex =2/(colliR*colliR)*first+second*pow(Dzdx,2);
+                double valuey =2/(colliR*colliR)*first+second*pow(Dzdy,2);
+                double valuexy =second*Dzdx*Dzdy;
+                fillsymetrix(m_Hession,5*steps+2,5*steps+2,
+                             coef*valuex);
+                fillsymetrix(m_Hession,5*steps+3,5*steps+3,
+                             coef*valuey);
+                fillsymetrix(m_Hession,5*steps+2,5*steps+3,
+                             coef*valuexy);
+                //这里和上面的第二项一模一样
+            }
+        }
+    }
+    //补充，可能需要实现无人车之间的避障，但是首先解决最小化动不了的问题
+    //动不了的问题通过tranditionalcontrol解决了，可以用优化器的非线性解释糊弄过去
+    //无人车之间的避障，好像是不是可以通过未来拓扑解决？
+    //因为这两项一模一样的...
+    //不行，有的时候未来拓扑不会执行
     costNow=error;
     return error;
 }

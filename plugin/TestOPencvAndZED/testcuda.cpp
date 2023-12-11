@@ -2,7 +2,7 @@
 #include "GL_3D/GL3Dcommon.h"
 TestCuda::TestCuda()
 {
-    flag=0;
+    flag=2;
     //初始化摄像机：
     // Create a ZED camera object
     if(flag==0)
@@ -37,10 +37,7 @@ void TestCuda::draw()
 {
     if(flag==0)
     {
-        glm::vec3 axis(0.0f, 0.0f, 1.0f); // 绕Z轴旋转
-        glm::mat4 rotationMatrix= glm::mat4(1.0f);
-        rotationMatrix=glm::rotate(rotationMatrix, 3.14f, axis);//旋转180度
-        m_animator->SetModelmat(rotationMatrix);
+
 
         //冷静，图片是能够显示的,if也是能够进去的
         //我们需要更小的子问题

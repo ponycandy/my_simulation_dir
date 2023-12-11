@@ -1,0 +1,11 @@
+ZED的环境变量
+
+ZED_SDK_ROOT_DIR   
+C:\Program Files (x86)\ZED SDK
+
+
+PATH
+C:\Program Files (x86)\ZED SDK\dependencies\glew-1.12.0\x64
+C:\Program Files (x86)\ZED SDK\dependencies\freeglut_2.8\x64
+C:\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\x64
+C:\Program Files (x86)\ZED SDK\bin

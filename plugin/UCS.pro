@@ -40,3 +40,5 @@ test_NMPC_Plugin \
     OpenCVGraph   \
     TestOPencvAndZED   \
     Animator3D   \
+swarm_NLPSimulator \
+    Test_using_gpcs   \
