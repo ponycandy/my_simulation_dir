@@ -24,7 +24,7 @@ ZEDviewer::ZEDviewer()
     //        return ;
     //    }
     //    sl::Mat image_zed(1280,720, sl::MAT_TYPE::U8_C4);
-    //    cv::Mat image_ocv = slMat2cvMat(image_zed);
+     //   cv::Mat image_ocv = slMat2cvMat(image_zed);
 
 
     //    if (zed.grab() == sl::ERROR_CODE::SUCCESS)

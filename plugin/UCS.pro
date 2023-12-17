@@ -42,3 +42,4 @@ test_NMPC_Plugin \
     Animator3D   \
 swarm_NLPSimulator \
     Test_using_gpcs   \
+    Slam_Visualizer   \

@@ -14,7 +14,7 @@ DESTDIR = ../../build
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
-
+INCLUDEPATH += ../../3rdlib
 SOURCES += \
     Activator.cpp
 

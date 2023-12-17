@@ -3,9 +3,8 @@
 
 #include <QObject>
 #include "qtimer.h"
-
+#include "gpcsmat.h"
 #include "gpcsnode.h"
-
 struct MyData {
     int id;
     double value;
@@ -25,6 +24,8 @@ class mainExecution : public QObject
 public:
     explicit mainExecution(QObject *parent = nullptr);
     void gpcscallback(const std::string& data);
+    void gpcscallback_2(const std::string& data);
+
     QTimer *m_timer;
     QTimer *m_timer1;
      gpcs::gpcsnode *nh;//创建句柄

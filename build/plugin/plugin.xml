@@ -7,7 +7,7 @@
 
 
                 <plugin order="1" name="Animator3D" />
-                <plugin order="1" name="Test_using_gpcs" />
+                <plugin order="1" name="Slam_Visualizer" />
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
 </plugins>
