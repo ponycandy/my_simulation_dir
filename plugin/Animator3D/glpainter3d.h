@@ -19,6 +19,13 @@ class glpainter3D: public QObject,public Animateservice3Dservice//，这个移�
 public:
     explicit glpainter3D(QObject *parent = nullptr);
     void setupUI();
+    void Draw_Camera(std::string buffer_name) override;
+    void Set_Frame_world() override;//设置右x上z前y的世界坐标系到viewporjectionmatrix里面
+    void Set_Frame_Camera() override;//设置右x下y前z的摄像机坐标到iewporjectionmatrix里面
+    void Add_Camera(Eigen::MatrixXd &Trans,std::string buffer_name) override;
+    void Create_Buffer(std::string buffer_name) override;
+    void Draw_Triangular(std::string buffername) override;
+    void Push_Data2buffer(std::string buffer_name,std::vector<float> data) override;
     void setbackgroundColor(float R,float G,float B,float A) override;
     void SetModelmat(glm::mat4 &Model) override;
     void GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void* data) override;
@@ -35,6 +42,13 @@ public:
     void drawcube(float Dx,float Dy,float Dz,
                   float centerx,float centery,float centerz,
                   float alpha,float beta,float gama) override;
+    void drawcamera(float Dx,float Dy,float Dz,
+                    float centerx,float centery,float centerz,
+                    float alpha,float beta,float gama) override;
+    void drawcamera_Iterate(float Dx,float Dy,float Dz,
+                            float centerx,float centery,float centerz,
+                            float alpha,float beta,float gama) override;
+
     void resizeWindow(int width,int height) override;
     void GLDrawArrays(unsigned int glmode,  int start,  int length) override;
     void setCameraParms(float nearP,float farP,float LinearSpeed=3.0f,float RotSpeed=0.0005f) override;
@@ -82,7 +96,8 @@ public:
     int m_height;
 
     QMap<int,Drawer3D*>    DrawOperation_map;
-
+    QMap<std::string,unsigned int> name_2_buffermap;
+    QMap<std::string,std::shared_ptr<std::vector<float>>> name_2_datamap;
 
 };
 

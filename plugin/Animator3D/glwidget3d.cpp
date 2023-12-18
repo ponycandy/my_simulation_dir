@@ -1,5 +1,5 @@
 #include "glwidget3d.h"
-
+#include <cmath>
 glwidget3D::glwidget3D(QWidget *parent)
 {
     setMouseTracking(true);
@@ -29,11 +29,19 @@ glwidget3D::glwidget3D(QWidget *parent)
 
     glm::vec3 axisz(0.0f, 0.0f, 1.0f); // 绕Z轴旋转
     glm::mat4 rotationMatrix= glm::mat4(1.0f);
-    Transformworld2worldMat=glm::rotate(rotationMatrix, 3.14f, axisz);//旋转180度
+    camera_frame_T=glm::rotate(rotationMatrix, float(M_PI), axisz);//旋转180度
     glm::vec3 axisy(0.0f, 1.0f, 0.0f); // 绕Y轴旋转
-    Transformworld2worldMat=glm::rotate(Transformworld2worldMat, 3.14f, axisy);//旋转180度
-    //通过上面两步实现了 从正交XYZ坐标（上Z右x前y）向屏幕XYZ坐标转化（上y右x后Z）
-    //接下来要制作动画，只要按照 正交XYZ坐标（上Z右x前y）的基座标 添加元素就可以了
+    camera_frame_T=glm::rotate(camera_frame_T, float(M_PI), axisy);//旋转180度
+    //这是摄像机坐标系
+    //通过上面两步实现了ZED摄像机点云到正常能看的坐标的转化，现在的坐标系为，原点在屏幕中央，右x下y前z
+
+
+    Transformworld2worldMat=camera_frame_T;
+    //默认使用的摄像机坐标系
+    glm::vec3 axisx(1.0f, 0.0f, 0.0f); // 绕X轴旋转
+    world_frame_T=glm::rotate(rotationMatrix, float(M_PI), axisz);//旋转180度
+    world_frame_T=glm::rotate(world_frame_T, float(M_PI), axisy);//旋转180度
+    world_frame_T=glm::rotate(world_frame_T, float(M_PI)/2, axisx);//旋转90度
 }
 
 void glwidget3D::GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void *data)

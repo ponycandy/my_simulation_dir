@@ -6,6 +6,8 @@
 #include "qtimer.h"
 #include <QObject>
 #include "service/Animateservice3Dservice.h"
+#include "slam_drawer.h"
+#include "QWidget"
 class vomanager: public QObject
 {
      Q_OBJECT
@@ -16,6 +18,9 @@ public:
 
     gpcs::gpcsnode *nh;
     QTimer *m_timer;
+    Animateservice3Dservice *anim;
+    Slam_Drawer *SD;
+    QWidget *MWidget;
 private slots:
     void spinonce();
 };

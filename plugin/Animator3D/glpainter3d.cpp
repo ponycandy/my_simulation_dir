@@ -40,6 +40,108 @@ void glpainter3D::setupUI()
     //    m_widget->resize(m_width,m_height);
 }
 
+void glpainter3D::Draw_Camera(std::string buffer_name)
+{
+    std::shared_ptr<std::vector<float>> data_stored=name_2_datamap.value(buffer_name);
+    GLuint vbo=name_2_buffermap.value(buffer_name);
+    m_glwidget->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
+    m_glwidget->GLDrawArrays(GL_LINES, 0, data_stored->size() * sizeof(float));
+}
+
+void glpainter3D::Set_Frame_world()
+{
+    m_glwidget->Transformworld2worldMat=m_glwidget->world_frame_T;
+}
+
+void glpainter3D::Set_Frame_Camera()
+{
+    m_glwidget->Transformworld2worldMat=m_glwidget->camera_frame_T;
+}
+
+void glpainter3D::Add_Camera(Eigen::MatrixXd &Trans, std::string buffer_name)
+{
+    GLuint vbo=name_2_buffermap.value(buffer_name);
+    std::shared_ptr<std::vector<float>> data_stored=name_2_datamap.value(buffer_name);
+    //接下来根据Trans生成8个顶点
+    float scale=1;
+    std::vector<Eigen::MatrixXd> points;
+    //下面首先完成线框
+    Eigen::MatrixXd R_B;R_B.resize(4,1);R_B<<0.5*scale,0,0.5*scale,1;
+    Eigen::MatrixXd R_F;R_F.resize(4,1);R_F<<0.5*scale,0,-0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<0.5*scale,0,-0.5*scale,1;R_F<<-0.5*scale,0,-0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-0.5*scale,0,-0.5*scale,1;R_F<<-0.5*scale,0,0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-0.5*scale,0,0.5*scale,1;R_F<<0.5*scale,0,0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<0.5*scale,0,0.5*scale,1;R_F<<scale,scale,scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<scale,scale,scale,1;R_F<<-scale,scale,scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-scale,scale,scale,1;R_F<<-scale,scale,-scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-scale,scale,-scale,1;R_F<<scale,scale,-scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<scale,scale,-scale,1;R_F<<scale,scale,scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-scale,scale,scale,1;R_F<<-0.5*scale,0,0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<-scale,scale,-scale,1;R_F<<-0.5*scale,0,-0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+
+    R_B<<scale,scale,-scale,1;R_F<<0.5*scale,0,-0.5*scale,1;
+    points.push_back(R_B);points.push_back(R_F);
+    //然后作transformation
+    for(auto point:points)
+    {
+        Eigen::MatrixXd cam_P=Trans*point;
+        std::vector<float> data;//xyz坐标压入到buffer里面
+        data.push_back(cam_P(0,0));data.push_back(cam_P(1,0));data.push_back(cam_P(2,0));
+        Push_Data2buffer(buffer_name,data);
+    }
+}
+
+void glpainter3D::Create_Buffer(std::string buffer_name)
+{
+    GLuint buf;
+    m_glwidget->GLGenBuffers(1,&buf);
+    name_2_buffermap.insert(buffer_name,buf);
+    std::shared_ptr<std::vector<float>> ptr(new std::vector<float>);
+    name_2_datamap.insert(buffer_name,ptr);
+
+}
+
+void glpainter3D::Draw_Triangular(std::string buffername)
+{
+    std::shared_ptr<std::vector<float>> data_stored=name_2_datamap.value(buffername);
+    GLuint vbo=name_2_buffermap.value(buffername);
+    m_glwidget->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
+    m_glwidget->GLDrawArrays(GL_TRIANGLES, 0, data_stored->size() * sizeof(float));
+}
+
+void glpainter3D::Push_Data2buffer(std::string buffer_name, std::vector<float> data)
+{
+    //这个功能的bug，不知道为什么第一下没有用....
+    GLuint vbo=name_2_buffermap.value(buffer_name);
+    std::shared_ptr<std::vector<float>> data_stored=name_2_datamap.value(buffer_name);
+    data_stored->insert(data_stored->end(), data.begin(), data.end());
+
+    m_glwidget->GLBindBuffer(GL_ARRAY_BUFFER, vbo);
+    m_glwidget->GLBufferData(GL_ARRAY_BUFFER, data_stored->size() * sizeof(float),
+                             data_stored->data(), GL_DYNAMIC_DRAW);
+}
+
 void glpainter3D::setbackgroundColor(float R, float G, float B, float A)
 {
     m_glwidget->Channel_A=A;
@@ -47,6 +149,7 @@ void glpainter3D::setbackgroundColor(float R, float G, float B, float A)
     m_glwidget->Channel_G=G;
     m_glwidget->Channel_B=B;
 }
+
 
 void glpainter3D::SetModelmat(glm::mat4 &Model)
 {
@@ -56,6 +159,7 @@ void glpainter3D::SetModelmat(glm::mat4 &Model)
 void glpainter3D::GLBufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void *data)
 {
     m_glwidget->GLBufferSubData(target,offset,size,data);
+    //只能够修改已有的数据，无法添加新的数据
 }
 
 void glpainter3D::SetPainterID(unsigned int programID)
@@ -133,6 +237,16 @@ void glpainter3D::GLBindBuffer(unsigned int target, unsigned int buffer)
 }
 
 void glpainter3D::drawcube(float Dx, float Dy, float Dz, float centerx, float centery, float centerz, float alpha, float beta, float gama)
+{
+
+}
+
+void glpainter3D::drawcamera(float Dx, float Dy, float Dz, float centerx, float centery, float centerz, float alpha, float beta, float gama)
+{
+
+}
+
+void glpainter3D::drawcamera_Iterate(float Dx, float Dy, float Dz, float centerx, float centery, float centerz, float alpha, float beta, float gama)
 {
 
 }

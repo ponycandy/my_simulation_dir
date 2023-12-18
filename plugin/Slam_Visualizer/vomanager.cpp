@@ -1,19 +1,30 @@
 #include "vomanager.h"
 
 
-
+#include "Slam_VisualizerActivator.h"
 vomanager::vomanager(QObject *parent)
 {
-    nh=new gpcs::gpcsnode;
-    nh->init("Qtnode");
-    nh->subscribe("Slam_data/3D_points",
-                  std::bind(&vomanager::Point3dCallback, this,std::placeholders::_1));
-    nh->subscribe("Slam_data/Camerapos",
-                  std::bind(&vomanager::KeyframeCallback, this,std::placeholders::_1));
+    anim=Slam_VisualizerActivator::getService<Animateservice3Dservice>("Animateservice3Dservice");
 
-    m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(spinonce()));
-    m_timer->start(30);
+    SD=new Slam_Drawer;
+    anim->register_painter(SD);
+    MWidget=anim->getwidget();
+    MWidget->show();
+
+
+
+//    nh=new gpcs::gpcsnode;
+//    nh->init("Qtnode");
+//    nh->subscribe("Slam_data/3D_points",
+//                  std::bind(&vomanager::Point3dCallback, this,std::placeholders::_1));
+//    nh->subscribe("Slam_data/Camerapos",
+//                  std::bind(&vomanager::KeyframeCallback, this,std::placeholders::_1));
+//    m_timer = new QTimer(this);
+//    connect(m_timer, SIGNAL(timeout()), this, SLOT(spinonce()));
+//    m_timer->start(30);
+
+
+    anim->start_animate();
 }
 
 void vomanager::KeyframeCallback(const std::string &data)

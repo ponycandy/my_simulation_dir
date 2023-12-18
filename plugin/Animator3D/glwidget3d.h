@@ -48,6 +48,9 @@ public:
 
     glm::mat4 ViewMatrix;
     glm::mat4 Transformworld2worldMat;
+    glm::mat4 camera_frame_T;//设置右x下y前z
+    glm::mat4 world_frame_T;//设置右x上z前y
+
     //从正交XYZ坐标（上Z右x前y）向屏幕XYZ坐标转化（上y右x后Z）
     glm::mat4 ProjectionMatrix;
     glm::vec3 direction;
