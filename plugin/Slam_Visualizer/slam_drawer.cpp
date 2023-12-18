@@ -3,11 +3,11 @@
 Slam_Drawer::Slam_Drawer(QObject *parent)
     : QObject{parent}
 {
-    panel=new ControlPanel;
-    connect(panel,SIGNAL(addone()),this,SLOT(addoneslot()));
-    panel->show();
-    current_buffer_size=sizeof(cubebuffer);
-    counter=1;
+    //panel=new ControlPanel;
+    //connect(panel,SIGNAL(addone()),this,SLOT(addoneslot()));
+   // panel->show();
+    //current_buffer_size=sizeof(cubebuffer);
+    //counter=1;
 
 }
 
@@ -76,11 +76,16 @@ void Slam_Drawer::addoneslot()
 //                               0.5,1,0+(float)counter};
 
 //    m_animator->Push_Data2buffer("testcubic",data);
-    Eigen::MatrixXd somemat;
-    somemat.resize(4,4);somemat.setIdentity();
-    somemat(0,3)=counter;somemat(1,3)=counter;somemat(2,3)=counter;
-    m_animator->Add_Camera(somemat,"camera");
-//不对，像是数据被漏掉了，我们要求检查
-    //没漏掉，第一次插入的数据和之前的数据一模一样...
-    counter++;
+//    Eigen::MatrixXd somemat;
+//    somemat.resize(4,4);somemat.setIdentity();
+//    somemat(0,3)=counter;somemat(1,3)=counter;somemat(2,3)=counter;
+//    m_animator->Add_Camera(somemat,"camera");
+////不对，像是数据被漏掉了，我们要求检查
+//    //没漏掉，第一次插入的数据和之前的数据一模一样...
+    //    counter++;
+}
+
+void Slam_Drawer::add_pos(Eigen::MatrixXd Trans)
+{
+    m_animator->Add_Camera(Trans,"camera");
 }

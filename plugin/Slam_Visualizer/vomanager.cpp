@@ -13,15 +13,17 @@ vomanager::vomanager(QObject *parent)
 
 
 
-//    nh=new gpcs::gpcsnode;
-//    nh->init("Qtnode");
+    nh=new gpcs::gpcsnode;
+    nh->init("Qtnode");
 //    nh->subscribe("Slam_data/3D_points",
 //                  std::bind(&vomanager::Point3dCallback, this,std::placeholders::_1));
-//    nh->subscribe("Slam_data/Camerapos",
-//                  std::bind(&vomanager::KeyframeCallback, this,std::placeholders::_1));
-//    m_timer = new QTimer(this);
-//    connect(m_timer, SIGNAL(timeout()), this, SLOT(spinonce()));
-//    m_timer->start(30);
+    nh->subscribe("Slam_data/Camerapos",
+                  std::bind(&vomanager::KeyframeCallback, this,std::placeholders::_1));
+    m_timer = new QTimer(this);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(spinonce()));
+    qRegisterMetaType<Eigen::MatrixXd>();
+    connect(this, SIGNAL(posupdate(Eigen::MatrixXd)), SD, SLOT(add_pos(Eigen::MatrixXd)));
+    m_timer->start(30);
 
 
     anim->start_animate();
@@ -29,18 +31,12 @@ vomanager::vomanager(QObject *parent)
 
 void vomanager::KeyframeCallback(const std::string &data)
 {
-    std::cout<<"KeyframeCallback "<<std::endl;
+    std::cout<<"KeyframeCallback: "<<SD->counter++<<std::endl;
 
     gpcs::mat matrix=gpcs::struct_load<gpcs::mat>(data);
-    for(int i=0;i<matrix.rows;i++)
-    {
-        for(int j=0;j<matrix.cols;j++)
-        {
-            std::cout<<" "<<matrix[i][j]<<" ";
-        }
-        std::cout<<" "<<std::endl;
-    }
-    std::cout<<"endl"<<std::endl;
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
+        Trans(matrix.data.data(), 4, 4);
+    emit posupdate(Trans);
 
 }
 

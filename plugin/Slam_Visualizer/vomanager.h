@@ -21,8 +21,11 @@ public:
     Animateservice3Dservice *anim;
     Slam_Drawer *SD;
     QWidget *MWidget;
+signals:
+    void posupdate(Eigen::MatrixXd mat);
 private slots:
     void spinonce();
+
 };
 
 #endif // VOMANAGER_H
