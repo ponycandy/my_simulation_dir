@@ -39,7 +39,11 @@ void Slam_Drawer::initialization()
     m_animator->Create_Buffer("camera");
     Eigen::MatrixXd somemat;
     somemat.resize(4,4);somemat.setIdentity();
-    m_animator->Add_Camera(somemat,"camera");
+    somemat<<1,0,0,0,
+        0,0,1,0,
+        0,-1,0,0,
+        0,0,0,1;
+    m_animator->Add_Camera(somemat,0.25,"camera");
 //总是要画一个基准点的，算了吧，这个以后再说
     m_animator->GLEnableVertexAttribArray(0);
     m_animator->GLVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,0, nullptr);
@@ -87,5 +91,5 @@ void Slam_Drawer::addoneslot()
 
 void Slam_Drawer::add_pos(Eigen::MatrixXd Trans)
 {
-    m_animator->Add_Camera(Trans,"camera");
+    m_animator->Add_Camera(Trans,0.25,"camera");
 }

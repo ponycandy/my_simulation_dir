@@ -15,8 +15,8 @@ vomanager::vomanager(QObject *parent)
 
     nh=new gpcs::gpcsnode;
     nh->init("Qtnode");
-//    nh->subscribe("Slam_data/3D_points",
-//                  std::bind(&vomanager::Point3dCallback, this,std::placeholders::_1));
+////    nh->subscribe("Slam_data/3D_points",
+////                  std::bind(&vomanager::Point3dCallback, this,std::placeholders::_1));
     nh->subscribe("Slam_data/Camerapos",
                   std::bind(&vomanager::KeyframeCallback, this,std::placeholders::_1));
     m_timer = new QTimer(this);
@@ -31,11 +31,41 @@ vomanager::vomanager(QObject *parent)
 
 void vomanager::KeyframeCallback(const std::string &data)
 {
-    std::cout<<"KeyframeCallback: "<<SD->counter++<<std::endl;
+
 
     gpcs::mat matrix=gpcs::struct_load<gpcs::mat>(data);
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>>
         Trans(matrix.data.data(), 4, 4);
+    //相机坐标系是右x下y前z
+    //世界坐标是右x前y上z
+    //首先要将旋转矩阵修正，也就是绕x轴旋转90度
+    //其次，得到的位移和旋转坐标是相较于初始摄像机位置的旋转坐标，
+    Eigen::MatrixXd toworld,towordl2;
+    toworld.resize(4,4);
+    toworld.setIdentity();towordl2=toworld;
+    toworld<<-1,0,0,0
+            ,0,0,-1,0
+            ,0,1,0,0
+            ,0,0,0,1;
+    toworld=toworld*Trans;
+    Trans(0,3)=toworld(0,3);Trans(1,3)=toworld(1,3);Trans(2,3)=toworld(2,3);
+    //得到的矩阵是相对于相机初始位置的，所以还要转化一下到世界坐标系下
+    toworld<<1,0,0,0,
+        0,0,1,0,
+        0,-1,0,0,
+        0,0,0,1;
+        towordl2<<-1,0,0,0,
+            0,-1,0,0,
+            0,0,1,0,
+            0,0,0,1;
+    //
+      //  Trans.block(0,0,3,3)=toworld.block(0,0,3,3)*Trans.block(0,0,3,3);
+//左右手坐标系的转化（idiot）
+        Trans.block(0,0,3,3)=toworld.block(0,0,3,3)*towordl2.block(0,0,3,3)*Trans.block(0,0,3,3);
+
+    std::cout<<"KeyframeCallback: "<<SD->counter++<<
+            "   "<<"pos x: "<<Trans(0,3)<<" y: "<<Trans(1,3)
+              <<" z: "<<Trans(2,3)<<std::endl;
     emit posupdate(Trans);
 
 }
