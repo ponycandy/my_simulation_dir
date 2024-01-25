@@ -7,7 +7,16 @@ CardataViewer::CardataViewer(QWidget *parent) :
     ui(new Ui::CardataViewer)
 {
     ui->setupUi(this);
+    ui->widget_2->setStyleSheet("background-color: white");
+    ui->widget_3->setStyleSheet("background-color: white");
+    ui->widget_4->setStyleSheet("background-color: white");
+
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+    setAttribute(Qt::WA_TranslucentBackground);
     m_video=new videoplayer;
+    ui->gridLayout->setSpacing(0);
+    ui->gridLayout->setContentsMargins(0,0,0,0);
+
     ui->gridLayout->addWidget(m_video);
     nullwidget=new QWidget;
 }
@@ -39,6 +48,7 @@ void CardataViewer::Addwidget(QWidget *windows, QString vehicle, QString windown
     }
     else
     {
+        combox_map_view_genre.insert(windowname,combox_map_view_genre.size());
         ui->comboBox_2->addItem(windowname);
     }
     m_video->addWidget(windows);

@@ -16,6 +16,8 @@ void SingleVehicleCard::initialization()
 
 
     //试验一下能不能连上
+    client_S=new QMQTT::Client;
+    client_R=new QMQTT::Client;
     setNet(client_S,cilentID_S,port_S,host_S,username_S,password_S,topicname_S);
     setNet(client_R,cilentID_R,port_R,host_R,username_R,password_R,topicname_R);
 
@@ -27,47 +29,10 @@ void SingleVehicleCard::initialization()
 
 void SingleVehicleCard::setNet(QMQTT::Client *client, QString cilentID, QString port, QString host, QString username, QString password, QString topicname)
 {
-    client=new QMQTT::Client;
-    QString plos_sk=cilentID;
-    char* plos=plos_sk.toLatin1().data();
-    char *plo=new char[64];
-    memset(plo,0x00,64);
-    memcpy(plo,plos,plos_sk.length());
-
-    QString plos_sk1=port;
-    char* plos1=plos_sk1.toLatin1().data();
-    char *plo1=new char[64];
-    memset(plo1,0x00,64);
-    memcpy(plo1,plos1, plos_sk1.length());
-
-    QString plos_sk2=host;
-    char* plos2=plos_sk2.toLatin1().data();
-    char *plo2=new char[64];
-    memset(plo2,0x00,64);
-    memcpy(plo2,plos2,plos_sk2.length());
-
-    QString plos_sk3=username;
-    char* plos3=plos_sk3.toLatin1().data();
-    char *plo3=new char[64];
-    memset(plo3,0x00,64);
-    memcpy(plo3,plos3,plos_sk3.length());
-
-    QString plos_sk4=password;
-    char* plos4=plos_sk4.toLatin1().data();
-    char *plo4=new char[64];
-    memset(plo4,0x00,64);
-    memcpy(plo4,plos4,plos_sk4.length());
-
-    QString plos_sk5=topicname;
-    char* plos5=plos_sk5.toLatin1().data();
-    char *plo5=new char[64];
-    memset(plo5,0x00,64);
-    memcpy(plo5,plos5,plos_sk5.length());
-
-    client->setHost(QHostAddress(plo2));
-    client->setClientId(plos_sk);
-    client->setUsername(plos_sk3);
-    client->setPassword(plo4);
+    client->setHost(QHostAddress(host));
+    client->setClientId(cilentID);
+    client->setUsername(username);
+    client->setPassword(QByteArray::fromStdString(password.toStdString()));
 
 }
 

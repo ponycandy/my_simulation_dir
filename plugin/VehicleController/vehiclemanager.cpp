@@ -4,12 +4,13 @@
 VehicleManager::VehicleManager(QObject *parent) : QObject(parent)
 {
     VehicleControllerActivator::subscribevent(UCSEVENT::MQTTNETSET,this);
+    VehicleControllerActivator::subscribevent(UCSEVENT::MQTTSTART,this);
+    VehicleControllerActivator::subscribevent(UCSEVENT::MQTTSTOP,this);
+
     vehicle_order=0;
     viewer=new CardataViewer;
     coreservice=VehicleControllerActivator::getService<Coreservice>("Coreservice");
-    viewer->setGeometry(0,0,1920,1080);
     coreservice->addView(UcsDefines::CardataViewer,viewer);
-
 }
 
 void VehicleManager::EventTriggeres(XTLevent event)
