@@ -9,29 +9,26 @@ SUBDIRS += \
     NonlinearSolver \
     C_Python_decode \
     CollisionDetect \
-    JOY_card \
     MPC_Tracking_Controller \
     NMPC_TrajPlanning \
-Pendulem_rl_experinece \
-pushingbox \
-pythonCpptcpptest \
-pushingbox_2d \
-Simulator \
-swarm_rl_experiment \
-TCPCommunicator \
-MPC_Tracking_Controller \
-test_MPC_nonlinear_tracking \
-test_MPC_tracker \
-testNonlinearSOlver \
-test_NMPC_Plugin \
+    Pendulem_rl_experinece \
+    pushingbox \
+    pythonCpptcpptest \
+    pushingbox_2d \
+    Simulator \
+    swarm_rl_experiment \
+    TCPCommunicator \
+    MPC_Tracking_Controller \
+    test_MPC_nonlinear_tracking \
+    test_MPC_tracker \
+    testNonlinearSOlver \
+    test_NMPC_Plugin \
     testautograd   \
     DataLogger   \
     swarm_Target_Incept_with_obs_avoidence   \
-    SwarmSimulator \
     swarm_path_planning   \
     Test_Use_Hession   \
     swarm_ETM   \
-    Swarm_obstacle_avoid \
     swarm_ETM_compare   \
     swarm_path_planning_FeedBack   \
     singleCarCalculator   \
@@ -40,6 +37,17 @@ test_NMPC_Plugin \
     OpenCVGraph   \
     TestOPencvAndZED   \
     Animator3D   \
-swarm_NLPSimulator \
+    swarm_NLPSimulator \
     Test_using_gpcs   \
     Slam_Visualizer   \
+    Vehicle_simulator   \
+    SwarmSimulator \
+    Datamanager   \
+    ocu_car_manager   \
+    ocu_core   \
+    ocu_map   \
+    topicsubscriber   \
+    ocu_video_control   \
+    ocu_video_player   \
+    VehicleController   \
+    testffmpegutility   \

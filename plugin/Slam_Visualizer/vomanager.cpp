@@ -49,6 +49,17 @@ void vomanager::KeyframeCallback(const std::string &data)
             ,0,0,0,1;
     toworld=toworld*Trans;
     Trans(0,3)=toworld(0,3);Trans(1,3)=toworld(1,3);Trans(2,3)=toworld(2,3);
+
+std::cout<<"comehere "<<std::endl;
+    for(int i=0;i<3;i++)
+    {
+        for(int j=0;j<3;j++)
+        {
+            std::cout<<" "<<matrix[i][j]<<" ";
+        }
+        std::cout<<" "<<std::endl;
+    }
+
     //得到的矩阵是相对于相机初始位置的，所以还要转化一下到世界坐标系下
     toworld<<1,0,0,0,
         0,0,1,0,
@@ -63,9 +74,7 @@ void vomanager::KeyframeCallback(const std::string &data)
 //左右手坐标系的转化（idiot）
         Trans.block(0,0,3,3)=toworld.block(0,0,3,3)*towordl2.block(0,0,3,3)*Trans.block(0,0,3,3);
 
-    std::cout<<"KeyframeCallback: "<<SD->counter++<<
-            "   "<<"pos x: "<<Trans(0,3)<<" y: "<<Trans(1,3)
-              <<" z: "<<Trans(2,3)<<std::endl;
+
     emit posupdate(Trans);
 
 }

@@ -20,6 +20,7 @@ public:
     explicit glpainter(QObject *parent = nullptr);
     void setupUI();
     void zoomin();
+    void setbackground(unsigned int color) override;
     void register_painter(DrawOperation* painter);
     void draw_polygon(QPolygonF poly) override;
     void draw_square_oneside(double leftside_center_x, double leftside_center_y, double width, double height, double spinangle) override;

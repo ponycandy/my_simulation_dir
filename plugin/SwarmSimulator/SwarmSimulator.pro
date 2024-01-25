@@ -32,6 +32,7 @@ SOURCES += \
     simulator_manager.cpp \
     mypainter.cpp \
     simulator.cpp \
+    simulator.cpp \
 
 
 
@@ -39,6 +40,7 @@ HEADERS += \
     SwarmSimulatorActivator.h \
     simulator_manager.h \
     mypainter.h \
+    simulator.h \
     simulator.h \
 
 

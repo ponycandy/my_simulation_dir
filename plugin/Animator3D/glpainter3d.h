@@ -22,7 +22,7 @@ public:
     void Draw_Camera(std::string buffer_name) override;
     void Set_Frame_world() override;//设置右x上z前y的世界坐标系到viewporjectionmatrix里面
     void Set_Frame_Camera() override;//设置右x下y前z的摄像机坐标到iewporjectionmatrix里面
-    void Add_Camera(Eigen::MatrixXd &Trans,std::string buffer_name) override;
+    void Add_Camera(Eigen::MatrixXd &Trans,float scale,std::string buffer_name) override;
     void Create_Buffer(std::string buffer_name) override;
     void Draw_Triangular(std::string buffername) override;
     void Push_Data2buffer(std::string buffer_name,std::vector<float> data) override;

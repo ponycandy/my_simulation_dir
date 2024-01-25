@@ -58,49 +58,49 @@ void glpainter3D::Set_Frame_Camera()
     m_glwidget->Transformworld2worldMat=m_glwidget->camera_frame_T;
 }
 
-void glpainter3D::Add_Camera(Eigen::MatrixXd &Trans, std::string buffer_name)
+void glpainter3D::Add_Camera(Eigen::MatrixXd &Trans, float scale,std::string buffer_name)
 {
     GLuint vbo=name_2_buffermap.value(buffer_name);
     std::shared_ptr<std::vector<float>> data_stored=name_2_datamap.value(buffer_name);
     //接下来根据Trans生成8个顶点
-    float scale=1;
+    //固定在相机的本体坐标系是右x下y前z，所以，相机初始的放置位置应该是世界坐标系绕x轴右手旋转-90度的
     std::vector<Eigen::MatrixXd> points;
     //下面首先完成线框
-    Eigen::MatrixXd R_B;R_B.resize(4,1);R_B<<0.5*scale,0,0.5*scale,1;
-    Eigen::MatrixXd R_F;R_F.resize(4,1);R_F<<0.5*scale,0,-0.5*scale,1;
+    Eigen::MatrixXd R_B;R_B.resize(4,1);R_B<<0.5*scale,-0.5*scale,0,1;
+    Eigen::MatrixXd R_F;R_F.resize(4,1);R_F<<-0.5*scale,-0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<0.5*scale,0,-0.5*scale,1;R_F<<-0.5*scale,0,-0.5*scale,1;
+    R_B<<-0.5*scale,-0.5*scale,0,1;R_F<<-0.5*scale,0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-0.5*scale,0,-0.5*scale,1;R_F<<-0.5*scale,0,0.5*scale,1;
+    R_B<<-0.5*scale,0.5*scale,0,1;R_F<<0.5*scale,0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-0.5*scale,0,0.5*scale,1;R_F<<0.5*scale,0,0.5*scale,1;
+    R_B<<0.5*scale,0.5*scale,0,1;R_F<<0.5*scale,-0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<0.5*scale,0,0.5*scale,1;R_F<<scale,scale,scale,1;
+    R_B<<0.5*scale,-0.5*scale,0,1;R_F<<scale,-scale,scale,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<scale,scale,scale,1;R_F<<-scale,scale,scale,1;
+    R_B<<scale,-scale,scale,1;R_F<<-scale,-scale,scale,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-scale,scale,scale,1;R_F<<-scale,scale,-scale,1;
+    R_B<<-scale,-scale,scale,1;R_F<<-scale,scale,scale,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-scale,scale,-scale,1;R_F<<scale,scale,-scale,1;
+    R_B<<-scale,scale,scale,1;R_F<<scale,scale,scale,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<scale,scale,-scale,1;R_F<<scale,scale,scale,1;
+    R_B<<scale,scale,scale,1;R_F<<scale,-scale,scale,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-scale,scale,scale,1;R_F<<-0.5*scale,0,0.5*scale,1;
+    R_B<<-scale,-scale,scale,1;R_F<<-0.5*scale,-0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<-scale,scale,-scale,1;R_F<<-0.5*scale,0,-0.5*scale,1;
+    R_B<<-scale,scale,scale,1;R_F<<-0.5*scale,0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
 
-    R_B<<scale,scale,-scale,1;R_F<<0.5*scale,0,-0.5*scale,1;
+    R_B<<scale,scale,scale,1;R_F<<0.5*scale,0.5*scale,0,1;
     points.push_back(R_B);points.push_back(R_F);
     //然后作transformation
     for(auto point:points)

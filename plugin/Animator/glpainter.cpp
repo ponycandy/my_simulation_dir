@@ -16,7 +16,7 @@ glpainter::glpainter(QObject *parent) : QObject(parent),m_glwidget(NULL),m_widge
 
     m_width=1000;
     m_height=600;
-    background.setColor(Qt::black);
+    background.setColor(Qt::white);
     background.setStyle(Qt::SolidPattern);
     agent_brush.setColor(Qt::red);
     agent_brush.setStyle(Qt::SolidPattern);
@@ -98,6 +98,12 @@ void glpainter::zoomin()
     y_min=mousey-(mousey-y_min)/factorin;
     y_max=mousey+(y_max-mousey)/factorin;
     pixel_per_meter=m_height/(y_max-y_min);//pixel per meter
+}
+
+void glpainter::setbackground(unsigned int color)
+{
+    background.setColor(color);
+    background.setStyle(Qt::SolidPattern);
 }
 
 void glpainter::register_painter(DrawOperation *painter)
