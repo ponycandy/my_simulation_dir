@@ -9,6 +9,8 @@
 #include "cardataviewer.h"
 #include "service/Coreservice.h"
 #include "service/VideoCoreservice.h"
+#include "service/Mapservice.h"
+
 class VehicleManager:public QObject,public EventService
 {
     Q_OBJECT
@@ -19,6 +21,8 @@ public:
     QMap<QString,VideoCoreservice*> videoserviceMap;
     int vehicle_order;
     CardataViewer *viewer;
+    MapService *mapservl;
+    InteractiveMap *mapwidget;
     Coreservice *coreservice;
 };
 

@@ -31,7 +31,9 @@ void startwindow::setupwidget()
     /*初始化12个按钮，左右两边各6个，并将指针插入到节点管理器中*/
     /*左边的六个按钮*/
     m_leftWidget = new QWidget;
-    m_leftWidget->setFixedSize(121,980);
+    m_leftWidget->setFixedSize(120,1080);
+    m_leftWidget->setStyleSheet("background-color: white");
+
     m_leftLayout = new QVBoxLayout;
     m_leftLayout->setContentsMargins(0, 0, 0, 0);
     m_leftLayout->setSpacing(0);
@@ -41,7 +43,7 @@ void startwindow::setupwidget()
     {
         QToolButton *button = new QToolButton;
         button->setProperty("style", "MenuLeftButton");
-        button->setFixedSize(121,163);
+        button->setFixedSize(120,181);
         QSizePolicy policy = button->sizePolicy();
         policy.setVerticalPolicy(QSizePolicy::Fixed);
         button->setSizePolicy(policy);
@@ -53,7 +55,9 @@ void startwindow::setupwidget()
 
     /*右边的六个按钮*/
     m_rightWidget = new QWidget;
-    m_rightWidget->setFixedSize(121, 980);
+    m_rightWidget->setFixedSize(120, 1080);
+    m_rightWidget->setStyleSheet("background-color: white");
+
     m_rightLayout = new QVBoxLayout;
     m_rightLayout->setContentsMargins(0, 0, 0, 0);
     m_rightLayout->setSpacing(0);
@@ -64,7 +68,7 @@ void startwindow::setupwidget()
         QToolButton *button = new QToolButton;
         button->setProperty("style", "MenuRightButton");
 
-        button->setFixedSize(121,163);
+        button->setFixedSize(120,181);
 
         QSizePolicy policy = button->sizePolicy();
         policy.setVerticalPolicy(QSizePolicy::Fixed);

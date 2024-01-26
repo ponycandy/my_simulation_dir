@@ -11,6 +11,8 @@ VehicleManager::VehicleManager(QObject *parent) : QObject(parent)
     viewer=new CardataViewer;
     coreservice=VehicleControllerActivator::getService<Coreservice>("Coreservice");
     coreservice->addView(UcsDefines::CardataViewer,viewer);
+    mapservl=VehicleControllerActivator::getService<MapService>("MapService");
+    mapwidget=mapservl->getMapwidget();
 }
 
 void VehicleManager::EventTriggeres(XTLevent event)
@@ -43,6 +45,7 @@ void VehicleManager::EventTriggeres(XTLevent event)
         vidservice->setrtmpPath(vehicle->videoAddress);
         vehicle_order++;
         viewer->Addwidget(vidservice->getVideoPlayerWindow(), vehicle->vehiclename,"VideoStream");
+        viewer->Addwidget(mapwidget, vehicle->vehiclename,"LocalMap");
     }
     if(event.eventname==UCSEVENT::MQTTSTART)
     {

@@ -22,7 +22,10 @@ public:
     QMap<int,QString> order_2_namemap;
     QMap<QString,int> combox_map_view_genre;
 
-    QMap<QString,QMap<QString,QWidget*>> two_2_1map;//第一输入为车辆名称，第二输入为窗口类型.
+    QMap<QString,QWidget*> two_2_1map;//第一输入为车辆名称，第二输入为窗口类型.
+    QMap<QString,int > temp_1;//第一输入为车辆名称，第二输入为窗口类型.
+    QMap<QString,int > temp_2;//第一输入为车辆名称，第二输入为窗口类型.
+
     VideoCoreservice *vid;
     QWidget *nullwidget;
     videoplayer *m_video;

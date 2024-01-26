@@ -24,14 +24,11 @@ AvDecoder::~AvDecoder()
 
 void AvDecoder::startDecode(const QString &url)
 {
-    m_videoPath = url;
-
-    stopDecode();
-
-    m_isThreadRunningState = true;
-
-    g_decoding = true;
-    this->start();
+    QString text;
+    text="roslaunch  ydlidar_ros_driver lidar.launch &";
+    std::system(text.toLatin1().data());
+    //每次只启动一个进程，一旦进程启动，或者界面切换，就需要重连相机
+    //我们不考虑更多可变性了，代码简单些第一位
 }
 
 void AvDecoder::stopDecode()

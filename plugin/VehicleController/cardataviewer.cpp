@@ -34,27 +34,27 @@ void CardataViewer::clearcombox()
 
 void CardataViewer::Addwidget(QWidget *windows, QString vehicle, QString windowname)
 {
-    if(two_2_1map.contains(vehicle))
+    if(temp_1.contains(vehicle))
     {
 
     }
     else
     {
         ui->comboBox->addItem(vehicle);
+        temp_1.insert(vehicle,0);
     }
-    if(combox_map_view_genre.contains(windowname))
+    if(temp_2.contains(windowname))
     {
 
     }
     else
     {
-        combox_map_view_genre.insert(windowname,combox_map_view_genre.size());
+        temp_2.insert(windowname,0);
         ui->comboBox_2->addItem(windowname);
     }
     m_video->addWidget(windows);
-    QMap<QString ,QWidget*> pair;
-    pair.insert(windowname,windows);
-    two_2_1map.insert(vehicle,pair);
+
+    two_2_1map.insert(vehicle+windowname,windows);
     //然后加combox
 
 
@@ -62,8 +62,8 @@ void CardataViewer::Addwidget(QWidget *windows, QString vehicle, QString windown
 
 void CardataViewer::changeTowidget(QString vehicle, QString windowname)
 {
-    QMap<QString ,QWidget*> pair=two_2_1map.value(vehicle);
-    m_video->setCurrentWidget(pair.value(windowname));
+    QWidget* pair=two_2_1map.value(vehicle+windowname);
+    m_video->setCurrentWidget(pair);
 }
 
 void CardataViewer::switchview()

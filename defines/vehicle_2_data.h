@@ -90,10 +90,10 @@ typedef  struct   _SINGEPOINTDATA{
 
 }SINGEPOINTDATA;
 typedef  struct   _ORIENTATION{
-    _Float64 x;
-    _Float64 y;
-    _Float64 z;
-    _Float64 w;
+    long double  x;
+    long double  y;
+    long double  z;
+    long double  w;
 }ORIENTATION;
 typedef  struct   _MOTORSTATE{
 
@@ -114,18 +114,18 @@ typedef  struct   _POINTCLOUD{
 typedef  struct   _TFTRANS{
     uint32_t secquense;
     ROSTIMESTAMP time;
-    _Float64 x;
-    _Float64 y;
-    _Float64 z;
+    long double  x;
+    long double  y;
+    long double  z;
     ORIENTATION orien;
 }TFTRANS;
 typedef  struct   _DOWNSTREAM_INFO{
     short   header;
     vehicle_state   m_state;
     control_mode   m_mode;
-    _Float32   electric_left;
-    _Float32   omega_chasis;
-    _Float32   lin_chasis;
+    float   electric_left;
+    float   omega_chasis;
+    float   lin_chasis;
     IMUDATA imu_data;
     MOTORSTATE motor_state;
     uint32_t left_odom;
@@ -141,9 +141,9 @@ typedef  struct   _DOWNSTREAM_INFO_ISSUED{
     short   header;
     vehicle_state   m_state;
     control_mode   m_mode;
-    _Float32   electric_left;
-    _Float32   omega_chasis;
-    _Float32   lin_chasis;
+    float   electric_left;
+    float   omega_chasis;
+    float   lin_chasis;
     IMUDATA imu_data;
     MOTORSTATE motor_state;
     uint32_t left_odom;
@@ -158,9 +158,9 @@ typedef  struct   _DOWNSTREAM_INFO_ISSUED{
 typedef  struct   _USED_DATA{
     vehicle_state   m_state;
     control_mode   m_mode;
-    _Float32   electric_left;
-    _Float32   omega_chasis;
-    _Float32   lin_chasis;
+    float   electric_left;
+    float   omega_chasis;
+    float   lin_chasis;
     IMUDATA imu_data;
     MOTORSTATE motor_state;
     uint32_t left_odom;
@@ -185,142 +185,6 @@ typedef  struct   _MOTIONCOMMAND{
     double angular;
 }MOTIONCOMMAND;
 #pragma pack(pop)
-///** *************************** 操控席位<-协同指控席位*****************************************/
-///**
-// * 1.1 任务下发
-// **/
-//#define   TaskPositionNum   2
-//#define   OperationUnitNumber 33
-//#define   NameMaxNum  50
-//#define   ProccessDescriptionNum  50
-//#define associatedtargetnum 30
-//#define associatedtargetcode 33
-
-//typedef  struct  _CoorperativeTaskIssuedTrans{
-//    char      operationalUnitNumber[OperationUnitNumber];
-//    char      actionName[NameMaxNum];
-//    CooperativeTaskType   cooperativeTaskType;
-//    CooperativeMemberType cooperativeMemberType;
-//    CooperativeRole       cooperativeRole;
-//    CooperativeTaskActionType cooperativeTaskActionType;
-//    TaskSystemTimeTrans     taskStartTime;
-//    TaskSystemTimeTrans     taskCompleteTime;
-//    OperationalAreaDescription  areaDescription;
-//    quint32                 areaPostitonNum;///
-//    QVector<TaskPostitonTrans>  areaPosition;
-//    QString                 processDescription;
-//    quint32                 taskPostitonNum;
-//    QVector<TaskPostitonTrans>  processPosition;
-//    quint32                 tasktargetnum;
-//    QVector<TaskTargetTrans>     taskTarget;
-//}CoorperativeTaskIssuedTrans;
-
-/**
- * 1.2 统一目标（协同席位下发发给操控席位的目标信息）
- **/
-//typedef  struct _UnifiedTargetTrans{
-//    char   unifiedCode[32];
-//    char   targetName[60];
-//    TargetType  targetType;
-//    double      longtitude;
-//    double      latitude;
-//    double      altitude;
-//    TaskSystemTimeTrans time;
-//    quint16     moveSpeed;
-//    quint16     moveDirection;
-//    float       targetThreat;
-//    char      associatedTargetTable[associatedtargetnum];
-//    char      associatedTargetCode[associatedtargetcode];
-//}UnifiedTargetTrans;
-
-
-/** ***************************操控席位->协同指控席位*****************************************/
-
-/**
- *     2.1.2 任务执行情况上报
- **//*
-typedef  struct _ReportTaskExecutionTrans{
-    QString         operationalUnitNumber;
-    QString         actionName;
-    TaskSystemTimeTrans  reportTime;
-    TaskActionType  taskActionType;
-    TaskSystemTimeTrans  realStartTime;
-    TaskSystemTimeTrans  realEndTime;
-    int targetnum;
-    QVector<TargetDamageInformationTrans> targetDamageInformation;
-    QVector<TaskTargetInfoTrans>  taskTargetInfo;
-}ReportTaskExecutionTrans;*/
-
-/**
- *  2.1.2 侦察情报上报
- **/
-//typedef  struct _InvestigationIntelligenceTrans{
-//    quint32  operationalUnitCode;
-//    quint32  sensorNum;
-//    SensorType sensorType;
-//    int   targetNum;
-//    int   targetMotorState;
-//    double targetTypeRaliable;
-//    FriendFoeProperties friendFoeProperties;
-//    CoordinateSystemType coordinateSystemType;
-//    double   longtitude;
-//    double   latitude;
-//    double   altitude;
-//    char      dataAcquisitionTime[6];
-//    char      dataAcquisitionDay[8];
-//}InvestigationIntelligenceTrans;
-
-///**
-// * 态势信息
-// **/
-//typedef  struct _SituationalInformationTrans
-//{
-//    quint16 senderCode;
-//    quint16 recvieCode;
-//    quint32 currentOperationalUnitCode;
-//    quint8  operationalUnitCode;
-//    float   speed;
-//    float   direction;
-//    double  longtitude;
-//    double  latitude;
-//    double  altitude;
-//    float   lineFireDirection;
-//}SituationalInformationTrans;
-
-///**
-// * 操控权限配置
-// **/
-//typedef  struct _CKpermissionconfigTrans
-//{
-//    char infonum;
-//    QVector<PermissionTrans> permissiontrans;
-//}CKpermissionconfigTrans;
-
-//}
-
-
-//Q_DECLARE_METATYPE(Xtzkx::CooperativeTaskType)
-//Q_DECLARE_METATYPE(Xtzkx::CooperativeMemberType)
-//Q_DECLARE_METATYPE(Xtzkx::CooperativeRole)
-//Q_DECLARE_METATYPE(Xtzkx::CooperativeTaskActionType)
-//Q_DECLARE_METATYPE(Xtzkx::OperationalAreaDescription)
-//Q_DECLARE_METATYPE(Xtzkx::SensorType)
-//Q_DECLARE_METATYPE(Xtzkx::TargetType)
-//Q_DECLARE_METATYPE(Xtzkx::FriendFoeProperties)
-//Q_DECLARE_METATYPE(Xtzkx::CoordinateSystemType)
-//Q_DECLARE_METATYPE(Xtzkx::TaskActionType)
-//Q_DECLARE_METATYPE(Xtzkx::TargetDamageState)
-//Q_DECLARE_METATYPE(Xtzkx::TaskSystemTimeTrans)
-//Q_DECLARE_METATYPE(Xtzkx::TaskPostitonTrans)
-//Q_DECLARE_METATYPE(Xtzkx::TaskTargetTrans)
-//Q_DECLARE_METATYPE(Xtzkx::TargetDamageInformationTrans)
-//Q_DECLARE_METATYPE(Xtzkx::TaskTargetInfoTrans)
-//Q_DECLARE_METATYPE(Xtzkx::CoorperativeTaskIssuedTrans)
-//Q_DECLARE_METATYPE(Xtzkx::UnifiedTargetTrans)
-//Q_DECLARE_METATYPE(Xtzkx::ReportTaskExecutionTrans)
-//Q_DECLARE_METATYPE(Xtzkx::InvestigationIntelligenceTrans)
-//Q_DECLARE_METATYPE(Xtzkx::SituationalInformationTrans)
-//Q_DECLARE_METATYPE(Xtzkx::CKpermissionconfigTrans)
 }
 Q_DECLARE_METATYPE(VEHICLE_2_DATA::POINTCLOUD);
 Q_DECLARE_METATYPE(VEHICLE_2_DATA::ROSTIMESTAMP);

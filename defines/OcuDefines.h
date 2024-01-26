@@ -27,12 +27,12 @@ namespace UcsDefines {
 typedef enum {
     UCS_VIEW_KIND_NONE = 0,
     UCS_VIEW_KIND_MAIN,                               //! 主界面
-    VEHICLE_1_WINDOW,                                   //!vehicle 1 interface
+    VEHICLE_WINDOW,                                   //!vehicle 1 interface
     VEHICLE_2_WINDOW,                                   //!vehicle 2 interface
 
     NETCONFIG_INTERFACE,                                   //!NETCONFIG_INTERFACE 1 interface
     ROSNODEMANAGEMENT,                                   //ROSNODEMANAGEMENT
-    VEHICLE1_CONTROL,                                   //ROSNODEMANAGEMENT
+    CardataViewer,                                   //ROSNODEMANAGEMENT
     VEHICLE1_VIDEO,                                   //ROSNODEMANAGEMENT
     VEHICLE2_CONTROL,                                   //ROSNODEMANAGEMENT
     VEHICLE2_VIDEO,                                   //ROSNODEMANAGEMENT
@@ -60,43 +60,7 @@ typedef enum {
     UCS_VIEW_KIND_SUB_CORE_VIDEO,                      //! 第二张界面视频界面
 
 
-    UCS_VIEW_KIND_MIANWIDOW_CORE,                      //!整体框架的主界面
-
-    UCS_VIEW_KIND_QXXLC_OPERATION_CONTROL,             //!轻型巡逻车车辆操控
-    UCS_VIEW_KIND_QXXLC_FIRE_CONTROL,                  //!轻型巡逻车火控操控
-    UCS_VIEW_KIND_QXXLC_COMMAND_CONTROL,               //!轻型巡逻车指控界面
-
-    UCS_VIEW_KIND_ZXLSC_OPERATION_CONTROL,             //!中型轮式车车辆操控
-    UCS_VIEW_KIND_ZXLSC_FIRE_CONTROL,                  //!中型轮式车火控操控
-    UCS_VIEW_KIND_ZXLSC_COMMAND_CONTROL,               //!中型轮式车指控界面
-
-    UCS_VIEW_KIND_ZXLDC_OPERATION_CONTROL,             //!中型履带车车辆操控
-    UCS_VIEW_KIND_ZXLDC_FIRE_CONTROL,                  //!中型履带车火控操控
-    UCS_VIEW_KIND_ZXLDC_COMMAND_CONTROL,               //!中型履带车指控界面
-
-    UCS_VIEW_KIND_XXDZZ_OPERATION_CONTROL,             //!新型电子战车辆操控
-    UCS_VIEW_KIND_XXDZZ_FIRE_CONTROL,                  //!新型电子战火控操控
-    UCS_VIEW_KIND_XXDZZ_COMMAND_CONTROL,               //!新型电子战指控界面
-
-    UCS_VIEW_KIND_ZXBLG_OPERATION_CONTROL,             //!中型北理工车辆操控
-    UCS_VIEW_KIND_ZXBLG_FIRE_CONTROL,                  //!中型北理工火控操控
-    UCS_VIEW_KIND_ZXBLG_COMMAND_CONTROL,               //!中型北理工指控界面
-
-    UCS_VIEW_KIND_XXFKC_OPERATION_CONTROL,             //!新型防空车车辆操控
-    UCS_VIEW_KIND_XXFKC_FIRE_CONTROL,                  //!新型防空车火控操控
-    UCS_VIEW_KIND_XXFKC_COMMAND_CONTROL,               //!新型防空车指控界面
-
-    UCS_VIEW_KIND_JJLSC_OPERATION_CONTROL,             //!军交8*轮式车辆操控
-    UCS_VIEW_KIND_JJLSC_FIRE_CONTROL,                  //!军交8*轮式火控操控
-    UCS_VIEW_KIND_JJLSC_COMMAND_CONTROL,               //!军交8*轮式指控界面
-
-    UCS_VIEW_KIND_BKLSC_OPERATION_CONTROL,             //!207所8*8轮式车辆操控
-    UCS_VIEW_KIND_BKLSC_FIRE_CONTROL,                  //!207所8*8轮式火控操控
-    UCS_VIEW_KIND_BKLSC_COMMAND_CONTROL,               //!207所8*8轮式指控界面
-
-    UCS_VIEW_KINE_OCU_CC_CONTROL,                      //! 指控信息显示界面
-    UCS_VIEW_KIND_DJXLC_OPERATION_CONTROL,             //! 岛礁巡逻车操控界面
-    UCS_VIEW_KIND_DJXLC_FIRE_CONTROL,                  //! 岛礁巡逻车火控界面
+    UCS_VIEW_KIND_MIANWIDOW_CORE,                      //!整体框架的主界面                                 //ROSNODEMANAGEMENT
 } UcsViewKind;
 
 typedef enum {

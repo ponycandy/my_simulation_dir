@@ -1,0 +1,8 @@
+<plugins>
+
+
+                <plugin order="1" name="OpenCVGraph" />
+                <plugin order="1" name="TestOPencvAndZED" />
+<!--		<endplugin/>-->
+<pluginnum value="1"/>
+</plugins>

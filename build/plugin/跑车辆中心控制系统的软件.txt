@@ -1,0 +1,10 @@
+<plugins>
+<plugin order="1" name="ocu_core" />
+<plugin order="1" name="ocu_car_manager" />
+<plugin order="1" name="Datamanager" />
+<plugin order="1" name="ocu_video_player" />
+<plugin order="1" name="VehicleController" />
+
+<!--		<endplugin/>-->
+<pluginnum value="1"/>
+</plugins>

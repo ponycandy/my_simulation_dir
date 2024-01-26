@@ -14,6 +14,7 @@ void ocu_mapActivator::init(PluginContext *CONTEXT)
 void ocu_mapActivator::start()
 {
     m_manager=new MapManager;
+    ocu_mapActivator::registerservice(m_manager,"MapService");
 }
 void ocu_mapActivator::stop()
 {

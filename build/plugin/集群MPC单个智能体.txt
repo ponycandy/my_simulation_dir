@@ -1,0 +1,12 @@
+<plugins>
+<plugin order="1" name="TCPCommunicator" />
+<plugin order="1" name="C_Python_decode" />
+
+<plugin order="1" name="NonlinearSolver" />
+
+                <plugin order="1" name="singleCarCalculator" />
+                <plugin order="1" name="singlCarcalculatorCompare" />
+                <plugin order="1" name="swarm_NMPC_trajectory_planner" />
+<!--		<endplugin/>-->
+<pluginnum value="1"/>
+</plugins>

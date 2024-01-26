@@ -12,6 +12,8 @@ coremainwindow::coremainwindow(QWidget *parent) : QWidget(parent)
 
 
     this->setGeometry(0,0,1920,1080);
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+
     showFullScreen();
 }
 
@@ -89,7 +91,7 @@ void coremainwindow::setupUi()
 {
 
     //! 设置透明属性，为了显示视频
-   // setAttribute(Qt::WA_TranslucentBackground, true);
+    setAttribute(Qt::WA_TranslucentBackground, true);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -99,13 +101,14 @@ void coremainwindow::setupUi()
 
     m_centralWidget = new QWidget;
     mainLayout->addWidget(m_centralWidget);
-
+    m_centralWidget->setAttribute(Qt::WA_TranslucentBackground, true);
     QHBoxLayout *centralLayout = new QHBoxLayout;
     centralLayout->setContentsMargins(0, 0, 0, 0);
     centralLayout->setSpacing(0);
     centralLayout->setContentsMargins(0,0,0,0);
 
     m_viewManager = new CoreViewManager;
+    m_viewManager->setAttribute(Qt::WA_TranslucentBackground, true);
     centralLayout->addWidget(m_viewManager);
 
     m_centralWidget->setLayout(centralLayout);

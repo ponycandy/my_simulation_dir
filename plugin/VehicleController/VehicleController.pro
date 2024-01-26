@@ -10,6 +10,8 @@ DEFINES += VEHICLECONTROLLER_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
 DESTDIR = ../../build
 include(../../3rdlib/mqtt/mqtt.pri)
+include (../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
+
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../

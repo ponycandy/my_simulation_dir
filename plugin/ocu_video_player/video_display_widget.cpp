@@ -2,14 +2,16 @@
 #include "ui_video_display_widget.h"
 #include <QTimer>
 #include <QDebug>
-#define RECV_FRAME_IMAGE_TIMEOUT 2000
-#define VIDEO_CONTROL_DISPLAY
+#include <cstdlib>
 video_display_widget::video_display_widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::video_display_widget)
 {
     ui->setupUi(this);
-    init();
+    mode=0;//0 is play stream,1 is play local
+    ui->widget->setStyleSheet("background-color: white");
+    ui->widget_2->setStyleSheet("background-color: white");
+
 }
 
 video_display_widget::~video_display_widget()
@@ -17,77 +19,37 @@ video_display_widget::~video_display_widget()
     delete ui;
 }
 
-void video_display_widget::init()
-{
-    initModule();
-    initUi();
-    initConnector();
-}
 
-void video_display_widget::initModule()
-{
-    m_pAvPlayer = new AvPlayer(this);
-    m_pRecvFrameImageTimer = new QTimer(this);
-    m_pRecvFrameImageTimer->setInterval(RECV_FRAME_IMAGE_TIMEOUT);
-}
-
-void video_display_widget::initUi()
-{
-}
-
-void video_display_widget::initConnector()
-{
-    qRegisterMetaType<QSharedPointer<QImage>>("QSharedPointer<QImage>");
-    qRegisterMetaType<IMAGE_DATA::_IMAGEDATA>("IMAGE_DATA::_IMAGEDATA");
-
-    connect(m_pAvPlayer, SIGNAL(signalFrameImage(IMAGE_DATA::_IMAGEDATA)), this, SLOT(slotOnFrameImageNotify(IMAGE_DATA::_IMAGEDATA)), Qt::QueuedConnection);
-    connect(m_pAvPlayer, SIGNAL(signalTryReconnect()), this, SLOT(slotOnTryReconnect()));
-    connect(m_pAvPlayer, SIGNAL(signalVideoPlayFinished()), this, SLOT(slotOnVideoPlayFinished()));
-    connect(m_pRecvFrameImageTimer, SIGNAL(timeout()), this, SLOT(slotOnRecvFrameImageTimeout()));
-}
-void video_display_widget::createReconnectFrameImageDisplay()
-{
-    QSharedPointer<QImage> spImage = QSharedPointer<QImage>(new QImage(":/img/titan.PNG"));
-    ui->widget_video->setImage(spImage.data());
-    //set the background image of the display window
-}
 
 
 void video_display_widget::slotOnStart()
 {
-    Q_ASSERT(m_pAvPlayer);
-    QString rtmp_path=pathname;
-    m_pAvPlayer->play(rtmp_path);
-    m_pRecvFrameImageTimer->start();
+    if(mode==0)//remote
+    {
+        QString cmd="start cmd.exe /k ffplay -fflags nobuffer -flags low_delay -framedrop rtmp://"+pathname+" -noborder -left 300 -top 420 -vf scale=720:480";
+        std::system(cmd.toLatin1().data());
+    }
+    else//local
+    {
+        QString cmd="start cmd.exe /k ffplay "+ QString(" -noborder -left 300 -top 420 -x 720 -y 480 ")+pathname;
+        std::system(cmd.toLatin1().data());
+    }
+    //更改透明度！
+    // Set the widget as transparent
+    ui->widget_video->setWindowOpacity(0);
+    ui->widget_video->setWindowOpacity(0);
+    ui->widget_video->setAttribute(Qt::WA_TranslucentBackground);
+    ui->widget_video->setAttribute(Qt::WA_NoSystemBackground);
+    ui->widget_video->setWindowFlags(Qt::FramelessWindowHint);
 }
 
 void video_display_widget::slotOnStop()
 {
-    m_pAvPlayer->stop();
-    m_pRecvFrameImageTimer->stop();
-    createReconnectFrameImageDisplay();
-}
+    QString cmd=" taskkill /f /im ffplay.exe";
+    std::system(cmd.toLatin1().data());
 
-void video_display_widget::slotOnFrameImageNotify(IMAGE_DATA::_IMAGEDATA spFrameImage)
-{
-    ui->widget_video->setImage(spFrameImage.sp_t_image.data());
-}
-
-void video_display_widget::slotOnTryReconnect()
-{
-    createReconnectFrameImageDisplay();
-
-}
-
-void video_display_widget::slotOnVideoPlayFinished()
-{
-    createReconnectFrameImageDisplay();
-    m_pRecvFrameImageTimer->stop();
-}
-
-void video_display_widget::slotOnRecvFrameImageTimeout()
-{
-    createReconnectFrameImageDisplay();
+//    cmd=" taskkill /f /im cmd.exe";
+//    std::system(cmd.toLatin1().data());
 }
 
 void video_display_widget::on_horizontalSlider_valueChanged(int value)

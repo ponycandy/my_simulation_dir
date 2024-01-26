@@ -5,12 +5,7 @@
 #include <QImage>
 #include <QSharedPointer>
 #include <defines/VehicleData.h>
-extern "C"
-{
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-};
+
 
 class AvDecoder : public QThread
 {
@@ -24,7 +19,6 @@ public:
     /*解码*/
     void startDecode(const QString &url);
     void stopDecode();
-    void parse_time( IMAGE_DATA::_IMAGEDATA *structdata, const AVFrame *Frame);
 
 signals:
     void signalDecodeFinished();
@@ -50,7 +44,6 @@ private:
     void release();
 
     void decode();
-    void decodeFrame(AVFormatContext *pAvFmtCtx, uint streamIndex);
 
     void debugInfo(const QString &text, AVDEBUG_TYPE type = AVDEBUG_INFO);
 

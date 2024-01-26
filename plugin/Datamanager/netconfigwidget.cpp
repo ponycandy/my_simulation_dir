@@ -11,6 +11,7 @@ Netconfigwidget::Netconfigwidget(QWidget *parent) :
     ui(new Ui::Netconfigwidget)
 {
     ui->setupUi(this);
+    setStyleSheet("background-color: white");
     ui->tableWidget->setRowCount(0);
     ui->tableWidget->setColumnCount(13);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -58,7 +59,7 @@ void Netconfigwidget::readconfig()
         std::string port_R;carxmlreader.xmlRead("port_R",port_R);
         std::string host_R;carxmlreader.xmlRead("host_R",host_R);
         std::string cilentID_R;carxmlreader.xmlRead("cilentID_R",cilentID_R);
-        std::string videoAddress;carxmlreader.xmlRead("videoAddress",cilentID_R);
+        std::string videoAddress;carxmlreader.xmlRead("videoAddress",videoAddress);
         videoAddresses.push_back(QString::fromStdString(videoAddress));
 
         QString vehiclename=filelists[car_count-1];
@@ -105,11 +106,11 @@ void Netconfigwidget::on_pushButton_2_clicked()
         m_event.m_dict.insert("host(S)",ui->tableWidget->item(i,2)->text());
         m_event.m_dict.insert("port(S)",ui->tableWidget->item(i,3)->text());
         m_event.m_dict.insert("topicname(S)",ui->tableWidget->item(i,4)->text());
-        m_event.m_dict.insert("username(S)",ui->tableWidget->item(i,5)->text());    m_event.m_dict.insert("vehicle_num",ui->tableWidget->item(i,0)->text());
+        m_event.m_dict.insert("username(S)",ui->tableWidget->item(i,5)->text());
         m_event.m_dict.insert("password(S)",ui->tableWidget->item(i,6)->text());
-        m_event.m_dict.insert("cilentID(R)",ui->tableWidget->item(i,7)->text());    m_event.m_dict.insert("vehicle_num",ui->tableWidget->item(i,0)->text());
+        m_event.m_dict.insert("cilentID(R)",ui->tableWidget->item(i,7)->text());
         m_event.m_dict.insert("host(R)",ui->tableWidget->item(i,8)->text());
-        m_event.m_dict.insert("port(R)",ui->tableWidget->item(i,9)->text());    m_event.m_dict.insert("vehicle_num",ui->tableWidget->item(i,0)->text());
+        m_event.m_dict.insert("port(R)",ui->tableWidget->item(i,9)->text());
         m_event.m_dict.insert("topicname(R)",ui->tableWidget->item(i,10)->text());
         m_event.m_dict.insert("username(R)",ui->tableWidget->item(i,11)->text());
         m_event.m_dict.insert("password(R)",ui->tableWidget->item(i,12)->text());

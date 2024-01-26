@@ -7,7 +7,8 @@
 #include <service/Mapservice.h>
 #include <mapwidget.h>
 #include "service/ocu_car_coreservice.h"
-
+#include "graphicsmap.h"
+#include "interactivemap.h"
 class MapWidget;
 
 class MapManager : public QObject, public MapService
@@ -20,11 +21,10 @@ public:
      * @param parent
      */
     explicit MapManager(QObject *parent = nullptr);
-
+    InteractiveMap* getMapwidget() override;
     ~MapManager();
 
-    ocu_car_coreservice *m_service;
-
+    InteractiveMap* map ;
 
 
 

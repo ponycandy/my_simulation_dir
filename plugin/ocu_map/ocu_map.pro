@@ -1,9 +1,8 @@
-QT       += core gui testlib quickwidgets
+QT       += core gui testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+include (../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
 CONFIG += c++17
-CONFIG -= qml_debug
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 
@@ -32,8 +31,5 @@ HEADERS += \
 
 FORMS += \
     mapwidget.ui
-
-RESOURCES += \
-    map_res.qrc
 
 

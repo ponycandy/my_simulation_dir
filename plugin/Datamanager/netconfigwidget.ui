@@ -14,20 +14,38 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_15">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_8">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
            <property name="font">
             <font>
              <family>Agency FB</family>
@@ -41,6 +59,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_7">
              <property name="text">
@@ -65,6 +86,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label">
              <property name="text">
@@ -86,6 +110,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
@@ -107,6 +134,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_3">
              <property name="text">
@@ -128,6 +158,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_4">
              <property name="text">
@@ -149,6 +182,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_5">
              <property name="text">
@@ -170,6 +206,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_6">
              <property name="text">
@@ -193,8 +232,14 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
@@ -205,7 +250,7 @@
            <item>
             <widget class="QSlider" name="horizontalSlider">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -232,6 +277,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_16">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_18">
              <property name="text">
@@ -242,7 +290,7 @@
            <item>
             <widget class="QSlider" name="horizontalSlider_2">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -296,6 +344,9 @@
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="label_9">
            <property name="font">
@@ -311,6 +362,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_11">
              <property name="text">
@@ -332,6 +386,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_12">
              <property name="text">
@@ -353,6 +410,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_13">
              <property name="text">
@@ -374,6 +434,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_14">
              <property name="text">
@@ -395,6 +458,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_13">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_15">
              <property name="text">
@@ -416,6 +482,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_14">
+           <property name="spacing">
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="label_16">
              <property name="text">

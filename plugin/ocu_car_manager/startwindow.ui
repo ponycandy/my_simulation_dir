@@ -14,6 +14,21 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <layout class="QVBoxLayout" name="H_left">
      <property name="spacing">
@@ -29,7 +44,7 @@
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page"/>
        <widget class="QWidget" name="page_2"/>
@@ -38,7 +53,11 @@
     </layout>
    </item>
    <item row="0" column="2">
-    <layout class="QVBoxLayout" name="H_right"/>
+    <layout class="QVBoxLayout" name="H_right" stretch="">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+    </layout>
    </item>
   </layout>
  </widget>

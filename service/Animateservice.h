@@ -12,6 +12,7 @@ class Animateservice
 public:
     virtual ~Animateservice(){}
     virtual void resizeWindow(int width,int height)=0;
+    virtual void setbackground(unsigned int color)=0;
     virtual void start_animate()=0;
     virtual void stop_animate()=0;
     virtual void register_painter(DrawOperation *painter)=0;
