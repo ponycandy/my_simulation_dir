@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
@@ -47,11 +47,12 @@ add_library(${PROJECT_NAME} SHARED
 add_library(Lib::GraphicsMap ALIAS ${PROJECT_NAME})
 
 #
-find_package(Qt6 COMPONENTS Core Widgets Positioning OpenGLWidgets REQUIRED)
+find_package(Qt6 COMPONENTS Core Widgets Positioning REQUIRED)
+#find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Widgets Positioning)
 
 #
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Positioning Qt6::OpenGLWidgets)
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Widgets Qt6::Positioning)
 
 #
 target_compile_definitions(${PROJECT_NAME} PRIVATE GRAPHICSMAPLIB_LIBRARY)

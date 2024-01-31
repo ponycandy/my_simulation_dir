@@ -300,7 +300,7 @@ void GraphicsMapThread::requestTile(const GraphicsMap::TileRegion &region)
     const auto &type = origin.type;
     const auto &zoom = origin.zoom;
     {
-        QTransform  rotMat;
+        QTransform rotMat;
         rotMat.rotate(region.rotation);
         QRect boundRect = rotMat.mapRect(QRectF(0, 0, region.horCount, region.verCount)).toRect();
         // noto: y向下递增

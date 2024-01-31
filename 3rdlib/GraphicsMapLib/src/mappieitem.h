@@ -1,7 +1,7 @@
 ﻿#ifndef MAPPIEITEM_H
 #define MAPPIEITEM_H
 
-#include <GraphicsMapLib_global.h>
+#include "GraphicsMapLib_global.h"
 #include <QGraphicsEllipseItem>
 #include <QGeoCoordinate>
 #include <QSet>

@@ -3,6 +3,7 @@
 #include "mappolygonitem.h"
 #include "maprouteitem.h"
 #include "mapobjectitem.h"
+#include "maprangeringitem.h"
 #include "maptrailitem.h"
 #include "maplineitem.h"
 #include <QDebug>
