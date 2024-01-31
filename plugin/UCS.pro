@@ -43,10 +43,9 @@ SUBDIRS += \
     Vehicle_simulator   \
     SwarmSimulator \
     Datamanager   \
+    ocu_map \
     ocu_car_manager   \
     ocu_core   \
-    ocu_map   \
-    topicsubscriber   \
     ocu_video_control   \
     ocu_video_player   \
     VehicleController   \

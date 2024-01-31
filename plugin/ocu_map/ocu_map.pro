@@ -1,8 +1,9 @@
-QT       += core gui testlib
+QT       += core gui testlib positioning openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-include (../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
 CONFIG += c++17
+include(../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
+
 QMAKE_CXXFLAGS += /arch:AVX
 QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 
@@ -31,5 +32,7 @@ HEADERS += \
 
 FORMS += \
     mapwidget.ui
+
+
 
 

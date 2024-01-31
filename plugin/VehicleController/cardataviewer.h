@@ -4,6 +4,7 @@
 #include <QWidget>
 #include "videoplayer.h"
 #include "service/VideoCoreservice.h"
+#include <QMap>
 namespace Ui {
 class CardataViewer;
 }

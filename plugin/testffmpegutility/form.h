@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "service/VideoCoreservice.h"
-
+#include "interactivemap.h"
 namespace Ui {
 class Form;
 }
@@ -16,6 +16,7 @@ public:
     explicit Form(QWidget *parent = nullptr);
     ~Form();
     VideoCoreservice *m_service;
+    InteractiveMap *widg;
 
 private:
     Ui::Form *ui;
