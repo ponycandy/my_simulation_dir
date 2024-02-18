@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.1, 2024-01-31T09:30:31. -->
+<!-- Written by QtCreator 12.0.1, 2024-02-18T09:20:20. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -82,6 +82,10 @@
     <valuelist type="QVariantList" key="ClangTools.SelectedFiles"/>
     <valuelist type="QVariantList" key="ClangTools.SuppressedDiagnostics"/>
     <value type="bool" key="ClangTools.UseGlobalSettings">true</value>
+   </valuemap>
+   <valuemap type="QVariantMap" key="ClangdSettings">
+    <value type="bool" key="blockIndexing">false</value>
+    <value type="bool" key="useGlobalSettings">true</value>
    </valuemap>
   </valuemap>
  </data>
@@ -238,14 +242,12 @@
     <value type="bool" key="Analyzer.Valgrind.Settings.UseGlobalSettings">true</value>
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
-    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
-     <value type="QString">Path=D:\QT\bin\6.2.4\msvc2019_64\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.36.32532\bin\HostX64\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\VCPackages;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer;C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\bin\Roslyn;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\Performance Tools\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\Team Tools\Performance Tools;C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\\x64;C:\Program Files (x86)\Windows Kits\10\bin\\x64;C:\Program Files\Microsoft Visual Studio\2022\Community\\MSBuild\Current\Bin\amd64;C:\Windows\Microsoft.NET\Framework64\v4.0.30319;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\libnvvp;D:\oneAPI\MKL\mpi\latest\bin\;D:\oneAPI\MKL\mpi\latest\bin\release\;D:\oneAPI\MKL\mpi\latest\libfabric\bin\;D:\oneAPI\MKL\mpi\latest\libfabric\bin\utils\;D:\oneAPI\MKL\tbb\latest\redist\intel64\vc_mt\;D:\oneAPI\MKL\tbb\latest\redist\ia32\vc_mt\;D:\oneAPI\MKL\compiler\latest\windows\redist\intel64_win\compiler;D:\oneAPI\MKL\compiler\latest\windows\redist\ia32_win\compiler;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;D:\git\Git\cmd;D:\Tortosegit\bin;D:\Cmake\bin;C:\Program Files\NVIDIA Corporation\Nsight Compute 2022.2.1\;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\lib;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\include;D:\PythonProject\venv\Scripts;D:\matlab\bin\runtime\win64;D:\matlab\bin\bin;D:\matlab\bin\polyspace\bin;D:\oneAPI\MKL\mkl\2023.1.0\redist\intel64;D:\oneAPI\MKL\compiler\2023.1.0\windows\redist\intel64_win\compiler;C:\Program Files (x86)\ZED SDK\dependencies\glew-1.12.0\x64;C:\Program Files (x86)\ZED SDK\dependencies\freeglut_2.8\x64;C:\Program Files (x86)\ZED SDK\dependencies\opencv_3.1.0\x64;C:\Program Files (x86)\ZED SDK\bin;D:\liballhere\opencv\opencv\build;D:\starwberryperl\c\bin;D:\starwberryperl\perl\site\bin;D:\starwberryperl\perl\bin;D:\liballhere\gpcskernel;C:\Users\ponyc\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\VC\Linux\bin\ConnectionManagerExe;C:\Program Files\Microsoft Visual Studio\2022\Community\VC\vcpkg;D:\QT\prjdir\OSGIMODULE\my_simulation_dir\build</value>
-    </valuelist>
+    <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/QT/prjdir/OSGIMODULE/my_simulation_dir/plugin/launcher/launcher.pro</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/QT/prjdir/OSGIMODULE/my_simulation_dir/plugin/launcher/launcher.pro</value>
-    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">true</value>
+    <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>

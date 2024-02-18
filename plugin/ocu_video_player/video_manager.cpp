@@ -1,9 +1,11 @@
 #include "video_manager.h"
+#include "service/ocu_car_coreservice.h"
+#include "ocu_video_playerActivator.h"
 video_manager::video_manager(QObject *parent) : QObject(parent),m_display(nullptr)
 {
     m_display=new video_display_widget;
-
-
+    // ocu_car_coreservice *m_service=ocu_video_playerActivator::getService<ocu_car_coreservice>("ocu_car_coreservice");
+    // m_service->addView()
 }
 
 QWidget *video_manager::getVideoPlayerWindow()

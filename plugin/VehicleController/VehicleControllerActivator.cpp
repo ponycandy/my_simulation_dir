@@ -14,6 +14,7 @@ void VehicleControllerActivator::init(PluginContext *CONTEXT)
 void VehicleControllerActivator::start()
 {
     m_manager=new VehicleManager;
+    registerservice(m_manager,"VehicleControlservice");
 }
 void VehicleControllerActivator::stop()
 {

@@ -3,13 +3,13 @@
 #define VEHICLECONTROLSERVICE_H
 
 #include <QObject>
-#include <Eigen/Core>
+#include <QByteArray>
 class VehicleControlservice
 {
 public:
     virtual ~VehicleControlservice(){}
-    virtual Eigen::MatrixXd feedback(Eigen::MatrixXd state,
-    Eigen::MatrixXd reference)=0;
+    virtual void send(QByteArray byteArray,QString vehicle,QString topicname)=0;
+    virtual VehicleControlservice* cloneservice()=0;
 
 };
 #define VehicleControlservice_iid "VehicleControlservice"

@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include "qmqtt.h"
+#include "Mqttmessenger/Mqttmessenger.h"
+#include "jetsonnanoDATA/jetsonnanoDATA.h"
 class SingleVehicleCard : public QObject
 {
     Q_OBJECT
@@ -13,31 +15,22 @@ public:
     void connectall();
     void initialization();
     void setNet(QMQTT::Client *client,QString cilentID,
-                QString port,QString host,QString username,QString password,
-                QString topicname);
+                QString port,QString host,QString username,QString password);
+    void send(QByteArray data,QString topic_name);
     int vehiclenumber;
     QString vehiclename;
     QString videoAddress;
     QString cilentID_S;
     QString host_S;
     QString port_S;
-    QString topicname_S;
     QString username_S;
     QString password_S;
-
-    QString cilentID_R;
-    QString host_R;
-    QString port_R;
-    QString topicname_R;
-    QString username_R;
-    QString password_R;
-    QMQTT::Client *client_S;
-    QMQTT::Client *client_R;
+    QMQTT::Client *client;
 
 signals:
 
 private slots:
-    void send(QByteArray data);
+
 
     void onConnected();
     void onReceived(const QMQTT::Message& message);

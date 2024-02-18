@@ -10,14 +10,17 @@
 #include "service/Coreservice.h"
 #include "service/VideoCoreservice.h"
 #include "service/Mapservice.h"
-
-class VehicleManager:public QObject,public EventService
+#include "service/VehicleControlservice.h"
+class VehicleManager:public QObject,public EventService,public VehicleControlservice
 {
     Q_OBJECT
 public:
     explicit VehicleManager(QObject *parent = nullptr);
     void  EventTriggeres(XTLevent event) override;
-    QVector<SingleVehicleCard*> cargroup;
+    void send(QByteArray byteArray,QString vehiclename,QString topicname) override;
+    VehicleControlservice *cloneservice() override;
+    QMap<QString,SingleVehicleCard*> cargroup;
+
     QMap<QString,VideoCoreservice*> videoserviceMap;
     int vehicle_order;
     CardataViewer *viewer;

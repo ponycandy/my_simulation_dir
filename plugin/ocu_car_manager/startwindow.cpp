@@ -90,28 +90,10 @@ void startwindow::EventTriggeres(XTLevent event)
     if (event.eventname==UcsEventConstants::TOPCI_MENU_CLICKED)
     {
         QString name=event.m_dict.value("property").toString();
-        if(name== UcsEventConstants::MENU_EVENT_LOGIN)
+        if(name== UcsEventConstants::MENU_EVENT_LOGIN || name== UcsEventConstants::EXITTOMAIN)
         {
             m_service->changeView(UcsDefines::UCS_VIEW_KIND_MAIN);
             changeView(UcsDefines::UCS_VIEW_KIND_MAIN);
-            return;
-        }
-        if(name== UcsEventConstants::ROS_NODE_MANAGEMENT)
-        {
-            changeView(UcsDefines::ROSNODEMANAGEMENT);
-            return;
-        }
-        if(name== UcsEventConstants::VEHICLE_ACTIVATED)
-        {
-            m_service->changeView(UcsDefines::CardataViewer);
-            return;
-        }
-
-        if(name== UcsEventConstants::EXITTOMAIN)
-        {
-            m_service->changeView(UcsDefines::UCS_VIEW_KIND_MAIN);
-            changeView(UcsDefines::UCS_VIEW_KIND_MAIN);
-
             return;
         }
         if(name== UcsEventConstants::STSTEMSHUTDOWN)
@@ -123,18 +105,7 @@ void startwindow::EventTriggeres(XTLevent event)
 #endif
             QApplication::quit();
         }
-        if(name== UcsEventConstants::MAPINTERFACE)
-        {
-            changeView(UcsDefines::OCU_MAP_DISPLAY);
 
-            return;
-        }
-        if(name== UcsEventConstants::ROS_RVIZ_VIEW)
-        {
-            changeView(UcsDefines::OCU_ROS_RVIZ);
-
-            return;
-        }
     }
 
 }
@@ -146,39 +117,34 @@ void startwindow::buildMenu(int type)
     {
     case UcsDefines::UCS_VIEW_KIND_MAIN:
     {
-        setButton(1, QStringLiteral("NetConfig"), UcsEventConstants::NETCONFIG, QString(":/b_img/star.png"));
-        setButton(2, QStringLiteral("Map\r\nInterface"), UcsEventConstants::MAPINTERFACE, QString(":/b_img/star.png"));
-        setButton(3, QStringLiteral("ROSnode\r\nManage"), UcsEventConstants::ROS_NODE_MANAGEMENT, QString(":/b_img/star.png"));
-        setButton(4, QStringLiteral("vehicle\r\ncontol"), UcsEventConstants::VEHICLE_ACTIVATED, QString(":/b_img/star.png"));
+        setButton(1, QStringLiteral("连接\r\n配置"), UcsEventConstants::NETCONFIG, QString(":/b_img/star.png"));
+        if(Is_map_flag==1)
+        {
+            setButton(2, QStringLiteral("切换\r\n显示"), UcsEventConstants::SWITCHTOVIDEO, QString(":/b_img/star.png"));
+        }
+        else
+        {
+            setButton(2, QStringLiteral("切换\r\n显示"), UcsEventConstants::SWITCHTOMAP, QString(":/b_img/star.png"));
+        }
+        setButton(3, QStringLiteral("指令\r\n执行"), UcsEventConstants::COMMANDLINEEXEC, QString(":/b_img/star.png"));
+        setButton(4, QStringLiteral("任务\r\n规划"), UcsEventConstants::MISSIONPLAN, QString(":/b_img/star.png"));
 
-        setButton(12, QStringLiteral("EXIT"), UcsEventConstants::STSTEMSHUTDOWN, QString(":/b_img/star.png"));
+        setButton(12, QStringLiteral("退出"), UcsEventConstants::STSTEMSHUTDOWN, QString(":/b_img/star.png"));
 
         break;
     }
     case UcsDefines::NETCONFIG_INTERFACE:
     {
-        setButton(12, QStringLiteral("BACK"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
+        setButton(12, QStringLiteral("返回"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
         break;
     }
     case UcsDefines::ROSNODEMANAGEMENT:
     {
-        setButton(12, QStringLiteral("BACK"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
+        setButton(12, QStringLiteral("返回"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
         break;
     }
-    case UcsDefines::OCU_MAP_DISPLAY:
-    {
-        setButton(7, QStringLiteral("Map\r\nSetting"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
-        setButton(1, QStringLiteral("ROS\r\nRviz View"), UcsEventConstants::ROS_RVIZ_VIEW, QString(":/b_img/star.png"));
-        setButton(12, QStringLiteral("BACK"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
-        break;
-    }
-    case UcsDefines::OCU_ROS_RVIZ:
-    {
-        setButton(7, QStringLiteral("RVIZ\r\nSetting"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
-        setButton(1, QStringLiteral("Map\r\nView"), UcsEventConstants::MAPINTERFACE, QString(":/b_img/star.png"));
-        setButton(12, QStringLiteral("BACK"), UcsEventConstants::MENU_EVENT_LOGIN, QString(":/b_img/star.png"));
-        break;
-    }
+
+
     default:
         break;
     }

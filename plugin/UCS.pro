@@ -20,7 +20,6 @@ SUBDIRS += \
     TCPCommunicator \
     MPC_Tracking_Controller \
     test_MPC_nonlinear_tracking \
-    test_MPC_tracker \
     testNonlinearSOlver \
     test_NMPC_Plugin \
     testautograd   \
@@ -50,3 +49,6 @@ SUBDIRS += \
     ocu_video_player   \
     VehicleController   \
     testffmpegutility   \
+    testvehiclecontroller   \
+    testmultitopicsubscribe   \
+    MultipleCameraOperator   \

@@ -33,7 +33,7 @@ typedef enum {
     NETCONFIG_INTERFACE,                                   //!NETCONFIG_INTERFACE 1 interface
     ROSNODEMANAGEMENT,                                   //ROSNODEMANAGEMENT
     CardataViewer,                                   //ROSNODEMANAGEMENT
-    VEHICLE1_VIDEO,                                   //ROSNODEMANAGEMENT
+    OCU_VIDEO_WIDGETS,                                   //ROSNODEMANAGEMENT
     VEHICLE2_CONTROL,                                   //ROSNODEMANAGEMENT
     VEHICLE2_VIDEO,                                   //ROSNODEMANAGEMENT
     OCU_MAP_DISPLAY,                                   //ROSNODEMANAGEMENT

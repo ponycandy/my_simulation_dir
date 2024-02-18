@@ -12,6 +12,10 @@ DESTDIR = ../../build
 include(../../3rdlib/mqtt/mqtt.pri)
 INCLUDEPATH += ../../3rdlib/project_library/src/GraphicsMapLib
 LIBS += -L../../3rdlib/project_library/bin -lGraphicsMapLib
+
+INCLUDEPATH += C:\Boost\include\boost-1_83
+LIBS += -LC:\Boost\lib -llibboost_thread-vc143-mt-gd-x64-1_83
+
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../

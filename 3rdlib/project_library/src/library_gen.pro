@@ -9,3 +9,4 @@ SUBDIRS += \
     xmlcore \
     PolyParams   \
     GrayAray   \
+    GraphicsMapLib   \
