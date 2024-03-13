@@ -25,13 +25,11 @@ SOURCES += \
     netconfigwidget.cpp
 
 
-
 HEADERS += \
     DatamanagerActivator.h \
     datacollection.h \
     messagecollector.h \
     netconfigwidget.h
-
 FORMS += \
     netconfigwidget.ui
 

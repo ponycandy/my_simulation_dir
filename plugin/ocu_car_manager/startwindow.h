@@ -37,7 +37,7 @@ public:
      UcsDefines::UcsViewKind getCurrentView() override;
     void changeMenu(const QString &oldMenu, const QString &newMenu, const QString &text)  override;
      void changeMenu(const int num,const QString &newMenu,const QString &text) override;
-    int Is_map_flag=1;
+    int display_status_flag=1;
      int Is_logo_hidden=0;
 private slots:
     void onMenuClicked();

@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "event/OcuEventContants.h"
 #include "defines/OcuDefines.h"
+#include "service/VehicleControlservice.h"
 messagecollector::messagecollector(QObject *parent) : QObject(parent),m_Data(NULL),m_widget(NULL)
 {
     flag=0;
@@ -11,6 +12,26 @@ messagecollector::messagecollector(QObject *parent) : QObject(parent),m_Data(NUL
     m_widget=new Netconfigwidget;
     DatamanagerActivator::registerservice(this,"Datamanageservice");
     DatamanagerActivator::subscribevent(UcsEventConstants::TOPCI_MENU_CLICKED,this);
+    // display=new StatusDisplay;
+    // display->update_BatteryHealthy(0);
+    // display->update_BatteryTemprature(0);
+    // display->update_acc_x(0);
+    // display->update_acc_y(0);
+    // display->update_acc_z(0);
+    // display->update_altitude(0);
+    // display->update_latitude(0);
+    // display->update_angular_velocity(0);
+    // display->update_linear_velocity(0);
+    // display->update_motorRPM_1(0);
+    // display->update_motorRPM_2(0);
+    // display->update_motorRPM_3(0);
+    // display->update_motorRPM_4(0);
+    // display->update_pitch(0);
+    // display->update_roll(0);
+    // display->update_yaw(0);
+
+    //initialization
+
 }
 #ifdef __linux__
 void messagecollector::store(const sensor_msgs::PointCloud data)

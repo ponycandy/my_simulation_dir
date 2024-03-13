@@ -26,8 +26,8 @@ SOURCES += \
     cardataviewer.cpp \
     singlevehiclecard.cpp \
     vehiclemanager.cpp \
-    videoplayer.cpp
-
+    videoplayer.cpp \
+    statusdisplay.cpp
 
 
 
@@ -36,9 +36,7 @@ HEADERS += \
     cardataviewer.h \
     singlevehiclecard.h \
     vehiclemanager.h \
-    videoplayer.h
-
-FORMS += \
-    cardataviewer.ui
+    videoplayer.h \
+    statusdisplay.h
 
 

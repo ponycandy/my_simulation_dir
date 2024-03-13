@@ -11,9 +11,13 @@ public:
     video_manager(QObject *parent = nullptr);
     video_display_widget *m_display;
     QWidget * getVideoPlayerWindow() override;
+    void manualtrigger() override;
+    void manualhalt() override;
+
     void setrtmpPath(QString streampath) override;
     void playlocalvideo(QString filename) override;
     VideoCoreservice* cloneservice() override;
+    void setGeometry(int x,int y,int width,int height) override;
     void start_streaming() override;
     void stop_streaming() override;
 

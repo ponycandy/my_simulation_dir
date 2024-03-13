@@ -44,6 +44,8 @@ void startwindow::setupwidget()
         QToolButton *button = new QToolButton;
         button->setProperty("style", "MenuLeftButton");
         button->setFixedSize(120,181);
+        button->setStyleSheet("border: 1px solid #000000;");
+
         QSizePolicy policy = button->sizePolicy();
         policy.setVerticalPolicy(QSizePolicy::Fixed);
         button->setSizePolicy(policy);
@@ -69,6 +71,7 @@ void startwindow::setupwidget()
         button->setProperty("style", "MenuRightButton");
 
         button->setFixedSize(120,181);
+        button->setStyleSheet("border: 1px solid #000000;");
 
         QSizePolicy policy = button->sizePolicy();
         policy.setVerticalPolicy(QSizePolicy::Fixed);
@@ -118,16 +121,11 @@ void startwindow::buildMenu(int type)
     case UcsDefines::UCS_VIEW_KIND_MAIN:
     {
         setButton(1, QStringLiteral("连接\r\n配置"), UcsEventConstants::NETCONFIG, QString(":/b_img/star.png"));
-        if(Is_map_flag==1)
-        {
-            setButton(2, QStringLiteral("切换\r\n显示"), UcsEventConstants::SWITCHTOVIDEO, QString(":/b_img/star.png"));
-        }
-        else
-        {
-            setButton(2, QStringLiteral("切换\r\n显示"), UcsEventConstants::SWITCHTOMAP, QString(":/b_img/star.png"));
-        }
+
+        setButton(2, QStringLiteral("切换\r\n显示"), UcsEventConstants::DISPLAYSTATUS, QString(":/b_img/star.png"));
         setButton(3, QStringLiteral("指令\r\n执行"), UcsEventConstants::COMMANDLINEEXEC, QString(":/b_img/star.png"));
         setButton(4, QStringLiteral("任务\r\n规划"), UcsEventConstants::MISSIONPLAN, QString(":/b_img/star.png"));
+        setButton(5, QStringLiteral("信源\r\n切换"), UcsEventConstants::SOURCESWITCH, QString(":/b_img/star.png"));
 
         setButton(12, QStringLiteral("退出"), UcsEventConstants::STSTEMSHUTDOWN, QString(":/b_img/star.png"));
 
@@ -211,7 +209,7 @@ void startwindow::changeView(UcsDefines::UcsViewKind viewKind)
 
 UcsDefines::UcsViewKind startwindow::getCurrentView()
 {
-//暂时没有用到的API
+    //暂时没有用到的API
     return UcsDefines::UCS_VIEW_KIND_NONE;
 }
 

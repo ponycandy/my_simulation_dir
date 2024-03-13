@@ -43,7 +43,6 @@ SUBDIRS += \
     SwarmSimulator \
     Datamanager   \
     ocu_map \
-    ocu_car_manager   \
     ocu_core   \
     ocu_video_control   \
     ocu_video_player   \
@@ -52,3 +51,5 @@ SUBDIRS += \
     testvehiclecontroller   \
     testmultitopicsubscribe   \
     MultipleCameraOperator   \
+    Visualizer_201   \
+    ocu_car_manager_sim   \

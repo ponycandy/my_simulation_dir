@@ -17,18 +17,25 @@ INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 
 SOURCES += \
+    crossaxle.cpp \
     ocu_video_playerActivator.cpp \
     video_display_widget.cpp \
-    video_manager.cpp
+    video_manager.cpp \
+    batterystatus.cpp \
+    customslider.cpp \
+    directionhron.cpp \
+    hronslider.cpp \
 
 
 HEADERS += \
+    crossaxle.h \
     ocu_video_playerActivator.h \
     video_display_widget.h \
-    video_manager.h
-
-FORMS += \
-    video_display_widget.ui
+    video_manager.h \
+    batterystatus.h \
+    customslider.h \
+    directionhron.h \
+    hronslider.h \
 
 RESOURCES += \
     imgsrc.qrc

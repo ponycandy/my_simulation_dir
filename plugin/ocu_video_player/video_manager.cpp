@@ -15,6 +15,17 @@ QWidget *video_manager::getVideoPlayerWindow()
 
 }
 
+void video_manager::manualtrigger()
+{
+    m_display->slotOnStart();
+}
+
+void video_manager::manualhalt()
+{
+    m_display->slotOnStop();
+
+}
+
 void video_manager::setrtmpPath(QString streampath)
 {
     //检查结尾，如果是视频格式后缀名那么
@@ -40,6 +51,15 @@ VideoCoreservice *video_manager::cloneservice()
 {
     video_manager *manager_new=new video_manager;
     return manager_new;
+}
+
+void video_manager::setGeometry(int x, int y, int width, int height)
+{
+    m_display->vid_x=x;
+    m_display->vid_y=y;
+    m_display->vid_width=width;
+    m_display->vid_height=height;
+
 }
 
 void video_manager::start_streaming()

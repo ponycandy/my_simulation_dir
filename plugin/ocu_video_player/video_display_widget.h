@@ -3,10 +3,13 @@
 
 #include <QWidget>
 #include <QPainter>
-namespace Ui {
-class video_display_widget;
-}
 
+#include <QSlider>
+#include <batterystatus.h>
+#include <hronslider.h>
+#include <customslider.h>
+#include <directionhron.h>
+#include <crossaxle.h>
 class video_display_widget : public QWidget
 {
     Q_OBJECT
@@ -15,9 +18,22 @@ public:
     explicit video_display_widget(QWidget *parent = nullptr);
     ~video_display_widget();
 
-
+    QSlider *slider;
+    HronSlider *customvslider;
+    BatteryStatus *battery;
+    CustomSlider *customhslider;
+    DirectionHron *direct;
+    crossaxle *cross;
     QString pathname;
     int mode;
+    int vid_x,vid_y,vid_width,vid_height;
+
+public slots:
+
+
+    void slotOnStart();
+    void slotOnStop();
+    void on_horizontalSlider_valueChanged(int value);
 private:
 
 protected:
@@ -29,15 +45,7 @@ protected:
     }
 
 
-private slots:
 
-
-    void slotOnStart();
-    void slotOnStop();
-    void on_horizontalSlider_valueChanged(int value);
-
-private:
-    Ui::video_display_widget *ui;
 };
 
 #endif // VIDEO_DISPLAY_WIDGET_H
