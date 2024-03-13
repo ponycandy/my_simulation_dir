@@ -8,9 +8,13 @@ class VideoCoreservice
 public:
     virtual ~VideoCoreservice(){}
     virtual QWidget * getVideoPlayerWindow()=0;
+    virtual void manualtrigger() =0;
+    virtual void manualhalt() =0;
     virtual void playlocalvideo(QString filename)=0;
     virtual VideoCoreservice* cloneservice()=0;
     virtual void setrtmpPath(QString streampath)=0;
+    virtual void setGeometry(int x,int y,int width,int height)=0;
+
     virtual void start_streaming()=0;
     virtual void stop_streaming()=0;
 };
