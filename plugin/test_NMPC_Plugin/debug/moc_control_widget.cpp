@@ -1,18 +1,19 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'control_widget.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.9.9)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.2.4)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
+#include <memory>
 #include "../control_widget.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'control_widget.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.9.9. It"
+#elif Q_MOC_OUTPUT_REVISION != 68
+#error "This file was generated using the moc from 6.2.4. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -21,20 +22,17 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_Control_Widget_t {
-    QByteArrayData data[4];
+    const uint offsetsAndSize[8];
     char stringdata0[52];
 };
-#define QT_MOC_LITERAL(idx, ofs, len) \
-    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_Control_Widget_t, stringdata0) + ofs \
-        - idx * sizeof(QByteArrayData)) \
-    )
+#define QT_MOC_LITERAL(ofs, len) \
+    uint(offsetof(qt_meta_stringdata_Control_Widget_t, stringdata0) + ofs), len 
 static const qt_meta_stringdata_Control_Widget_t qt_meta_stringdata_Control_Widget = {
     {
-QT_MOC_LITERAL(0, 0, 14), // "Control_Widget"
-QT_MOC_LITERAL(1, 15, 13), // "start_solving"
-QT_MOC_LITERAL(2, 29, 0), // ""
-QT_MOC_LITERAL(3, 30, 21) // "on_pushButton_clicked"
+QT_MOC_LITERAL(0, 14), // "Control_Widget"
+QT_MOC_LITERAL(15, 13), // "start_solving"
+QT_MOC_LITERAL(29, 0), // ""
+QT_MOC_LITERAL(30, 21) // "on_pushButton_clicked"
 
     },
     "Control_Widget\0start_solving\0\0"
@@ -45,7 +43,7 @@ QT_MOC_LITERAL(3, 30, 21) // "on_pushButton_clicked"
 static const uint qt_meta_data_Control_Widget[] = {
 
  // content:
-       7,       // revision
+      10,       // revision
        0,       // classname
        0,    0, // classinfo
        2,   14, // methods
@@ -55,11 +53,11 @@ static const uint qt_meta_data_Control_Widget[] = {
        0,       // flags
        1,       // signalCount
 
- // signals: name, argc, parameters, tag, flags
-       1,    0,   24,    2, 0x06 /* Public */,
+ // signals: name, argc, parameters, tag, flags, initial metatype offsets
+       1,    0,   26,    2, 0x06,    1 /* Public */,
 
- // slots: name, argc, parameters, tag, flags
-       3,    0,   25,    2, 0x08 /* Private */,
+ // slots: name, argc, parameters, tag, flags, initial metatype offsets
+       3,    0,   27,    2, 0x08,    2 /* Private */,
 
  // signals: parameters
     QMetaType::Void,
@@ -73,8 +71,8 @@ static const uint qt_meta_data_Control_Widget[] = {
 void Control_Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
-        Control_Widget *_t = static_cast<Control_Widget *>(_o);
-        Q_UNUSED(_t)
+        auto *_t = static_cast<Control_Widget *>(_o);
+        (void)_t;
         switch (_id) {
         case 0: _t->start_solving(); break;
         case 1: _t->on_pushButton_clicked(); break;
@@ -83,20 +81,30 @@ void Control_Widget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
-            typedef void (Control_Widget::*_t)();
+            using _t = void (Control_Widget::*)();
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&Control_Widget::start_solving)) {
                 *result = 0;
                 return;
             }
         }
     }
-    Q_UNUSED(_a);
+    (void)_a;
 }
 
-const QMetaObject Control_Widget::staticMetaObject = {
-    { &QWidget::staticMetaObject, qt_meta_stringdata_Control_Widget.data,
-      qt_meta_data_Control_Widget,  qt_static_metacall, nullptr, nullptr}
-};
+const QMetaObject Control_Widget::staticMetaObject = { {
+    QMetaObject::SuperData::link<QWidget::staticMetaObject>(),
+    qt_meta_stringdata_Control_Widget.offsetsAndSize,
+    qt_meta_data_Control_Widget,
+    qt_static_metacall,
+    nullptr,
+qt_incomplete_metaTypeArray<qt_meta_stringdata_Control_Widget_t
+, QtPrivate::TypeAndForceComplete<Control_Widget, std::true_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>
+
+
+>,
+    nullptr
+} };
 
 
 const QMetaObject *Control_Widget::metaObject() const
@@ -123,7 +131,7 @@ int Control_Widget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 2;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         if (_id < 2)
-            *reinterpret_cast<int*>(_a[0]) = -1;
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
         _id -= 2;
     }
     return _id;

@@ -1,5 +1,4 @@
 #include "cardataviewer.h"
-#include "ui_cardataviewer.h"
 #include "VehicleControllerActivator.h"
 #include "service/Coreservice.h"
 CardataViewer::CardataViewer(QWidget *parent) :

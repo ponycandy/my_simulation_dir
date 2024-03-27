@@ -1,19 +1,20 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'NMPC_TrajPlanningActivator.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.9.9)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.2.4)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
+#include <memory>
 #include "../NMPC_TrajPlanningActivator.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #include <QtCore/qplugin.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'NMPC_TrajPlanningActivator.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.9.9. It"
+#elif Q_MOC_OUTPUT_REVISION != 68
+#error "This file was generated using the moc from 6.2.4. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -22,17 +23,14 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_NMPC_TrajPlanningActivator_t {
-    QByteArrayData data[1];
+    const uint offsetsAndSize[2];
     char stringdata0[27];
 };
-#define QT_MOC_LITERAL(idx, ofs, len) \
-    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_NMPC_TrajPlanningActivator_t, stringdata0) + ofs \
-        - idx * sizeof(QByteArrayData)) \
-    )
+#define QT_MOC_LITERAL(ofs, len) \
+    uint(offsetof(qt_meta_stringdata_NMPC_TrajPlanningActivator_t, stringdata0) + ofs), len 
 static const qt_meta_stringdata_NMPC_TrajPlanningActivator_t qt_meta_stringdata_NMPC_TrajPlanningActivator = {
     {
-QT_MOC_LITERAL(0, 0, 26) // "NMPC_TrajPlanningActivator"
+QT_MOC_LITERAL(0, 26) // "NMPC_TrajPlanningActivator"
 
     },
     "NMPC_TrajPlanningActivator"
@@ -42,7 +40,7 @@ QT_MOC_LITERAL(0, 0, 26) // "NMPC_TrajPlanningActivator"
 static const uint qt_meta_data_NMPC_TrajPlanningActivator[] = {
 
  // content:
-       7,       // revision
+      10,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -57,16 +55,26 @@ static const uint qt_meta_data_NMPC_TrajPlanningActivator[] = {
 
 void NMPC_TrajPlanningActivator::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    Q_UNUSED(_o);
-    Q_UNUSED(_id);
-    Q_UNUSED(_c);
-    Q_UNUSED(_a);
+    (void)_o;
+    (void)_id;
+    (void)_c;
+    (void)_a;
 }
 
-const QMetaObject NMPC_TrajPlanningActivator::staticMetaObject = {
-    { &QObject::staticMetaObject, qt_meta_stringdata_NMPC_TrajPlanningActivator.data,
-      qt_meta_data_NMPC_TrajPlanningActivator,  qt_static_metacall, nullptr, nullptr}
-};
+const QMetaObject NMPC_TrajPlanningActivator::staticMetaObject = { {
+    QMetaObject::SuperData::link<QObject::staticMetaObject>(),
+    qt_meta_stringdata_NMPC_TrajPlanningActivator.offsetsAndSize,
+    qt_meta_data_NMPC_TrajPlanningActivator,
+    qt_static_metacall,
+    nullptr,
+qt_incomplete_metaTypeArray<qt_meta_stringdata_NMPC_TrajPlanningActivator_t
+, QtPrivate::TypeAndForceComplete<NMPC_TrajPlanningActivator, std::true_type>
+
+
+
+>,
+    nullptr
+} };
 
 
 const QMetaObject *NMPC_TrajPlanningActivator::metaObject() const
@@ -92,71 +100,25 @@ int NMPC_TrajPlanningActivator::qt_metacall(QMetaObject::Call _c, int _id, void 
     return _id;
 }
 
-QT_PLUGIN_METADATA_SECTION const uint qt_section_alignment_dummy = 42;
-
-#ifdef QT_NO_DEBUG
-
 QT_PLUGIN_METADATA_SECTION
-static const unsigned char qt_pluginMetaData[] = {
-    'Q', 'T', 'M', 'E', 'T', 'A', 'D', 'A', 'T', 'A', ' ', ' ',
-    'q',  'b',  'j',  's',  0x01, 0x00, 0x00, 0x00,
-    0xb8, 0x00, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00,
-    0xa4, 0x00, 0x00, 0x00, 0x1b, 0x03, 0x00, 0x00,
-    0x03, 0x00, 'I',  'I',  'D',  0x00, 0x00, 0x00,
-    '#',  0x00, 'E',  'x',  'a',  'm',  'p',  'l', 
-    'e',  's',  '.',  'P',  'l',  'u',  'g',  'i', 
-    'n',  '.',  'P',  'l',  'u',  'g',  'i',  'n', 
-    'I',  'n',  't',  'e',  'r',  'f',  'a',  'c', 
-    'e',  '_',  'i',  'i',  'd',  0x00, 0x00, 0x00,
-    0x1b, 0x0a, 0x00, 0x00, 0x09, 0x00, 'c',  'l', 
-    'a',  's',  's',  'N',  'a',  'm',  'e',  0x00,
-    0x1a, 0x00, 'N',  'M',  'P',  'C',  '_',  'T', 
-    'r',  'a',  'j',  'P',  'l',  'a',  'n',  'n', 
-    'i',  'n',  'g',  'A',  'c',  't',  'i',  'v', 
-    'a',  't',  'o',  'r',  ':',  '!',  0xa1, 0x00,
-    0x07, 0x00, 'v',  'e',  'r',  's',  'i',  'o', 
-    'n',  0x00, 0x00, 0x00, 0x11, 0x00, 0x00, 0x00,
-    0x05, 0x00, 'd',  'e',  'b',  'u',  'g',  0x00,
-    0x15, 0x13, 0x00, 0x00, 0x08, 0x00, 'M',  'e', 
-    't',  'a',  'D',  'a',  't',  'a',  0x00, 0x00,
-    0x0c, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00,
-    0x88, 0x00, 0x00, 0x00, '@',  0x00, 0x00, 0x00,
-    '|',  0x00, 0x00, 0x00, 'l',  0x00, 0x00, 0x00
+static constexpr unsigned char qt_pluginMetaData_NMPC_TrajPlanningActivator[] = {
+    'Q', 'T', 'M', 'E', 'T', 'A', 'D', 'A', 'T', 'A', ' ', '!',
+    // metadata version, Qt version, architectural requirements
+    0, QT_VERSION_MAJOR, QT_VERSION_MINOR, qPluginArchRequirements(),
+    0xbf, 
+    // "IID"
+    0x02,  0x78,  0x23,  'E',  'x',  'a',  'm',  'p', 
+    'l',  'e',  's',  '.',  'P',  'l',  'u',  'g', 
+    'i',  'n',  '.',  'P',  'l',  'u',  'g',  'i', 
+    'n',  'I',  'n',  't',  'e',  'r',  'f',  'a', 
+    'c',  'e',  '_',  'i',  'i',  'd', 
+    // "className"
+    0x03,  0x78,  0x1a,  'N',  'M',  'P',  'C',  '_', 
+    'T',  'r',  'a',  'j',  'P',  'l',  'a',  'n', 
+    'n',  'i',  'n',  'g',  'A',  'c',  't',  'i', 
+    'v',  'a',  't',  'o',  'r', 
+    0xff, 
 };
-
-#else // QT_NO_DEBUG
-
-QT_PLUGIN_METADATA_SECTION
-static const unsigned char qt_pluginMetaData[] = {
-    'Q', 'T', 'M', 'E', 'T', 'A', 'D', 'A', 'T', 'A', ' ', ' ',
-    'q',  'b',  'j',  's',  0x01, 0x00, 0x00, 0x00,
-    0xb8, 0x00, 0x00, 0x00, 0x0b, 0x00, 0x00, 0x00,
-    0xa4, 0x00, 0x00, 0x00, 0x1b, 0x03, 0x00, 0x00,
-    0x03, 0x00, 'I',  'I',  'D',  0x00, 0x00, 0x00,
-    '#',  0x00, 'E',  'x',  'a',  'm',  'p',  'l', 
-    'e',  's',  '.',  'P',  'l',  'u',  'g',  'i', 
-    'n',  '.',  'P',  'l',  'u',  'g',  'i',  'n', 
-    'I',  'n',  't',  'e',  'r',  'f',  'a',  'c', 
-    'e',  '_',  'i',  'i',  'd',  0x00, 0x00, 0x00,
-    0x15, 0x0a, 0x00, 0x00, 0x08, 0x00, 'M',  'e', 
-    't',  'a',  'D',  'a',  't',  'a',  0x00, 0x00,
-    0x0c, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x9b, 0x0d, 0x00, 0x00,
-    0x09, 0x00, 'c',  'l',  'a',  's',  's',  'N', 
-    'a',  'm',  'e',  0x00, 0x1a, 0x00, 'N',  'M', 
-    'P',  'C',  '_',  'T',  'r',  'a',  'j',  'P', 
-    'l',  'a',  'n',  'n',  'i',  'n',  'g',  'A', 
-    'c',  't',  'i',  'v',  'a',  't',  'o',  'r', 
-    '1',  0x00, 0x00, 0x00, 0x05, 0x00, 'd',  'e', 
-    'b',  'u',  'g',  0x00, ':',  '!',  0xa1, 0x00,
-    0x07, 0x00, 'v',  'e',  'r',  's',  'i',  'o', 
-    'n',  0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00,
-    '@',  0x00, 0x00, 0x00, '\\', 0x00, 0x00, 0x00,
-    0x88, 0x00, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00
-};
-#endif // QT_NO_DEBUG
-
 QT_MOC_EXPORT_PLUGIN(NMPC_TrajPlanningActivator, NMPC_TrajPlanningActivator)
 
 QT_WARNING_POP

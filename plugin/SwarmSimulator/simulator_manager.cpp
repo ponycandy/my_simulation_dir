@@ -153,6 +153,8 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
             agent->ETM_sensor[j]=new Eigen::MatrixXd;//这里无法赋值
             agent->ETM_Flag[j]=1;//设置被触发
             *(agent->ETM_sensor[j])=(( agent->ETM_vec[j]))->eval();
+            // agent->ETM_sensor[j]=( agent->ETM_vec[j])->eval();
+
         }
 
     }
