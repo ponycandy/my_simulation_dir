@@ -3,7 +3,6 @@ QT += positioning openglwidgets
 #LIBS += -L../../3rdlib/GraphicsMapLib/lib -lGraphicsMapLibd
 INCLUDEPATH += ../../3rdlib/GraphicsMapLib/src
 SOURCES += \
-   ../../3rdlib/GraphicsMapLib/src/mapbeaconitem.cpp \
     ../../3rdlib/GraphicsMapLib/src/interactivemap.cpp \
    ../../3rdlib/GraphicsMapLib/src/graphicsmap.cpp \
      ../../3rdlib/GraphicsMapLib/src/mapellipseitem.cpp \
@@ -21,7 +20,6 @@ SOURCES += \
          ../../3rdlib/GraphicsMapLib/src/mapscutcheonitem.cpp\
 
 HEADERS += \
-   ../../3rdlib/GraphicsMapLib/src/mapbeaconitem.h \
 ../../3rdlib/GraphicsMapLib/src/interactivemap.h \
 ../../3rdlib/GraphicsMapLib/src/mapellipseitem.h \
  ../../3rdlib/GraphicsMapLib/src/maplabelitem.h \
