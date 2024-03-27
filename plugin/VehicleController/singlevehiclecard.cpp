@@ -69,12 +69,12 @@ void SingleVehicleCard::onReceived(const QMQTT::Message &message)
     QString topic_name=message.topic();
     if(topic_name==(vehiclename+"/location"))//example:   Songling_1/location
     {
-     //   Autodeserialization
-        jetson::vehiclestatus status=Autodeserialization<jetson::vehiclestatus>(data);
+     // 这个再接入到仿真器中,然后做实车
+        jetson::VehiclePos status=Autodeserialization<jetson::VehiclePos>(data);
     }
     if(topic_name==(vehiclename+"/matrix"))
     {
-        jetson::mat status=Autodeserialization<jetson::mat>(data);
+        // jetson::mat status=Autodeserialization<jetson::mat>(data);
 
     }
     if(topic_name==(vehiclename+"/pointcloud"))

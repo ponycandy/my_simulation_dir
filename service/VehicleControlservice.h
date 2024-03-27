@@ -10,6 +10,7 @@ class VehicleControlservice
 public:
     virtual ~VehicleControlservice(){}
     virtual void send(QByteArray byteArray,QString vehicle,QString topicname)=0;
+    virtual void sendVehicleCommand(int ID,double linear,double omega)=0;
     virtual VehicleControlservice* cloneservice()=0;
     virtual void AddHUD_2_controler(QFrame *wid,double x,double y)=0;
 

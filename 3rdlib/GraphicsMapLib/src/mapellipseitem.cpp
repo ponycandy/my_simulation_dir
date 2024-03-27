@@ -13,6 +13,8 @@ MapEllipseItem::MapEllipseItem():
 {
     // keep the outline width of 1-pixel when item scales
     auto pen = this->pen();
+    pen.setStyle(Qt::SolidLine);
+
     pen.setWidth(1);
     pen.setCosmetic(true);
     this->setPen(pen);
@@ -22,9 +24,10 @@ MapEllipseItem::MapEllipseItem():
     m_rectCtrl.setParentItem(this);
     m_firstCtrl.setParentItem(this);
     m_secondCtrl.setParentItem(this);
-    //
+
     pen.setColor(Qt::lightGray);
     pen.setStyle(Qt::DashLine);
+
     m_rectCtrl.setPen(pen);
     m_firstCtrl.setAcceptHoverEvents(true);
     m_firstCtrl.setPen(QPen(Qt::gray));
@@ -231,12 +234,12 @@ bool MapEllipseItem::sceneEventFilter(QGraphicsItem *watched, QEvent *event)
 
 QVariant MapEllipseItem::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
-   if(change != ItemSceneHasChanged)
-       return QGraphicsEllipseItem::itemChange(change, value);
+    if(change != ItemSceneHasChanged)
+        return QGraphicsEllipseItem::itemChange(change, value);
 
-   m_firstCtrl.installSceneEventFilter(this);
-   m_secondCtrl.installSceneEventFilter(this);
-   return QGraphicsEllipseItem::itemChange(change, value);
+    m_firstCtrl.installSceneEventFilter(this);
+    m_secondCtrl.installSceneEventFilter(this);
+    return QGraphicsEllipseItem::itemChange(change, value);
 }
 
 void MapEllipseItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

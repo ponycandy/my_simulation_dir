@@ -96,6 +96,7 @@ void vomanager::Point3dCallback(const std::string &data)
 }
 
 void vomanager::spinonce()
+
 {
     nh->spinonce();
 }

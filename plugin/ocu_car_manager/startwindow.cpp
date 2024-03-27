@@ -3,9 +3,7 @@
 #include "ocu_car_managerActivator.h"
 #include "event/OcuEventContants.h"
 #include "qcoreapplication.h"
-#ifdef __linux
-#include "service/ROSnodeservice.h"
-#endif
+#include "include/OSGIEVENT.h"
 startwindow::startwindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::startwindow),m_whitewidget(NULL)
@@ -83,6 +81,11 @@ void startwindow::setupwidget()
     ui->H_left->addWidget(m_leftWidget);
     ui->H_right->addWidget(m_rightWidget);
     m_whitewidget=new whitewidget;
+    situa=new SituationalPlan;
+    ocu_car_managerActivator::publishsignal(situa,SIGNAL(sig_start_record_points()),OSGIEVENT::SIG_MAP_SELECT_POINTS,Qt::QueuedConnection);
+    ocu_car_managerActivator::publishsignal(situa,SIGNAL(sig_stop_record_points()),OSGIEVENT::SIG_MAP_STOP_SELECT_POINTS,Qt::QueuedConnection);
+    ocu_car_managerActivator::publishsignal(situa,SIGNAL(sig_autoNavi_back()),OSGIEVENT::SIG_MAP_AUTONAVIGATE_POINTS,Qt::QueuedConnection);
+
     addView(UcsDefines::UCS_VIEW_KIND_MAIN,m_whitewidget);
     buildMenu(UcsDefines::UCS_VIEW_KIND_MAIN);/*根据主页面的值设置按钮值*/
 
@@ -99,13 +102,22 @@ void startwindow::EventTriggeres(XTLevent event)
             changeView(UcsDefines::UCS_VIEW_KIND_MAIN);
             return;
         }
+        if(name== UcsEventConstants::MISSIONPLAN)
+        {
+            if(SIM_Missionplan_is_shown)
+            {
+                situa->hide();
+                SIM_Missionplan_is_shown=false;
+            }
+            else
+            {
+                situa->show();
+                SIM_Missionplan_is_shown=true;
+            }
+            return;
+        }
         if(name== UcsEventConstants::STSTEMSHUTDOWN)
         {
-#ifdef __linux__
-            ROSnodeservice *m_service_ros=ocu_car_managerActivator::getService<ROSnodeservice>("ROSnodeservice");
-            m_service_ros->destroyall();
-            QApplication::quit();
-#endif
             QApplication::quit();
         }
 

@@ -11,6 +11,7 @@
 #include "service/ocu_car_coreservice.h"
 #include "viewmanager.h"
 #include "whitewidget.h"
+#include "situationalplan.h"
 namespace Ui {
 class startwindow;
 }
@@ -39,6 +40,8 @@ public:
      void changeMenu(const int num,const QString &newMenu,const QString &text) override;
     int display_status_flag=1;
      int Is_logo_hidden=0;
+    bool SIM_Missionplan_is_shown=false;
+     SituationalPlan *situa;
 private slots:
     void onMenuClicked();
 private:

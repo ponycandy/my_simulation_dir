@@ -2,13 +2,15 @@
 #include "VehicleControllerActivator.h"
 #include "event/eventype.h"
 #include "event/OcuEventContants.h"
+#include "jetsonnanoDATA/jetsonnanoDATA.h"
+#include "include/OSGIEVENT.h"
+
 VehicleManager::VehicleManager(QObject *parent) : QObject(parent)
 {
     VehicleControllerActivator::subscribevent(UCSEVENT::MQTTNETSET,this);
     VehicleControllerActivator::subscribevent(UCSEVENT::MQTTSTART,this);
     VehicleControllerActivator::subscribevent(UCSEVENT::MQTTSTOP,this);
     VehicleControllerActivator::subscribevent(UcsEventConstants::TOPCI_MENU_CLICKED,this);
-
 
     viewer=new CardataViewer;
     // coreservice=VehicleControllerActivator::getService<Coreservice>("Coreservice");
@@ -23,6 +25,14 @@ VehicleManager::VehicleManager(QObject *parent) : QObject(parent)
 
     mapservl=VehicleControllerActivator::getService<MapService>("MapService");
     mapwidget=mapservl->getMapwidget();
+
+
+    simservice=VehicleControllerActivator::getService<SwarmSimservice>("SwarmSimservice");
+    if(simservice!=NULL)
+    {
+        m_simulation_widget=simservice->getwidgetoperator()->getwidget();
+    }
+
 }
 
 void VehicleManager::EventTriggeres(XTLevent event)
@@ -31,7 +41,7 @@ void VehicleManager::EventTriggeres(XTLevent event)
     {
         SingleVehicleCard *vehicle=new SingleVehicleCard;
 
-        vehicle->cilentID_S=event.m_dict.value("cilentID(S)").value<QString>();
+        vehicle->cilentID_S="server"+event.m_dict.value("vehiclename").value<QString>();
         vehicle->host_S=event.m_dict.value("host(S)").value<QString>();
         vehicle->port_S=event.m_dict.value("port(S)").value<QString>();
         vehicle->username_S=event.m_dict.value("username(S)").value<QString>();
@@ -51,11 +61,23 @@ void VehicleManager::EventTriggeres(XTLevent event)
         initilizevideostatus(vidservice->getVideoPlayerWindow(),vehicle->vehiclename);
 
         viewer->Addwidget(mapwidget, vehicle->vehiclename,"LocalMap");
+        QWidget *temp_m_simulation_widget=new QWidget;
+        temp_m_simulation_widget->setContentsMargins(0,0,0,0);
+        temp_m_simulation_widget->resize(1780,1080);
+        if(m_simulation_widget)
+        {
+            m_simulation_widget->resize(1780,1080);
+            m_simulation_widget->setContentsMargins(0,0,0,0);
+            m_simulation_widget->move(0,0);
+            m_simulation_widget->setParent(temp_m_simulation_widget);
+            viewer->Addwidget(temp_m_simulation_widget, vehicle->vehiclename,"SimulationAnimation");
+        }
         viewer->comboBox->setCurrentText(vehicle->vehiclename);
         viewer->comboBox_2->setCurrentText("LocalMap");
         viewer->comboxframe->hide();
 
         cargroup.insert(vehicle->vehiclename,vehicle);
+        car_ID_2_vehiclename.push_back(vehicle->vehiclename);
 
     }
     if(event.eventname==UCSEVENT::MQTTSTART)
@@ -84,6 +106,10 @@ void VehicleManager::EventTriggeres(XTLevent event)
         {
 //一次按下显示
             viewer->display_combox();
+        }
+        if(name==UcsEventConstants::COMMANDLINEEXEC)
+        {
+
         }
     }
 
@@ -151,6 +177,16 @@ void VehicleManager::initilizevideostatus(QWidget *wid, QString vehiclename)
     display->update_yaw(0);
 }
 
+void VehicleManager::sendVehicleCommand(int ID, double linear, double omega)
+{
+    jetson::motioncommand mocmd;
+    mocmd.linear=linear;
+    mocmd.omega=omega;
+    std::string data=Autoserialization(mocmd);
+    QString vehiclename=car_ID_2_vehiclename.value(ID);
+    send(QByteArray::fromStdString(data),vehiclename,"motioncommand");
+}
+
 void VehicleManager::AddHUD_2_controler(QFrame *wid,double x,double y)
 {
     widgetinfos info;
@@ -169,4 +205,9 @@ VehicleControlservice *VehicleManager::cloneservice()
 {
     VehicleManager *vehicle=new VehicleManager;
     return vehicle;
+}
+
+void VehicleManager::showstartwindow(bool)
+{
+
 }

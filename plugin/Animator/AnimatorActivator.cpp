@@ -18,8 +18,7 @@ void AnimatorActivator::start()
     {
         m_painter = new glpainter;
         AnimatorActivator::registerservice(m_painter,"Animateservice");
-        AnimatorActivator::publishsignal(m_painter,SIGNAL(sig_mouse_pressed(double,double,double,double))
-                                         ,OSGIEVENT::MOUSE_PRESSED,Qt::QueuedConnection);
+
     }
 }
 void AnimatorActivator::stop()

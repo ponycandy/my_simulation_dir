@@ -31,6 +31,10 @@ void Simer::run()
             {
                 QCoreApplication::processEvents();
             }
+            if(Ifhault==true)
+            {
+                break;
+            }
         }while (1);
     }
 }

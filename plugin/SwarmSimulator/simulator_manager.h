@@ -16,6 +16,7 @@ public:
     explicit simulator_manager(QObject *parent = nullptr);
     Animateservice * getwidgetoperator() override;
     SwarmSimservice* cloneservice() override;
+    void haultsim() override;
     SimDynamicsservice * get_simer() override;
     QMap<int, SwarmAgent *> getagentgroup() override;
     void startsim() override;

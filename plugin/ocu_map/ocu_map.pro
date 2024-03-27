@@ -33,6 +33,6 @@ HEADERS += \
 FORMS += \
     mapwidget.ui
 
-
+RESOURCES += map_res.qrc
 
 

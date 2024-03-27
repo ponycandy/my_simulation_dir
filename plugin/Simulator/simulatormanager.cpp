@@ -17,11 +17,25 @@ void SimulatorManager::start_sim()
 {
     if(step_in_mode_flag==0)
     {
+        m_sim->Ifhault=false;
         m_sim->run();
     }
     else
     {
 //do nothing wait for the step in
+    }
+}
+
+void SimulatorManager::stop_sim()
+{
+    if(step_in_mode_flag==0)
+    {
+        m_sim->Ifhault=true;
+       // m_sim->run();
+    }
+    else
+    {
+        //do nothing wait for the step in
     }
 }
 
@@ -37,7 +51,7 @@ void SimulatorManager::step_in()
 
 void SimulatorManager::set_step_in_mode(int flag)
 {
-    step_in_mode_flag=1;
+    step_in_mode_flag=flag;
 }
 
 void SimulatorManager::step_in_control()

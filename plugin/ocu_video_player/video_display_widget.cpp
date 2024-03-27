@@ -1,5 +1,4 @@
 #include "video_display_widget.h"
-#include "ui_video_display_widget.h"
 #include <QTimer>
 #include <QDebug>
 #include <cstdlib>

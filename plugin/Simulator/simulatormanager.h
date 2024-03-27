@@ -12,6 +12,7 @@ public:
     explicit SimulatorManager(QObject *parent = nullptr);
     void set_delta_t(double delta_t) override;
     void start_sim() override;
+    void stop_sim() override;
     void set_ODE(ODE_functor *functor) override;
     void step_in() override;
     void set_step_in_mode(int flag) override;

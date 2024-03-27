@@ -1,9 +1,21 @@
 <plugins>
-<plugin order="1" name="ocu_core" />
-<plugin order="1" name="ocu_car_manager" />
+
+<plugin order="1" name="TCPCommunicator" />
+<plugin order="1" name="CollisionDetect" />
+<plugin order="1" name="Animator" />
+<plugin order="1" name="DataLogger" />
+<plugin order="1" name="Simulator" />
+<plugin order="1" name="SwarmSimulator" />
+
 <plugin order="1" name="Datamanager" />
 <plugin order="1" name="ocu_video_player" />
+<plugin order="1" name="ocu_map" />
+<plugin order="1" name="ocu_core" />
+<plugin order="1" name="ocu_car_manager" />
 <plugin order="1" name="VehicleController" />
+
+    <plugin order="1" name="Vehicle_swarm_controller" />
+                <plugin order="1" name="Vehicle_Swarm_UWB_simulator" />
 
 <!--		<endplugin/>-->
 <pluginnum value="1"/>

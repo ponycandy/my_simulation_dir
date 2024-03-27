@@ -62,6 +62,9 @@ public:
 
     //MapTableItem * getMapTabel() const { return m_Suct; }
     MapSuctcheonItem * getMapTabel() const { return m_Suct; }
+
+    //MapTableItem	*m_Suct = nullptr; //显示标牌对象
+    MapSuctcheonItem *m_Suct = nullptr;
 public:
     /// 获取所有的实例
     static const QSet<MapObjectItem*> &items();
@@ -105,8 +108,7 @@ private:
     // 节点速度  note:支持航路节点速度存储 亦可指代当前节点初始速度
     double m_speed;
 
-    //MapTableItem	*m_Suct = nullptr; //显示标牌对象
-    MapSuctcheonItem *m_Suct = nullptr;
+
 };
 
 #endif // MAPOBJECTITEM_H

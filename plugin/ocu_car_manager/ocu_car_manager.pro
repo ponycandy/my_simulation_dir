@@ -20,7 +20,8 @@ SOURCES += \
     ocu_car_managerActivator.cpp \
     startwindow.cpp \
     viewmanager.cpp \
-    whitewidget.cpp
+    whitewidget.cpp \
+    situationalplan.cpp
 
 
 
@@ -28,7 +29,8 @@ HEADERS += \
     ocu_car_managerActivator.h \
     startwindow.h \
     viewmanager.h \
-    whitewidget.h
+    whitewidget.h \
+    situationalplan.h
 
 FORMS += \
     startwindow.ui \

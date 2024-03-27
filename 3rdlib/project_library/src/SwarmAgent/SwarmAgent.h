@@ -49,6 +49,7 @@ public:
     Eigen::MatrixXd vel_xy;
     Eigen::MatrixXd state_vector;
     Eigen::MatrixXd act_vector;
+    Eigen::MatrixXd real_act_vector;
     Eigen::MatrixXd leader_self_act_vector;
     Eigen::MatrixXd selfETM;
 private:

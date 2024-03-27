@@ -5,6 +5,7 @@
 #include "qtimer.h"
 #include "gpcsmat.h"
 #include "gpcsnode.h"
+#include "controlwidget.h"
 struct MyData {
     int id;
     double value;
@@ -27,6 +28,7 @@ public:
     void gpcscallback_2(const std::string& data);
 
     QTimer *m_timer;
+    controlwidget *m_control;
     QTimer *m_timer1;
      gpcs::gpcsnode *nh;//创建句柄
     gpcs::Publisher* somepuber;

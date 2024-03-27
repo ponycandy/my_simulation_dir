@@ -1,4 +1,4 @@
-QT       += core gui testlib
+QT       += core gui testlib xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 include(../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
@@ -19,15 +19,19 @@ INCLUDEPATH += ../../3rdlib/project_library/src/SwarmObstacle
 LIBS += -L../../3rdlib/project_library/bin -lSwarmObstacle
 INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
 LIBS += -L../../3rdlib/project_library/bin -lxmlcore
+
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
+
 SOURCES += \
     Visualizer_201Activator.cpp \
     animator_manager.cpp \
     controlwidget.cpp \
-    myanimator.cpp
+    eventediter.cpp \
+    myanimator.cpp \
+    vehicle.cpp
 
 
 
@@ -35,6 +39,9 @@ HEADERS += \
     Visualizer_201Activator.h \
     animator_manager.h \
     controlwidget.h \
-    myanimator.h
+    eventediter.h \
+    myanimator.h \
+    vehicle.h
 
+RESOURCES += map_res.qrc
 

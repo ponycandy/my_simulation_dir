@@ -1,8 +1,10 @@
 <RCC>
-    <qresource prefix="/qml">
-        <file>main.qml</file>
-    </qresource>
-    <qresource prefix="/img">
-        <file>zero.jpg</file>
+    <qresource prefix="/img"/>
+    <qresource prefix="/">
+        <file>black.png</file>
+        <file>blue.png</file>
+        <file>dog.png</file>
+        <file>green.png</file>
+        <file>red.png</file>
     </qresource>
 </RCC>

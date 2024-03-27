@@ -36,14 +36,14 @@ SUBDIRS += \
     OpenCVGraph   \
     TestOPencvAndZED   \
     Animator3D   \
-    swarm_NLPSimulator \
     Test_using_gpcs   \
     Slam_Visualizer   \
     Vehicle_simulator   \
-    SwarmSimulator \
+    SwarmSimulator_201   \
     Datamanager   \
     ocu_map \
     ocu_core   \
+    ocu_car_manager \
     ocu_video_control   \
     ocu_video_player   \
     VehicleController   \
@@ -52,4 +52,9 @@ SUBDIRS += \
     testmultitopicsubscribe   \
     MultipleCameraOperator   \
     Visualizer_201   \
+    SwarmSimulator \
     ocu_car_manager_sim   \
+    Vehicle_swarm_controller   \
+    Vehicle_Swarm_UWB_simulator   \
+    UWB_Calibration   \
+    swarm_NLPSimulator

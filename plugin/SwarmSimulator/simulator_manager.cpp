@@ -7,7 +7,7 @@ simulator_manager::simulator_manager(QObject *parent) : QObject(parent)
     Animateservice *Anim_service_0=SwarmSimulatorActivator::getService<Animateservice>("Animateservice");
     SimDynamicsservice *SimDy_service_0=SwarmSimulatorActivator::getService<SimDynamicsservice>("SimDynamicsservice");
     Colli_service=SwarmSimulatorActivator::getService<CollisionDetectservice>("CollisionDetectservice");
-    Anim_service=Anim_service_0->cloneservice();
+    Anim_service=Anim_service_0;
     SimDy_service=SimDy_service_0->cloneservice();
     thread_ID=0;
     neibseq=0;
@@ -54,7 +54,10 @@ void simulator_manager::startsim()
     SimDy_service->start_sim();
     //    SimDy_service->start_sim();
 }
-
+void simulator_manager::haultsim()
+{
+    SimDy_service->stop_sim();
+}
 void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent *singleagents)
 {
     //需要更改，从外部选择配置文件！

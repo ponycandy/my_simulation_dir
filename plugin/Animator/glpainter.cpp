@@ -13,7 +13,7 @@ glpainter::glpainter(QObject *parent) : QObject(parent),m_glwidget(NULL),m_widge
     m_glwidget=new glwidget(m_widget);
     m_glwidget->set_glpainter(this);
     m_widget->setpainter(this);
-
+    m_widget->setContentsMargins(0,0,0,0);
     m_width=1000;
     m_height=600;
     background.setColor(Qt::white);
@@ -35,7 +35,8 @@ glpainter::glpainter(QObject *parent) : QObject(parent),m_glwidget(NULL),m_widge
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, m_glwidget, &glwidget::animate);
-
+    AnimatorActivator::publishsignal(this,SIGNAL(sig_mouse_pressed(double,double,double,double))
+                                     ,OSGIEVENT::MOUSE_PRESSED,Qt::QueuedConnection);
 }
 
 void glpainter::setupUI()

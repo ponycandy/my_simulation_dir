@@ -115,8 +115,6 @@ void SituationalPlan::On_startrecord_command()
 void SituationalPlan::On_hiding_quitrecord_check_command()
 {
     quitrecord->hide();
-
-    quitrecord->show();
     QMessageBox msgBox;
     msgBox.setWindowTitle("任务规划");
     msgBox.setText("保存任务文件？");

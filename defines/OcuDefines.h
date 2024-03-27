@@ -27,17 +27,18 @@ namespace UcsDefines {
 typedef enum {
     UCS_VIEW_KIND_NONE = 0,
     UCS_VIEW_KIND_MAIN,                               //! 主界面
+    SIM_SIMULATIONCONFIG,
     VEHICLE_WINDOW,                                   //!vehicle 1 interface
     VEHICLE_2_WINDOW,                                   //!vehicle 2 interface
 
     NETCONFIG_INTERFACE,                                   //!NETCONFIG_INTERFACE 1 interface
-    ROSNODEMANAGEMENT,                                   //ROSNODEMANAGEMENT
-    CardataViewer,                                   //ROSNODEMANAGEMENT
-    OCU_VIDEO_WIDGETS,                                   //ROSNODEMANAGEMENT
-    VEHICLE2_CONTROL,                                   //ROSNODEMANAGEMENT
-    VEHICLE2_VIDEO,                                   //ROSNODEMANAGEMENT
-    OCU_MAP_DISPLAY,                                   //ROSNODEMANAGEMENT
-    OCU_ROS_RVIZ,                                   //ROSNODEMANAGEMENT
+    ROSNODEMANAGEMENT,                                   //!ROSNODEMANAGEMENT
+    CardataViewer,                                   //!ROSNODEMANAGEMENT
+    OCU_VIDEO_WIDGETS,                                   //!ROSNODEMANAGEMENT
+    VEHICLE2_CONTROL,                                   //!ROSNODEMANAGEMENT
+    VEHICLE2_VIDEO,                                   //!ROSNODEMANAGEMENT
+    OCU_MAP_DISPLAY,                                   //!ROSNODEMANAGEMENT
+    OCU_ROS_RVIZ,                                   //!ROSNODEMANAGEMENT
 
 
     UCS_VIEW_KIND_LOGIN,                               //! 登陆界面

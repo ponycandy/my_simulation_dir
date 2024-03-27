@@ -13,6 +13,7 @@ public:
     void stepin();
     Simer(double t);
     double dt;
+    bool Ifhault=false;
     ODE_functor *functor;
     Eigen::MatrixXd act_array;
     Eigen::MatrixXd state_array;

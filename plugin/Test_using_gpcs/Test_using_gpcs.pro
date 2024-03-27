@@ -17,12 +17,17 @@ INCLUDEPATH += ../../
 
 SOURCES += \
     Test_using_gpcsActivator.cpp \
+    controlwidget.cpp \
     mainexecution.cpp
 
 
 
 HEADERS += \
     Test_using_gpcsActivator.h \
+    controlwidget.h \
     mainexecution.h
+
+FORMS += \
+    controlwidget.ui
 
 

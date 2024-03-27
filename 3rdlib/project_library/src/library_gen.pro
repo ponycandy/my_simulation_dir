@@ -10,3 +10,6 @@ SUBDIRS += \
     PolyParams   \
     GrayAray   \
     GraphicsMapLib   \
+    CustomalizedControlPannel   \
+    KalmanFilter   \
+    SmoothSlidingWindowFilter   \
