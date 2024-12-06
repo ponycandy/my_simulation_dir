@@ -1,4 +1,4 @@
-QT       += core gui testlib network positioning openglwidgets
+QT       += core gui testlib network positioning
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17

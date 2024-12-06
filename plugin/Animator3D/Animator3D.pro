@@ -1,4 +1,4 @@
-QT       += core gui testlib openglwidgets opengl
+QT       += core gui testlib  opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

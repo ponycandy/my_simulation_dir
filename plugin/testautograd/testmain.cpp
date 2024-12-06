@@ -30,7 +30,7 @@ Testmain::Testmain(QObject *parent)
 //    m_service->init_all_x(0,varmat);//这个只有使用内在动力学的时候才能够使用
     m_service->start_crack();
     double v=tcost->GetCost();
-    qDebug()<<"value is "<<v;
+//    qDebug()<<"value is "<<v;
     std::cout<<VAR->GetValues()<<std::endl;
 
 }

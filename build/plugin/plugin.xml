@@ -9,9 +9,6 @@
 <plugin order="1" name="SwarmSimulator" />
 
 
-
-<plugin order="1" name="swarm_ETM" />
-
 <!--		<endplugin/>-->
 <pluginnum value="1"/>
 </plugins>

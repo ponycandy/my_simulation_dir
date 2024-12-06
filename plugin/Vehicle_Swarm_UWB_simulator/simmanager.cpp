@@ -88,7 +88,7 @@ simmanager::simmanager(QObject *parent)
 
     Vehicle_Swarm_UWB_simulatorActivator::subscribeslot(this,SLOT(slot_mouse_pressed(double,double,double,double))
                                      ,OSGIEVENT::MOUSE_PRESSED,Qt::QueuedConnection);
-    qDebug()<<"UWB_controller初始化完成";
+//    qDebug()<<"UWB_controller初始化完成";
 
     Vehicle_Swarm_UWB_simulatorActivator::subscribeslot(this,SLOT(slot_choose_bool(bool)),OSGIEVENT::SIG_SWARMSIMULATOR_SIGCHOOSE,Qt::QueuedConnection);
 

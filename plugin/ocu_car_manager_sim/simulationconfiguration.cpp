@@ -3,6 +3,7 @@
 #include "QDialog"
 #include "qlabel.h"
 #include "QMessageBox"
+#include <QDebug>
 simulationconfiguration::simulationconfiguration(QWidget *parent) :
     QWidget(parent)
 {
@@ -10,12 +11,12 @@ simulationconfiguration::simulationconfiguration(QWidget *parent) :
     ocu_car_manager_simActivator::subscribeslot(this,SLOT(slot_updateControlmode(short,double)),"OCU_SIM_CONTROLMODE_UPDATE",Qt::QueuedConnection);
     ocu_car_manager_simActivator::subscribeslot(this,SLOT(slot_update_chasis_state_mode(int,int,int)),"OCU_SIM_CHASISDEVICESTATE_UPDATE",Qt::QueuedConnection);
 
-    m_chasiscontrol.header=0xaacc;
-    m_chasiscontrol.workload_enable=false;
-    m_chasiscontrol.chasis_enable=false;
-    m_chasiscontrol.weapon_enable=false;
-    m_chasiscontrol.set_control=short(stop);
-    m_chasiscontrol.speedlimit=12;
+//    m_chasiscontrol.header=0xaacc;
+//    m_chasiscontrol.workload_enable=false;
+//    m_chasiscontrol.chasis_enable=false;
+//    m_chasiscontrol.weapon_enable=false;
+//    m_chasiscontrol.set_control=short(stop);
+//    m_chasiscontrol.speedlimit=12;
     // 初始化控制体
 }
 
@@ -112,115 +113,115 @@ void simulationconfiguration::setupUI()
 
 void simulationconfiguration::send_motion_command(double linear, double omega)
 {
-    MOTIONCOMMAND cmd;
-    cmd.header=0xaaaa;
-    cmd.angular=omega;
-    cmd.linear=linear;
+//    MOTIONCOMMAND cmd;
+//    cmd.header=0xaaaa;
+//    cmd.angular=omega;
+//    cmd.linear=linear;
 
-    QByteArray sendingdata;
-    const char* ptData = cmd_cache;
-    int offset,size;
+//    QByteArray sendingdata;
+//    const char* ptData = cmd_cache;
+//    int offset,size;
 
-    size=0;
-    offset=2;
-    memcpy((void *)(ptData), (void *)&cmd.header, offset);
-    ptData += offset;
-    size+=offset;
+//    size=0;
+//    offset=2;
+//    memcpy((void *)(ptData), (void *)&cmd.header, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (cmd.linear);
-    memcpy((void *)(ptData), (void *)&cmd.linear, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (cmd.linear);
+//    memcpy((void *)(ptData), (void *)&cmd.linear, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (cmd.angular);
-    memcpy((void *)(ptData), (void *)&cmd.angular, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (cmd.angular);
+//    memcpy((void *)(ptData), (void *)&cmd.angular, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    sendingdata.setRawData(cmd_cache,size);
+//    sendingdata.setRawData(cmd_cache,size);
 
   //  m_decode->send(sendingdata);
 }
 
 void simulationconfiguration::send_Chasis_command(double linear, double omega)
 {
-    QByteArray sendingdata;
-    const char* ptData = chasis_cache;
-    int offset,size;
+//    QByteArray sendingdata;
+//    const char* ptData = chasis_cache;
+//    int offset,size;
 
-    size=0;
-    offset=sizeof(m_chasiscontrol);
-    memcpy((void *)(ptData), (void *)&m_chasiscontrol, offset);
-    ptData += offset;
-    size+=offset;
+//    size=0;
+//    offset=sizeof(m_chasiscontrol);
+//    memcpy((void *)(ptData), (void *)&m_chasiscontrol, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    sendingdata.setRawData(chasis_cache,size);
+//    sendingdata.setRawData(chasis_cache,size);
 
   //  m_decode->send(sendingdata);
 }
 
 void simulationconfiguration::sim_init()
 {
-    SimulationInit initinfoNow;
-    initinfoNow.header=0xaabb;
-    initinfoNow.vehicle=comboBox_vehicle_option->currentIndex();
-    initinfoNow.Missionstype=comboBox_Mission_option->currentIndex();
-    initinfoNow.worldtype=comboBox_world_option->currentIndex();
-    initinfoNow.Weathertype=comboBox_wheather_option->currentIndex();
-    TimePeriod time_period;
-    QDateTime startTime = startTimeEdit->dateTime();
-    time_period.starttime.year= startTime.date().year();
-    time_period.starttime.month= startTime.date().month();
-    time_period.starttime.days= startTime.date().daysInMonth();
-    time_period.starttime.hours= startTime.time().hour();
-    time_period.starttime.minite= startTime.time().minute();
-    time_period.starttime.seconds= startTime.time().second();
-    QDateTime endtime = endTimeEdit->dateTime();
-    time_period.endingtime.year= endtime.date().year();
-    time_period.endingtime.month= endtime.date().month();
-    time_period.endingtime.days= endtime.date().daysInMonth();
-    time_period.endingtime.hours= endtime.time().hour();
-    time_period.endingtime.minite= endtime.time().minute();
-    time_period.endingtime.seconds= endtime.time().second();
-    initinfoNow.Missiontime=time_period;
+//    SimulationInit initinfoNow;
+//    initinfoNow.header=0xaabb;
+//    initinfoNow.vehicle=comboBox_vehicle_option->currentIndex();
+//    initinfoNow.Missionstype=comboBox_Mission_option->currentIndex();
+//    initinfoNow.worldtype=comboBox_world_option->currentIndex();
+//    initinfoNow.Weathertype=comboBox_wheather_option->currentIndex();
+//    TimePeriod time_period;
+//    QDateTime startTime = startTimeEdit->dateTime();
+//    time_period.starttime.year= startTime.date().year();
+//    time_period.starttime.month= startTime.date().month();
+//    time_period.starttime.days= startTime.date().daysInMonth();
+//    time_period.starttime.hours= startTime.time().hour();
+//    time_period.starttime.minite= startTime.time().minute();
+//    time_period.starttime.seconds= startTime.time().second();
+//    QDateTime endtime = endTimeEdit->dateTime();
+//    time_period.endingtime.year= endtime.date().year();
+//    time_period.endingtime.month= endtime.date().month();
+//    time_period.endingtime.days= endtime.date().daysInMonth();
+//    time_period.endingtime.hours= endtime.time().hour();
+//    time_period.endingtime.minite= endtime.time().minute();
+//    time_period.endingtime.seconds= endtime.time().second();
+//    initinfoNow.Missiontime=time_period;
 
 
-    QByteArray sendingdata;
-    const char* ptData = Init_cache;
-    int offset,size;
+//    QByteArray sendingdata;
+//    const char* ptData = Init_cache;
+//    int offset,size;
 
-    size=0;
-    offset=2;
-    memcpy((void *)(ptData), (void *)&initinfoNow.header, offset);
-    ptData += offset;
-    size+=offset;
+//    size=0;
+//    offset=2;
+//    memcpy((void *)(ptData), (void *)&initinfoNow.header, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (initinfoNow.vehicle);
-    memcpy((void *)(ptData), (void *)&initinfoNow.vehicle, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (initinfoNow.vehicle);
+//    memcpy((void *)(ptData), (void *)&initinfoNow.vehicle, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (initinfoNow.Missionstype);
-    memcpy((void *)(ptData), (void *)&initinfoNow.Missionstype, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (initinfoNow.Missionstype);
+//    memcpy((void *)(ptData), (void *)&initinfoNow.Missionstype, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (initinfoNow.worldtype);
-    memcpy((void *)(ptData), (void *)&initinfoNow.worldtype, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (initinfoNow.worldtype);
+//    memcpy((void *)(ptData), (void *)&initinfoNow.worldtype, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (initinfoNow.Weathertype);
-    memcpy((void *)(ptData), (void *)&initinfoNow.Weathertype, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (initinfoNow.Weathertype);
+//    memcpy((void *)(ptData), (void *)&initinfoNow.Weathertype, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    offset=sizeof (initinfoNow.Missiontime);
-    memcpy((void *)(ptData), (void *)&initinfoNow.Missiontime, offset);
-    ptData += offset;
-    size+=offset;
+//    offset=sizeof (initinfoNow.Missiontime);
+//    memcpy((void *)(ptData), (void *)&initinfoNow.Missiontime, offset);
+//    ptData += offset;
+//    size+=offset;
 
-    sendingdata.setRawData(Init_cache,size);
+//    sendingdata.setRawData(Init_cache,size);
 
    // m_decode->send(sendingdata);
 }
@@ -262,15 +263,15 @@ void simulationconfiguration::On_startsimulation()
 
 void simulationconfiguration::slot_updateControlmode(short mode, double value)
 {
-    m_chasiscontrol.set_control=mode;
-    m_chasiscontrol.speedlimit=value;
-    send_Chasis_command(0, 0);
+//    m_chasiscontrol.set_control=mode;
+//    m_chasiscontrol.speedlimit=value;
+//    send_Chasis_command(0, 0);
 }
 
 void simulationconfiguration::slot_update_chasis_state_mode(int workload_enable, int chasis_enable, int weapon_enable)
 {
-    m_chasiscontrol.workload_enable=workload_enable;
-    m_chasiscontrol.chasis_enable=chasis_enable;
-    m_chasiscontrol.weapon_enable=weapon_enable;
-    send_Chasis_command(0, 0);
+//    m_chasiscontrol.workload_enable=workload_enable;
+//    m_chasiscontrol.chasis_enable=chasis_enable;
+//    m_chasiscontrol.weapon_enable=weapon_enable;
+//    send_Chasis_command(0, 0);
 }

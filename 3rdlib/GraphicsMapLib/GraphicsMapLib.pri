@@ -1,4 +1,4 @@
-QT += positioning openglwidgets
+QT += positioning
 
 #LIBS += -L../../3rdlib/GraphicsMapLib/lib -lGraphicsMapLibd
 INCLUDEPATH += ../../3rdlib/GraphicsMapLib/src

@@ -38,4 +38,7 @@ FORMS += \
 
 RESOURCES += iconresource.qrc
 
-
+msvc {
+    QMAKE_CFLAGS += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}

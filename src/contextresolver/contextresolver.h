@@ -8,6 +8,7 @@
 #include <service/eventservice.h>
 #include "slotpointer.h"
 #include "funcdummy.h"
+#include <QDebug>
 class ContextResolver : public QObject,public PluginContext
 {
     Q_OBJECT

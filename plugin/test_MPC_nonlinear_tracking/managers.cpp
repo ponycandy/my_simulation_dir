@@ -32,7 +32,7 @@ managers::managers(QObject *parent)
         Eigen::MatrixXd controls=mpc->feed_Back_control(statenow);
         odef->control_0=controls;
         statenow=odef->stepin();
-        qDebug()<<"x is: "<<statenow(0,0)<< " control is "<<odef->control_0(0,0);
+//        qDebug()<<"x is: "<<statenow(0,0)<< " control is "<<odef->control_0(0,0);
     }
 
 }

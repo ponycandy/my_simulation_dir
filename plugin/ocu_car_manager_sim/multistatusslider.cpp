@@ -1,5 +1,6 @@
 #include "multistatusslider.h"
 #include <qpainter.h>
+#include <QDebug>
 multistatusSlider::multistatusSlider(QWidget *parent)
     : QWidget{parent}
 {

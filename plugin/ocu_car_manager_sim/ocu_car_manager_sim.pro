@@ -1,4 +1,4 @@
-QT       += core gui testlib  positioning openglwidgets
+QT       += core gui testlib  positioning
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,9 +9,8 @@ QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 TEMPLATE = lib
 DEFINES += OCU_CAR_MANAGER_SIM_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
-DESTDIR = ../../build
-INCLUDEPATH += ../../3rdlib/project_library/src/GraphicsMapLib
-LIBS += -L../../3rdlib/project_library/bin -lGraphicsMapLib
+include(../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
+
 INCLUDEPATH += ../../build/config
 INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
@@ -45,5 +44,10 @@ HEADERS += \
 FORMS += \
     startwindow.ui \
     whitewidget.ui
+
+msvc {
+    QMAKE_CFLAGS += /utf-8
+    QMAKE_CXXFLAGS += /utf-8
+}
 
 RESOURCES += iconresource.qrc

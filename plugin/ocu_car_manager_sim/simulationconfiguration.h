@@ -22,7 +22,7 @@ public:
     void setupConnection();
     void getData(QByteArray data);
     QDateTimeEdit *startTimeEdit;
-    ChasisManipulation m_chasiscontrol;
+//    ChasisManipulation m_chasiscontrol;
 
     QDateTimeEdit *endTimeEdit;
     QPushButton *startlabel;
