@@ -25,3 +25,20 @@ SOURCES += \
 HEADERS += \
     CLOSEPOINT_global.h \
     ClosePoint.h \
+# 定义目标文件名
+TARGET = ClosePoint
+
+# 定义要拷贝的文件
+DESTDIR1 = ..\..\bin
+DESTDIR2 = ..\..\..\..\build
+# 定义拷贝命令
+win32 {
+    # Windows系统下的拷贝命令
+    POST_LINKING_COMMAND = copy $${DESTDIR1}\\$${TARGET}.lib $${DESTDIR2}\\$${TARGET}.lib  &  copy $${DESTDIR1}\\$${TARGET}.dll $${DESTDIR2}\\$${TARGET}.dll
+} else {
+    # Unix/Linux系统下的拷贝命令
+    POST_LINKING_COMMAND = cp ../../bin/$${TARGET}.lib $$DESTDIR2/$${TARGET}.lib  &  cp  ../../bin/$${TARGET}.dll $$DESTDIR2/$${TARGET}.dll
+}
+
+# 使用QMAKE_POST_LINK来执行拷贝命令
+QMAKE_POST_LINK = $$POST_LINKING_COMMAND

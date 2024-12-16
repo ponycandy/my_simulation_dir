@@ -16,54 +16,23 @@ bool xmlCore::xmlRead(std::string cName,Eigen::MatrixXd& matrix)
     QString value;
     QString value_reverse;
 
-    int row = 0;
+    int row = matrix.rows();
 
-    int col = 0;
+    int col = matrix.cols();
 
-    int i = 2;
-    QString part;
-    while (i < size)
+    matrix_qString.replace("\t"," ");
+    matrix_qString.replace("\r"," ");
+    matrix_qString.replace("\n"," ");
+    QStringList list = matrix_qString.split(" ", QString::SkipEmptyParts);
+    int i=0;
+    int entry1=0;
+    int entry2=0;
+    for (const QString &word : list)
     {
-        part=matrix_qString[i];
-
-        while (part != "\t")
-        {
-            value.clear();
-            value_reverse.clear();
-
-            while (part != " " && part != "\n")
-            {
-                value_reverse.insert(0,part);
-
-                i += 1;
-                part=matrix_qString[i];
-            }
-            col += 1;
-
-            for(int j = 0; j < value_reverse.size(); j++)
-            {
-                value.insert(0,value_reverse[j]);
-            }
-
-            matrix_vector.insert(matrix_vector.begin(),value.toDouble());
-
-            i += 1;
-            part=matrix_qString[i];
-        }
-        row +=1;
-
-        i += 1;
+        entry1=i / col;
+        entry2=i % col;
+        matrix(entry1, entry2) = word.toDouble();
+        i++;
     }
-
-    col = col/row;
-
-    for(int i = 0; i < row; i++)
-    {
-        for(int j = 0; j < col; j++)
-        {
-            matrix(i,j) = matrix_vector[matrix_vector.size() - 1 - i*col - j];
-        }
-    }
-
     return true;
 }
