@@ -14,11 +14,20 @@ CONFIG += c++11
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
-
+QMAKE_CXXFLAGS += /arch:AVX
+QMAKE_CXXFLAGS_DEBUG += /arch:AVX
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+#DESTDIR += ../../../../build/
+# 指定输出目录
+
+# 指定库文件输出目录
+#QMAKE_LIBDIR += $${DESTDIR_1} $${DESTDIR_2}
+
+## 指定动态链接库文件输出目录
+#QMAKE_BINDIR += $${DESTDIR_1} $${DESTDIR_2}
 
 SOURCES += \
 	xmlcore.cpp \
@@ -31,3 +40,22 @@ SOURCES += \
 HEADERS += \
     XMLCORE_global.h \
     xmlcore.h \
+
+
+# 定义目标文件名
+TARGET = xmlcore
+
+# 定义要拷贝的文件
+DESTDIR1 = ..\..\bin
+DESTDIR2 = ..\..\..\..\build
+# 定义拷贝命令
+win32 {
+    # Windows系统下的拷贝命令
+    POST_LINKING_COMMAND = copy $${DESTDIR1}\\$${TARGET}.lib $${DESTDIR2}\\$${TARGET}.lib  &  copy $${DESTDIR1}\\$${TARGET}.dll $${DESTDIR2}\\$${TARGET}.dll
+} else {
+    # Unix/Linux系统下的拷贝命令
+    POST_LINKING_COMMAND = cp ../../bin/$${TARGET}.lib $$DESTDIR2/$${TARGET}.lib  &  cp  ../../bin/$${TARGET}.dll $$DESTDIR2/$${TARGET}.dll
+}
+
+# 使用QMAKE_POST_LINK来执行拷贝命令
+QMAKE_POST_LINK = $$POST_LINKING_COMMAND
