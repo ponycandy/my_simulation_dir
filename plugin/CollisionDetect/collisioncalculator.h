@@ -4,6 +4,12 @@
 #include <QObject>
 #include <Eigen/Core>
 #include <service/CollisionDetectservice.h>
+struct triple_abc
+{
+    double a;
+    double b;
+    double c;
+};
 class collisionCalculator : public QObject,public CollisionDetectservice
 {
     Q_OBJECT
