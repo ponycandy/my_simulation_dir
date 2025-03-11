@@ -1,0 +1,238 @@
+#include "vehicle.h"
+#include "service/SwarmSimservice.h"
+#include "xmlcore.h"
+#include <cmath>
+#include <MyMath/MyMathLib.h>
+#include <swarm_ETMActivator.h>
+// Define pi as a constant
+Eigen::MatrixXd originalvector;
+int counter=0;
+
+inline double ValueOperator(Eigen::MatrixXd value)
+{
+    return abs(calculateAngleBetweenVectors(originalvector,value));
+}
+
+vehicle::vehicle():SwarmAgent()
+{
+    cacheSigma=1;
+    status_num=3;
+    action_num=2;
+    sigma=cacheSigma;
+    cacheOBSclpnum=0;
+
+    TriggerEvent();
+    //动力学不变
+
+
+
+    predictedN=20;
+    int antnum;
+    xmlreader= new xmlCore("./config/swarmETM/swarm2.xml");
+    xmlreader->xmlRead("agent_num",antnum);
+    formationmat.resize(antnum,2);
+    xmlreader->xmlRead("formation",formationmat);
+}
+
+
+void vehicle::state_update()
+{
+    heading_angle=normalize( state_vector(2,0));
+    state_vector(2,0)=heading_angle;
+    pos_xy(0,0)=state_vector(0,0);
+    pos_xy(1,0)=state_vector(1,0);
+    vel_xy(0,0)=act_vector(0,0)*cos(heading_angle);
+    vel_xy(1,0)=act_vector(0,0)*sin(heading_angle);
+    selfETM<<pos_xy(0,0),pos_xy(1,0),vel_xy(0,0),vel_xy(1,0);
+}
+
+void vehicle::sensorfunction()
+{
+    TriggerEvent();
+}
+
+void vehicle::broadcastfunction()
+{
+}
+
+void vehicle::controlfunction()
+{
+    if(ID!=6)
+    {
+        Eigen::MatrixXd syncP;
+        Get_sync_error(syncP);
+        Eigen::MatrixXd K;
+        K.resize(2,4);
+        K<<1 ,0 ,1 ,0 ,
+                0 ,1 ,0, 1;
+        double alpha=-0.8;
+        act_vector=alpha*K*syncP;
+        to_steering(act_vector);
+//        qDebug()<<"ID: "<<ID<<" 触发";
+    }
+    else {
+        act_vector<<0,0;
+    }
+}
+
+bool vehicle::stable_judgement()
+{
+    return false;
+}
+
+void vehicle::predicitTraj()
+{
+
+}
+
+void vehicle::Getcontrol()
+{
+
+}
+
+void vehicle::Getlookaheadpoint()
+{
+
+}
+void vehicle::setsendsig(int order)
+{
+
+
+    qRegisterMetaType<Eigen::MatrixXd>("Eigen::MatrixXd");
+    if(order==0)//也就是本机为target
+    {
+        swarm_ETMActivator::publishsignal(this,SIGNAL(updatetarget(double,double,double))
+                                          ,"Targetstateupdatesig",Qt::QueuedConnection);
+        swarm_ETMActivator::publishsignal(this,SIGNAL(LeaderBroadcast(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
+                                          ,"LeaderBroadCast",Qt::DirectConnection);
+    }
+    if(order==1)//也就是本机为agent
+    {
+        Eigen::MatrixXd MatHistory;
+        MatHistory.resize(4,predictedN);
+        predictguy.resize(agentnum+1);
+        Cachegrey.resize(agentnum+1);
+        for(int j=1;j<=agentnum;j++)
+        {
+
+            GrayAray *newgut=new GrayAray;
+            predictguy[j]=newgut;//从0开始
+            MatHistory.setZero();
+            predictguy[j]->resize(4);
+            predictguy[j]->storeInitial(MatHistory);
+            //            predictguy[j]->setMaxqueue(predictedN,4);
+            Eigen::MatrixXd newmat;
+            newmat.resize(4,1);
+            newmat.setZero();
+            Cachegrey[j]=newmat;
+        }
+
+
+
+        swarm_ETMActivator::subscribeslot(this,SLOT(Broadcastupdate(Eigen::MatrixXd,Eigen::MatrixXd,Eigen::MatrixXd))
+                                          ,"LeaderBroadCast",
+                                          Qt::DirectConnection);
+    }
+}
+
+void vehicle::to_steering(Eigen::MatrixXd &mat)
+{
+    Eigen::MatrixXd l_i;
+    l_i=vel_xy;
+    double uxi=vel_xy(0,0);
+    double uyi=vel_xy(0,0);
+    Eigen::MatrixXd linearspeed;
+    Eigen::MatrixXd orien=l_i;
+    orien(0,0)=cos(heading_angle);
+    orien(1,0)=sin(heading_angle);
+    linearspeed=orien.transpose()*(l_i+mat*0.03);//线速度控制量
+    linear=linearspeed(0,0);
+    double thetaHat=atan2(uyi,uxi);//rad
+    double dthetaHat=atan2(uyi,uxi);
+    if(uyi==uxi && uyi==0)
+    {
+        dthetaHat=0;
+    }
+    else
+    {
+        dthetaHat=uxi/(uxi*uxi+uyi*uyi)*mat(1,0)-uyi/(uxi*uxi+uyi*uyi)*mat(0,0);
+    }
+    double miu_1=0.5;
+    double miu_2=0.5;
+    omega=miu_1*(thetaHat-heading_angle)+miu_2*(dthetaHat-omega);
+
+    //用最大限制一下:
+    double maxlinear=100;
+    double maxomega=300;
+//    if(linear<0)
+//    {
+//        linear=0;
+//    }
+    if(abs(linear)>maxlinear)
+    {
+//        linear=linear/abs(linear)*maxlinear;
+    }
+
+    if(abs(omega)>maxomega)
+    {
+        omega=omega/abs(omega)*maxomega;
+    }
+    act_vector(0,0)=linear;
+    act_vector(1,0)=omega;
+}
+
+void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
+{
+    Eigen::MatrixXd syncP,hmat_i,hmat_j,*xi;
+    syncP.resize(4,1);
+    syncP.setZero();
+    hmat_i=syncP;
+    hmat_j=syncP;
+    Eigen::MatrixXd *xj;
+    xi=ETM_sensor.value(ID);
+    hmat_i<<formationmat(ID-1,0),formationmat(ID-1,1),0,0;
+    for(int j=1;j<=neib_num+1;j++)
+    {
+        xj=ETM_sensor.value(j);
+        if(nearbyagentdistance.contains(j))
+        {
+            hmat_j<<formationmat(j-1,0),formationmat(j-1,1),0,0;
+            syncP=syncP-(hmat_i-hmat_j);
+            syncP=syncP+xi->block(0,0,4,1)-xj->block(0,0,4,1)-(hmat_i-hmat_j);
+
+        }
+
+    }
+    mat=syncP;
+}
+void vehicle::fault_set(int option)
+{
+
+
+}
+
+SwarmAgent *vehicle::clone_agent()
+{
+    vehicle *new_vehicle=new vehicle;
+    return new_vehicle;
+}
+
+Eigen::MatrixXd vehicle::state_space_equation()
+{
+    Eigen::MatrixXd d_state;
+    d_state.resize(3,1);
+    d_state.setZero();
+
+    double angle=state_vector(2,0);
+    d_state(0,0)=act_vector(0,0)*cos(angle);
+    d_state(1,0)=act_vector(0,0)*sin(angle);
+    d_state(2,0)=act_vector(1,0);
+
+
+    return d_state;
+}
+
+void vehicle::Broadcastupdate(Eigen::MatrixXd e_t, Eigen::MatrixXd v_t, Eigen::MatrixXd v_n, Eigen::MatrixXd othersignal)
+{
+
+}

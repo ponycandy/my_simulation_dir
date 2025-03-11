@@ -117,6 +117,7 @@ void simulator_manager::init_plant(int steptime, QString configfile, SwarmAgent 
     for(int i=1;i<=m_sim->agent_num;i++)
     {
         SwarmAgent *new_agent=singleagents->clone_agent();
+        new_agent->config_file=configfile;
         new_agent->state_vector.resize(states_num,1);
         new_agent->ID=i;
         for(int j=0;j<new_agent->status_num;j++)

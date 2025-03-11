@@ -9,13 +9,8 @@ TEMPLATE = lib
 DEFINES += VEHICLECONTROLLER_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
 DESTDIR = ../../build
-include(../../3rdlib/mqtt/mqtt.pri)
-
-INCLUDEPATH += ../../3rdlib/project_library/src/GraphicsMapLib
-LIBS += -L../../3rdlib/project_library/bin -lGraphicsMapLib
-
-INCLUDEPATH += C:\Boost\include\boost-1_83
-LIBS += -LC:\Boost\lib -llibboost_thread-vc143-mt-gd-x64-1_83
+include(../../3rdlib/GraphicsMapLib/GraphicsMapLib.pri)
+include(../../3rdlib/protobuf/protobufdepedency.pri)
 
 INCLUDEPATH += ../../3rdlib/project_library/src/SwarmObstacle
 LIBS += -L../../3rdlib/project_library/bin -lSwarmObstacle
@@ -31,14 +26,20 @@ INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 
+
+
+
+
+
+
+
 SOURCES += \
     VehicleControllerActivator.cpp \
     cardataviewer.cpp \
     singlevehiclecard.cpp \
     vehiclemanager.cpp \
     videoplayer.cpp \
-    statusdisplay.cpp
-
+    statusdisplay.cpp \
 
 HEADERS += \
     VehicleControllerActivator.h \
@@ -46,5 +47,8 @@ HEADERS += \
     singlevehiclecard.h \
     vehiclemanager.h \
     videoplayer.h \
-    statusdisplay.h
+    statusdisplay.h \
+    T30Interface.h \
+    remote.pb.h
+
 

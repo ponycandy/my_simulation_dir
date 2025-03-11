@@ -1,4 +1,4 @@
-﻿#include "vehicle.h"
+#include "vehicle.h"
 #include "service/SwarmSimservice.h"
 #include "xmlcore.h"
 #include <cmath>
@@ -11,7 +11,7 @@
 Eigen::MatrixXd originalvector;
 double yip=0.8;
 int counter=0;
-int probability_denominator=22;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
+int probability_denominator=13;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
 inline double ValueOperator(Eigen::MatrixXd value)
 {
     return abs(calculateAngleBetweenVectors(originalvector,value));
@@ -115,10 +115,26 @@ void vehicle::broadcastfunction()
 
 void vehicle::controlfunction()
 {
-    if(ID==4)//领导者
+    if(ID==5)//目标
     {
         //先直线运动规律
-        act_vector<<1.5,0.08;
+        act_vector<<1,0.15;
+    }
+    if(ID==4)//虚拟领导者
+    {
+        //直接取用目标位置作PD追踪或者更fancy一点
+        Eigen::MatrixXd *temp_target=ETM_sensor.value(5);
+        Eigen::MatrixXd kp;
+        Eigen::MatrixXd kv;
+        kp.resize(2,2);
+        kp<<3,0,
+            0,3;
+        kv.resize(2,2);
+        kv<<1,0,
+            0,1;
+        act_vector=-kp*(selfETM.block(0,0,2,1)-temp_target->block(0,0,2,1))+
+                -kv*(selfETM.block(2,0,2,1)-temp_target->block(2,0,2,1));
+        to_steering(act_vector);
     }
     if(ID<4)//追随者
     {
@@ -311,9 +327,9 @@ void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
             grad=(dot-communication_range)/pow(dot,2)*norm;
 
             Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy)/sqrt(1+yip*pow((posofcp-pos_xy).norm(),2));
-            gradient_term=gradient_term+10/(posofcp-pos_xy).norm()*(-n_i_j_hat);
+            gradient_term=gradient_term+phibeta((posofcp-pos_xy).norm())*n_i_j_hat;
         }
-        act_vector=act_vector+(concencus+10*gradient_term);
+        act_vector=act_vector+(concencus+0.55*gradient_term);
         return;
     }
 

@@ -1,4 +1,4 @@
-﻿#include "vehicle.h"
+#include "vehicle.h"
 #include "service/SwarmSimservice.h"
 #include "xmlcore.h"
 #include <cmath>
@@ -6,12 +6,14 @@
 #include <swarm_ETMActivator.h>
 #include <random>
 #include <utility>
-
+#include <cmath>
+#include <iostream>
 // Define pi as a constant
 Eigen::MatrixXd originalvector;
 double yip=0.8;
+const double targetvel=0.8;
 int counter=0;
-int probability_denominator=22;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
+int probability_denominator=10;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
 inline double ValueOperator(Eigen::MatrixXd value)
 {
     return abs(calculateAngleBetweenVectors(originalvector,value));
@@ -62,7 +64,7 @@ void vehicle::state_update()
 
 void vehicle::sensorfunction()
 {
-    TriggerEvent();
+//    TriggerEvent();
     //这里开始记录数据
     //需要一个更好的格式数据，但是他丫的只有2个维度
     //考虑到触发数据是生造的，这里只记录各自的轨迹数据得了
@@ -71,7 +73,13 @@ void vehicle::sensorfunction()
     logger->log(internalcount,2,vel_xy.coeff(0,0));
     logger->log(internalcount,3,vel_xy.coeff(1,0));
     internalcount++;
-
+    if(ID==1)
+    {
+        if(internalcount==76)
+        {
+            qDebug()<<internalcount;
+        }
+    }
     //记录触发的时候只需要记录一次就行
     double ei;
     Eigen::MatrixXd temp;
@@ -117,8 +125,9 @@ void vehicle::controlfunction()
 {
     if(ID==4)//领导者
     {
-        //先直线运动规律
-        act_vector<<1.5,0.08;
+
+        act_vector<<1,0.075;
+
     }
     if(ID<4)//追随者
     {
@@ -175,12 +184,6 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
         dthetaHat=uxi/(uxi*uxi+uyi*uyi)*mat(1,0)-uyi/(uxi*uxi+uyi*uyi)*mat(0,0);
     }
 
-    if(sigma*thetaHat<0 && ID==3)
-    {
-        //按时越过临界角度
-        qDebug()<<"thetaHat:"<<thetaHat<<" dthetaHat:"<<dthetaHat<<" last_thetaHat:"<<sigma
-               <<" manipulating:"<<omega<<" heading_angle:"<<heading_angle;
-    }
     sigma=thetaHat;
     double miu_1=1;
     double miu_2=0.5;
@@ -251,7 +254,7 @@ void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
         }
 
         avergae_vel/=jnum;
-        act_vector=(concencus+gradient_term);
+        act_vector=(concencus+3*gradient_term);
         //下面添加避障项
         double dot=0;
         double vel_mag;
@@ -310,10 +313,10 @@ void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
             dot=norm.norm();
             grad=(dot-communication_range)/pow(dot,2)*norm;
 
-            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy)/sqrt(1+yip*pow((posofcp-pos_xy).norm(),2));
-            gradient_term=gradient_term+10/(posofcp-pos_xy).norm()*(-n_i_j_hat);
+            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy).normalized();
+            gradient_term=gradient_term+2*n_i_j_hat/(-(posofcp-pos_xy).norm());
         }
-        act_vector=act_vector+(concencus+10*gradient_term);
+        act_vector=act_vector+(5*concencus+3*gradient_term);
         return;
     }
 
@@ -323,10 +326,13 @@ void vehicle::fault_set(int option)
     xmlreader= new xmlCore(config_file.toStdString());
     xmlreader->xmlRead("agent_num",agentnum);
 
+
     Eigen::MatrixXd relationmatrix;
     relationmatrix.resize(agentnum,agentnum);
     xmlreader->xmlRead("relationmatrix",relationmatrix);
-
+    xmlreader->xmlRead("path_pnum",pathpointnum);
+    pathpoint.resize(pathpointnum,2);
+    xmlreader->xmlRead("Path",pathpoint);
     for(int k=0;k<agentnum;k++)
     {
         if(relationmatrix(ID-1,k)!=0)

@@ -283,7 +283,7 @@
            <item>
             <widget class="QLabel" name="label_18">
              <property name="text">
-              <string>ROS connection</string>
+              <string>MQ connection</string>
              </property>
             </widget>
            </item>

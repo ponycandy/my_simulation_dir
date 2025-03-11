@@ -9,7 +9,7 @@ simmanager::simmanager(QObject *parent)
     : QObject{parent}
 {
     Datalogservice *logger=swarm_ETMActivator::getService<Datalogservice>("Datalogservice");
-    QString filename="./config/swarmETM/swarm.xml";
+    QString filename="./config/swarmETM/swarm0.xml";
     singleone=new vehicle;
     xmlCore xmlreader(filename.toStdString());
     xmlreader.xmlRead("agent_num",agentnum);
@@ -17,53 +17,13 @@ simmanager::simmanager(QObject *parent)
     SwarmSimservice *swarmsim=swarmsim0->cloneservice();
     swarmsim->init_plant(30,filename,singleone);
     agentgroup=swarmsim->getagentgroup();
-    Eigen::MatrixXd relationmatrix;
-    relationmatrix.resize(agentnum,agentnum);
 
 
-    xmlreader.xmlRead("relationmatrix",relationmatrix);
 
     for(int i=1;i<=agentnum;i++)
     {
         vehicle *agent=dynamic_cast<vehicle *>( agentgroup[i]);
-
-        agent->agentnum=agentnum;
-
-        if(i==agentnum)
-        {
-            agent->logger=logger->cloneservice();
-            agent->logger->createlogfile("./log/ETM_Target.txt",6056);
-             agent->logger->DeleteFile("./log/ETM_Target.xls");
-            agent->logger->createxlsfile("./log/ETM_Target.xls");
-            agent->setsendsig(0);//设置目标发送信号
-            agent->status_num=3;
-            Eigen::MatrixXd mid1;
-            mid1.resize(3,1);
-            mid1=agent->state_vector.block(0,0,3,1);
-            agent->state_vector.resize(3,1);
-            agent->state_vector=mid1;
-        }
-
-        else
-        {
-            agent->logger=logger->cloneservice();
-            QString filename="./log/ETM_Agent_"+QString::number(i)+".xls";
-
-            agent->logger->createlogfile("./log/ETM_Agent_"+QString::number(i)+".txt",6056+i);
-            agent->logger->DeleteFile(filename);
-            agent->logger->createxlsfile(filename);
-
-            agent->setsendsig(1);//设置接受信号
-        }
-        for(int k=0;k<agentnum;k++)
-        {
-            if(relationmatrix(i-1,k)!=0)
-            {
-                agent->nearbyagentdistance.insert(k+1,relationmatrix(i-1,k));
-            }
-        }
-
-
+        agent->fault_set(0);
     }
     MYpainter *m_painter=new MYpainter;
     Animateservice *anim=swarmsim->getwidgetoperator();
@@ -73,16 +33,18 @@ simmanager::simmanager(QObject *parent)
     m_widget->show();
     anim->start_animate();
     dysim=swarmsim->get_simer();
-    swarmsim->startsim();
-
+    //需要一个开始按钮
+    mainwindow = new TestTriggered();
+    connect(mainwindow,SIGNAL(trigeronce()),this,SLOT(on_trigger()));
+    mainwindow->show();
 }
 
 void simmanager::on_trigger()
 {
-    QMap<int, SwarmAgent *>::const_iterator iter2 = agentgroup.cbegin();
-    while (iter2 != agentgroup.cend())
+    for(int i=1;i<=agentnum;i++)
     {
-        iter2.value()->TriggerEvent();
-        ++iter2;
+        vehicle *agent=dynamic_cast<vehicle *>( agentgroup[i]);
+        agent->predicitTraj();
     }
+    dysim->start_sim();
 }

@@ -1,4 +1,4 @@
-﻿#include "vehicle.h"
+#include "vehicle.h"
 #include "service/SwarmSimservice.h"
 #include "xmlcore.h"
 #include <cmath>

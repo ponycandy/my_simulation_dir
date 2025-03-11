@@ -1,4 +1,4 @@
-﻿#include "vehicle.h"
+#include "vehicle.h"
 #include "service/SwarmSimservice.h"
 #include "xmlcore.h"
 #include <cmath>
@@ -9,35 +9,13 @@
 
 // Define pi as a constant
 Eigen::MatrixXd originalvector;
-double yip=0.8;
 int counter=0;
-int probability_denominator=22;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
+int probability_denominator=17;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
 inline double ValueOperator(Eigen::MatrixXd value)
 {
     return abs(calculateAngleBetweenVectors(originalvector,value));
 }
-inline double sigma_1_norm(double value)
-{
-    return 1/sqrt(1+pow(value,2));
-}
-inline double nuoh(double value)
-{
-    double h=0.5;
-    if(value >=0 && value <=h)
-    {
-        return 1;
-    }
-    if(value >=h && value <=1)
-    {
-        return 0.5*(1+cos(3.1415926535*(value-h)/(1-h)));
-    }
-    return 0;
-}
-inline double phibeta(double var)
-{
-    double dbeta=2;
-    return nuoh(var/dbeta)*(sigma_1_norm(var-dbeta)-1);
-}
+
 vehicle::vehicle():SwarmAgent()
 {
     cacheSigma=1;
@@ -90,6 +68,7 @@ void vehicle::sensorfunction()
 
     if (random_num == 0) {
         //简单触发律
+        qDebug()<<"触发 "<<ID<<" 次数"<<internalcount;
         TriggerEvent();
         logger->log(internalcount,4,1);//0代表未被触发，1代表被触发
     }
@@ -98,14 +77,10 @@ void vehicle::sensorfunction()
         logger->log(internalcount,4,0);//0代表未被触发，1代表被触发
     }
     //看来必须使用某种方式进行预测才行
-    if(internalcount>1000)//30秒，600个触发时刻
+    if(internalcount>2000)//18秒，600个触发时刻
     {
         logger->savexlsfile();
     }
-}
-
-void vehicle::timerEvent(QTimerEvent *event)
-{
 }
 
 void vehicle::broadcastfunction()
@@ -115,15 +90,19 @@ void vehicle::broadcastfunction()
 
 void vehicle::controlfunction()
 {
-    if(ID==4)//领导者
+    if(ID!=6)
     {
-        //先直线运动规律
-        act_vector<<1.5,0.08;
-    }
-    if(ID<4)//追随者
-    {
-        Get_sync_error(syncP);
+        Get_sync_error(syncP);//这玩意儿算出来等于0？不对
+        Eigen::MatrixXd K;
+        K.resize(2,4);
+        K<<1 ,0 ,1 ,0 ,
+                0 ,1 ,0, 1;
+        double alpha=-0.2;
+        act_vector=alpha*K*syncP;
         to_steering(act_vector);
+    }
+    else {
+        act_vector<<0.3,0;
     }
 }
 
@@ -134,7 +113,7 @@ bool vehicle::stable_judgement()
 
 void vehicle::predicitTraj()
 {
-    m_timerid1=startTimer(15000);
+
 }
 
 void vehicle::Getcontrol()
@@ -148,7 +127,6 @@ void vehicle::Getlookaheadpoint()
 }
 void vehicle::setsendsig(int order)
 {
-
 }
 
 void vehicle::to_steering(Eigen::MatrixXd &mat)
@@ -164,7 +142,6 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
     linearspeed=orien.transpose()*(l_i+mat*0.03);//线速度控制量
     linear=linearspeed(0,0);
     double thetaHat=atan2(uyi,uxi);//rad
-    //这里的角度有一个吊诡的事情，就是通过0度临界角度的时候，控制量会剧烈抖动
     double dthetaHat=0;
     if(uyi==uxi && uyi==0)
     {
@@ -174,23 +151,14 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
     {
         dthetaHat=uxi/(uxi*uxi+uyi*uyi)*mat(1,0)-uyi/(uxi*uxi+uyi*uyi)*mat(0,0);
     }
-
-    if(sigma*thetaHat<0 && ID==3)
-    {
-        //按时越过临界角度
-        qDebug()<<"thetaHat:"<<thetaHat<<" dthetaHat:"<<dthetaHat<<" last_thetaHat:"<<sigma
-               <<" manipulating:"<<omega<<" heading_angle:"<<heading_angle;
-    }
-    sigma=thetaHat;
-    double miu_1=1;
+    double miu_1=3;
     double miu_2=0.5;
     //这里omega稍微优化一下，需要正向转向！
     omega=miu_1*((thetaHat-heading_angle))+miu_2*(dthetaHat-omega);
 
-
     //用最大限制一下:
-    double maxlinear=30;
-    double maxomega=20;
+    double maxlinear=1;
+    double maxomega=0.3;
     if(linear<0)
     {
         linear=0;
@@ -198,7 +166,7 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
     if(abs(linear)>maxlinear)
     {
         linear=linear/abs(linear)*maxlinear;
-    }//可以在稳定后开启不允许倒车的约束
+    }
 
     if(abs(omega)>maxomega)
     {
@@ -210,118 +178,33 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
 
 void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
 {
-    Eigen::MatrixXd n_ij;n_ij.resize(2,1);n_ij.setZero();
-    Eigen::MatrixXd grad=n_ij;
-    Eigen::MatrixXd grad1=n_ij;
-    Eigen::MatrixXd gradient_term=n_ij;
-    Eigen::MatrixXd concencus=n_ij;
-    Eigen::MatrixXd chasing_term=n_ij;
-    Eigen::MatrixXd vec_4d;
-    vec_4d.resize(4,1);
-    vec_4d.setZero();
-    Eigen::MatrixXd *ETMstate;
-
-
-    Eigen::MatrixXd avergae_vel;
-    avergae_vel.resize(2,1);
-    avergae_vel.setZero();
-    int jnum=1;
-    avergae_vel=vel_xy;
-
-    if(ID<agentnum)
+    Eigen::MatrixXd syncP,hmat_i,hmat_j,*xi;
+    syncP.resize(4,1);
+    syncP.setZero();
+    hmat_i=syncP;
+    hmat_j=syncP;
+    Eigen::MatrixXd *xj;
+    xi=ETM_sensor.value(ID);
+    hmat_i<<formationmat(ID-1,0),formationmat(ID-1,1),0,0;
+    for(int j=1;j<=neib_num+1;j++)
     {
-        for(int j=1;j<=neib_num+1;j++)
+        xj=ETM_sensor.value(j);
+        if(nearbyagentdistance.contains(j))
         {
-            if(j!=ID)
-            {
-                ETMstate=ETM_sensor.value(j);
-                if(nearbyagentdistance.contains(j))
-                {
-                    double distance=nearbyagentdistance.value(j);
-                    avergae_vel+=ETMstate->block(2,0,2,1);
-                    Eigen::MatrixXd n_ij=ETMstate->block(0,0,2,1)-pos_xy;
-                    concencus+=ETMstate->block(2,0,2,1)-vel_xy;
-                    double norm_2=n_ij.norm();
-                    Eigen::MatrixXd grad=(norm_2-distance)*n_ij.normalized();
-                    gradient_term+=grad;
-                }
-            }
-
+            hmat_j<<formationmat(j-1,0),formationmat(j-1,1),0,0;
+            syncP=syncP+xi->block(0,0,4,1)-xj->block(0,0,4,1)-(hmat_i-hmat_j);
 
         }
 
-        avergae_vel/=jnum;
-        act_vector=(concencus+gradient_term);
-        //下面添加避障项
-        double dot=0;
-        double vel_mag;
-        Eigen::MatrixXd edge0;
-        Eigen::MatrixXd norm;
-        Eigen::MatrixXd edge1;
-        Eigen::MatrixXd edge2;
-        Eigen::MatrixXd beta_agent_control;
-        beta_agent_control.resize(2,1);
-        norm.resize(2,1);
-        beta_agent_control.setZero();
-        gradient_term.setZero();
-        edge0=beta_agent_control;
-        edge1=edge0=edge2=edge0;
-        concencus.setZero();
-        Eigen::MatrixXd pos_close_agent=edge0;
-
-        for(int j=1;j<=obs_closet_point_num;j++)
-        {
-            ClosePoint *close_agent=closepoint_map.value(j);
-
-
-            edge1(0,0)=close_agent->edge1_x;
-            edge1(1,0)=close_agent->edge1_y;
-
-            edge2(0,0)=close_agent->edge2_x;
-            edge2(1,0)=close_agent->edge2_y;
-
-            pos_close_agent(0,0)=close_agent->x;
-            pos_close_agent(1,0)=close_agent->y;
-            Eigen::MatrixXd posofcp;
-            posofcp=pos_close_agent;
-
-            originalvector=avergae_vel;
-            if (close_agent->edg2==-close_agent->edg1)
-            {
-                std::vector<Eigen::MatrixXd> edges = {close_agent->edg1, close_agent->edg2};
-                edge0=*argmin(edges,ValueOperator);
-            }
-            else
-            {
-                //情况2：顶点，需要计算四个角度取最小
-                std::vector<Eigen::MatrixXd> edges = {close_agent->edg1, close_agent->edg2,
-                                                      -close_agent->edg1, -close_agent->edg2};
-
-                edge0=*argmin(edges,ValueOperator);
-            }
-
-            vel_mag=vel_xy.norm();
-            edge0.normalize();//vel of beta ganet
-            beta_agent_control=vel_mag*edge0;//vel of beta ganet
-            close_agent->angle=get_angle(beta_agent_control(0,0),beta_agent_control(1,0));
-            norm=beta_agent_control-vel_xy;
-            concencus=concencus+norm;
-            norm=pos_close_agent-pos_xy;
-            dot=norm.norm();
-            grad=(dot-communication_range)/pow(dot,2)*norm;
-
-            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy)/sqrt(1+yip*pow((posofcp-pos_xy).norm(),2));
-            gradient_term=gradient_term+10/(posofcp-pos_xy).norm()*(-n_i_j_hat);
-        }
-        act_vector=act_vector+(concencus+10*gradient_term);
-        return;
     }
-
+    mat=syncP;
 }
 void vehicle::fault_set(int option)
 {
     xmlreader= new xmlCore(config_file.toStdString());
     xmlreader->xmlRead("agent_num",agentnum);
+    formationmat.resize(agentnum,2);
+    xmlreader->xmlRead("formation",formationmat);
 
     Eigen::MatrixXd relationmatrix;
     relationmatrix.resize(agentnum,agentnum);

@@ -43,13 +43,12 @@ WidFrame::WidFrame(QWidget *parent) :
     this->setCentralWidget(centralWidget);
     Add_Menu(menuBar1,"Top_menu_bar");
 
-    QMenuBar *menuBar2 = new QMenuBar;
+//    QMenuBar *menuBar2 = new QMenuBar;
 
-    // 添加第一行菜单
-    menuBar2->addMenu("xxx");
-    Add_Menu(menuBar2,"Top_bar_2");
-
-    remove_Menu("Top_bar_2");
+//    // 添加第一行菜单
+//    menuBar2->addMenu("xxx");
+//    Add_Menu(menuBar2,"Top_bar_2");
+//    remove_Menu("Top_menu_bar");
 }
 
 WidFrame::~WidFrame()
@@ -68,9 +67,8 @@ void WidFrame::remove_Menu(QString Menuname)
 {
     if(menuist.contains(Menuname))
     {
-        menuist.remove(Menuname);
         QMenuBar *wid=menuist.value(Menuname);
-        wid->setParent(nullptr);
+        wid->hide();
         Menu_layout->removeWidget(wid);
     }
     else

@@ -13,6 +13,10 @@ LIBS += -L../../3rdlib/project_library/bin -lClosePoint
 INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
 LIBS += -L../../3rdlib/project_library/bin -lxmlcore
 
+INCLUDEPATH += ../../3rdlib/project_library/src/DeadReckon
+LIBS += -L../../3rdlib/project_library/bin -lDeadReckon
+
+
 CONFIG += c++17
 CONFIG += console
 
@@ -25,8 +29,7 @@ DEFINES += SWARM_ETM_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
 DESTDIR = ../../build
 
-INCLUDEPATH += ../../3rdlib/project_library/src/GrayAray
-LIBS += -L../../3rdlib/project_library/bin -lGrayAray
+
 
 
 INCLUDEPATH += ../../build/config

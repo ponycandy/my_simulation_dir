@@ -13,7 +13,6 @@ LIBS += -L../../3rdlib/project_library/bin -lSwarmObstacle
 INCLUDEPATH += ../../3rdlib/project_library/src/xmlcore
 LIBS += -L../../3rdlib/project_library/bin -lxmlcore
 
-
 TEMPLATE = lib
 DEFINES += SWARMSIMULATOR_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS

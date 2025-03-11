@@ -86,7 +86,7 @@ void StatusDisplay::update_linear_velocity(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     linear_velocity->setStyleSheet(textcolor);
     linear_velocity->setFont(ft);
-    linear_velocity->setText("线速度："+QString::number(value, 'f', 1)+"m/s");
+    linear_velocity->setText("linear velocity:"+QString::number(value, 'f', 1)+"m/s");
 }
 
 void StatusDisplay::update_angular_velocity(double value)
@@ -97,7 +97,7 @@ void StatusDisplay::update_angular_velocity(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     angular_velocity->setStyleSheet(textcolor);
     angular_velocity->setFont(ft);
-    angular_velocity->setText("角速度："+QString::number(value, 'f', 1)+"rad/s");
+    angular_velocity->setText("angular velocity:"+QString::number(value, 'f', 1)+"rad/s");
 }
 
 void StatusDisplay::update_latitude(double value)
@@ -108,7 +108,7 @@ void StatusDisplay::update_latitude(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     latitude->setStyleSheet(textcolor);
     latitude->setFont(ft);
-    latitude->setText("经度："+QString::number(value, 'f', 8)+"度");
+    latitude->setText("lat:"+QString::number(value, 'f', 8)+" ");
 }
 
 void StatusDisplay::update_altitude(double value)
@@ -119,7 +119,7 @@ void StatusDisplay::update_altitude(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     altitude->setStyleSheet(textcolor);
     altitude->setFont(ft);
-    altitude->setText("海拔："+QString::number(value, 'f', 8)+"m");
+    altitude->setText("alti: "+QString::number(value, 'f', 8)+"m");
 
 }
 
@@ -131,7 +131,7 @@ void StatusDisplay::update_BatteryTemprature(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     BatteryTemprature->setStyleSheet(textcolor);
     BatteryTemprature->setFont(ft);
-    BatteryTemprature->setText("电池温度： "+QString::number(value, 'f', 8)+" ");
+    BatteryTemprature->setText("temp:"+QString::number(value, 'f', 8)+" ");
 }
 
 void StatusDisplay::update_motorRPM_2(double value)
@@ -144,7 +144,7 @@ void StatusDisplay::update_motorRPM_2(double value)
     motorRPM_2->setFont(ft);
     motorRPM_2->setStyleSheet(textcolor);
 
-    motorRPM_2->setText("电机2转速： "+QString::number(value, 'f', 3)+" RPM");
+    motorRPM_2->setText("rpm motor2: "+QString::number(value, 'f', 3)+" RPM");
 
 }
 
@@ -156,7 +156,7 @@ void StatusDisplay::update_motorRPM_3(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     motorRPM_3->setStyleSheet(textcolor);
     motorRPM_3->setFont(ft);
-    motorRPM_3->setText("电机3转速： "+QString::number(value, 'f', 8)+" RPM");
+    motorRPM_3->setText("rpm motor3: "+QString::number(value, 'f', 8)+" RPM");
 
 }
 
@@ -168,7 +168,7 @@ void StatusDisplay::update_acc_x(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     acc_x->setStyleSheet(textcolor);
     acc_x->setFont(ft);
-    acc_x->setText("x轴加速度： "+QString::number(value, 'f', 3)+" m/s2");
+    acc_x->setText("ACC x:"+QString::number(value, 'f', 3)+" m/s2");
 
 }
 
@@ -180,7 +180,7 @@ void StatusDisplay::update_acc_y(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     acc_y->setStyleSheet(textcolor);
     acc_y->setFont(ft);
-    acc_y->setText("y轴加速度： "+QString::number(value, 'f', 3)+" m/s2");
+    acc_y->setText("ACC y:"+QString::number(value, 'f', 3)+" m/s2");
 
 }
 
@@ -192,7 +192,7 @@ void StatusDisplay::update_acc_z(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     acc_z->setStyleSheet(textcolor);
     acc_z->setFont(ft);
-    acc_z->setText("z轴加速度: "+QString::number(value, 'f', 3)+" m/s2");
+    acc_z->setText("Acc Z: "+QString::number(value, 'f', 3)+" m/s2");
 
 }
 
@@ -204,7 +204,7 @@ void StatusDisplay::update_pitch(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     pitch->setStyleSheet(textcolor);
     pitch->setFont(ft);
-    pitch->setText("俯仰角: "+QString::number(value, 'f', 3)+" rad");
+    pitch->setText("pitch: "+QString::number(value, 'f', 3)+" rad");
 
 }
 
@@ -216,7 +216,7 @@ void StatusDisplay::update_yaw(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     yaw->setStyleSheet(textcolor);
     yaw->setFont(ft);
-    yaw->setText("偏航角: "+QString::number(value, 'f', 3)+" rad");
+    yaw->setText("yaw: "+QString::number(value, 'f', 3)+" rad");
 
 }
 
@@ -228,7 +228,7 @@ void StatusDisplay::update_roll(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     roll->setStyleSheet(textcolor);
     roll->setFont(ft);
-    roll->setText("滚转角: "+QString::number(value, 'f', 3)+" rad");
+    roll->setText("roll: "+QString::number(value, 'f', 3)+" rad");
 }
 
 void StatusDisplay::update_motorRPM_4(double value)
@@ -239,7 +239,7 @@ void StatusDisplay::update_motorRPM_4(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     motorRPM_4->setStyleSheet(textcolor);
     motorRPM_4->setFont(ft);
-    motorRPM_4->setText("电机4转速： "+QString::number(value, 'f', 3)+" RPM");
+    motorRPM_4->setText("rpm motor4:"+QString::number(value, 'f', 3)+" RPM");
 
 }
 
@@ -251,7 +251,7 @@ void StatusDisplay::update_motorRPM_1(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     motorRPM_1->setStyleSheet(textcolor);
     motorRPM_1->setFont(ft);
-    motorRPM_1->setText("电机1转速： "+QString::number(value, 'f', 3)+" RPM");
+    motorRPM_1->setText("rpm motor1:"+QString::number(value, 'f', 3)+" ");
 
 }
 
@@ -263,7 +263,7 @@ void StatusDisplay::update_BatteryHealthy(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     BatteryHealthy->setStyleSheet(textcolor);
     BatteryHealthy->setFont(ft);
-    BatteryHealthy->setText("剩余电量： "+QString::number(100*value, 'f', 3)+" %");
+    BatteryHealthy->setText("SOC:"+QString::number(100*value, 'f', 3)+" %");
 }
 
 void StatusDisplay::update_longitude(double value)
@@ -274,6 +274,6 @@ void StatusDisplay::update_longitude(double value)
     label_pe.setColor(QPalette::WindowText, Qt::white);
     longitude->setStyleSheet(textcolor);
     longitude->setFont(ft);
-    longitude->setText("纬度："+QString::number(value, 'f', 8)+"度");
+    longitude->setText("long:"+QString::number(value, 'f', 8)+" ");
 }
 

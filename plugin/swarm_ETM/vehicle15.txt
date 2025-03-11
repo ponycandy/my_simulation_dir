@@ -1,4 +1,5 @@
-﻿#include "vehicle.h"
+
+#include "vehicle.h"
 #include "service/SwarmSimservice.h"
 #include "xmlcore.h"
 #include <cmath>
@@ -6,12 +7,14 @@
 #include <swarm_ETMActivator.h>
 #include <random>
 #include <utility>
-
+#include <cmath>
+#include <iostream>
 // Define pi as a constant
 Eigen::MatrixXd originalvector;
 double yip=0.8;
+const double targetvel=1.2;
 int counter=0;
-int probability_denominator=22;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
+int probability_denominator=18;//总时长60s，平均触发间隔1.2s，(0.12/0.0.3)
 inline double ValueOperator(Eigen::MatrixXd value)
 {
     return abs(calculateAngleBetweenVectors(originalvector,value));
@@ -71,7 +74,13 @@ void vehicle::sensorfunction()
     logger->log(internalcount,2,vel_xy.coeff(0,0));
     logger->log(internalcount,3,vel_xy.coeff(1,0));
     internalcount++;
-
+    if(ID==1)
+    {
+        if(internalcount==76)
+        {
+            qDebug()<<internalcount;
+        }
+    }
     //记录触发的时候只需要记录一次就行
     double ei;
     Eigen::MatrixXd temp;
@@ -98,7 +107,7 @@ void vehicle::sensorfunction()
         logger->log(internalcount,4,0);//0代表未被触发，1代表被触发
     }
     //看来必须使用某种方式进行预测才行
-    if(internalcount>1000)//30秒，600个触发时刻
+    if(internalcount>1500)//30秒，600个触发时刻
     {
         logger->savexlsfile();
     }
@@ -115,12 +124,52 @@ void vehicle::broadcastfunction()
 
 void vehicle::controlfunction()
 {
-    if(ID==4)//领导者
+    if(ID==6)//目标
     {
-        //先直线运动规律
-        act_vector<<1.5,0.08;
+        // 查找距离车辆最近路径点的索引
+
+        double dx = pathpoint(chache_idx, 0) - pos_xy(0,0);
+        double dy = pathpoint(chache_idx, 1) - pos_xy(1,0);
+        double dist = dx*dx + dy*dy;
+        if (dist < 0.02) {
+            chache_idx++;
+        }
+
+        if (chache_idx>pathpoint.rows() - 1)
+        {
+            chache_idx=pathpoint.rows() - 1;
+            act_vector<<0,0;
+            return;
+        }
+        double    thetax=atan2(dy,dx);
+
+
+        omega =  2*(thetax-heading_angle);
+        linear = targetvel;
+        act_vector<<linear,omega;
+
     }
-    if(ID<4)//追随者
+    if(ID==5)//虚拟领导者
+    {
+        Eigen::MatrixXd *temp_target=ETM_sensor.value(6);
+        Eigen::MatrixXd kp;
+        Eigen::MatrixXd kv;
+        kp.resize(2,2);
+        kp<<10,0,
+                0,10;
+        kv.resize(2,2);
+        kv<<2,0,
+                0,2;
+        act_vector=-kp*(selfETM.block(0,0,2,1)-temp_target->block(0,0,2,1))+
+                -kv*(selfETM.block(2,0,2,1)-temp_target->block(2,0,2,1));
+
+
+        to_steering(act_vector);
+
+        //追踪非直线目标的时候恐怕需要最优曲线估计了
+        //这里得写一个预瞄点追踪，反正后面要用。。。。
+    }
+    if(ID<5)//追随者
     {
         Get_sync_error(syncP);
         to_steering(act_vector);
@@ -175,12 +224,6 @@ void vehicle::to_steering(Eigen::MatrixXd &mat)
         dthetaHat=uxi/(uxi*uxi+uyi*uyi)*mat(1,0)-uyi/(uxi*uxi+uyi*uyi)*mat(0,0);
     }
 
-    if(sigma*thetaHat<0 && ID==3)
-    {
-        //按时越过临界角度
-        qDebug()<<"thetaHat:"<<thetaHat<<" dthetaHat:"<<dthetaHat<<" last_thetaHat:"<<sigma
-               <<" manipulating:"<<omega<<" heading_angle:"<<heading_angle;
-    }
     sigma=thetaHat;
     double miu_1=1;
     double miu_2=0.5;
@@ -251,7 +294,7 @@ void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
         }
 
         avergae_vel/=jnum;
-        act_vector=(concencus+gradient_term);
+        act_vector=(2*concencus+gradient_term);
         //下面添加避障项
         double dot=0;
         double vel_mag;
@@ -310,10 +353,10 @@ void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
             dot=norm.norm();
             grad=(dot-communication_range)/pow(dot,2)*norm;
 
-            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy)/sqrt(1+yip*pow((posofcp-pos_xy).norm(),2));
-            gradient_term=gradient_term+10/(posofcp-pos_xy).norm()*(-n_i_j_hat);
+            Eigen::MatrixXd n_i_j_hat=(posofcp-pos_xy).normalized();
+            gradient_term=gradient_term+1.5*n_i_j_hat/(-(posofcp-pos_xy).norm());
         }
-        act_vector=act_vector+(concencus+10*gradient_term);
+        act_vector=act_vector+(5*concencus+1*gradient_term);
         return;
     }
 
@@ -322,11 +365,15 @@ void vehicle::fault_set(int option)
 {
     xmlreader= new xmlCore(config_file.toStdString());
     xmlreader->xmlRead("agent_num",agentnum);
+    formationmat.resize(agentnum,2);
+    xmlreader->xmlRead("formation",formationmat);
 
     Eigen::MatrixXd relationmatrix;
     relationmatrix.resize(agentnum,agentnum);
     xmlreader->xmlRead("relationmatrix",relationmatrix);
-
+    xmlreader->xmlRead("path_pnum",pathpointnum);
+    pathpoint.resize(pathpointnum,2);
+    xmlreader->xmlRead("Path",pathpoint);
     for(int k=0;k<agentnum;k++)
     {
         if(relationmatrix(ID-1,k)!=0)

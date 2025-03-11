@@ -1,0 +1,245 @@
+#include "vehicle.h"
+#include "service/SwarmSimservice.h"
+#include "xmlcore.h"
+#include <cmath>
+#include <MyMath/MyMathLib.h>
+#include <swarm_ETMActivator.h>
+// Define pi as a constant
+Eigen::MatrixXd originalvector;
+int counter=0;
+
+inline double ValueOperator(Eigen::MatrixXd value)
+{
+    return abs(calculateAngleBetweenVectors(originalvector,value));
+}
+
+vehicle::vehicle():SwarmAgent()
+{
+    cacheSigma=1;
+    status_num=4;
+    action_num=2;
+    sigma=cacheSigma;
+    cacheOBSclpnum=0;
+    TriggerEvent();
+}
+
+
+void vehicle::state_update()
+{
+    heading_angle=normalize( atan2(state_vector(3,0),state_vector(2,0)));
+    pos_xy(0,0)=state_vector(0,0);
+    pos_xy(1,0)=state_vector(1,0);
+    vel_xy(0,0)=state_vector(2,0);
+    vel_xy(1,0)=state_vector(3,0);
+    selfETM<<pos_xy(0,0),pos_xy(1,0),vel_xy(0,0),vel_xy(1,0);
+}
+
+void vehicle::sensorfunction()
+{
+    //这里开始记录数据
+    //需要一个更好的格式数据，但是他丫的只有2个维度
+    //考虑到触发数据是生造的，这里只记录各自的轨迹数据得了
+    logger->log(internalcount,0,pos_xy.coeff(0,0));
+    logger->log(internalcount,1,pos_xy.coeff(1,0));
+    logger->log(internalcount,2,vel_xy.coeff(0,0));
+    logger->log(internalcount,3,vel_xy.coeff(1,0));
+    internalcount++;
+    if(internalcount>600)//18秒，600个触发时刻
+    {
+        logger->savexlsfile();
+    }
+    //记录触发的时候只需要记录一次就行
+    double ei;
+    Eigen::MatrixXd temp;
+    Eigen::MatrixXd *var=ETM_sensor.value(ID);
+    temp=var->block(0,0,4,1)-selfETM;
+    ei=temp.norm();
+    double pi;
+    pi=syncP.norm();
+
+    //判断是否误差超界
+    if(ei>0.2*pi)
+    {
+        //简单触发律
+        TriggerEvent();
+        logger->log(internalcount,4,1);//0代表未被触发，1代表被触发
+    }
+    else
+    {
+        logger->log(internalcount,4,0);//0代表未被触发，1代表被触发
+    }
+    //看来必须使用某种方式进行预测才行
+}
+
+void vehicle::broadcastfunction()
+{
+
+}
+
+void vehicle::controlfunction()
+{
+    if(ID!=6)
+    {
+        Get_sync_error(syncP);//这玩意儿算出来等于0？不对
+        Eigen::MatrixXd K;
+        K.resize(2,4);
+        K<<1 ,0 ,1 ,0 ,
+                0 ,1 ,0, 1;
+        double alpha=-1;
+        act_vector=alpha*K*syncP;
+        //        to_steering(act_vector);
+    }
+    else {
+        act_vector<<0,0;
+        state_vector(2,0)=0.2121;
+        state_vector(3,0)=0.2121;
+    }
+}
+
+bool vehicle::stable_judgement()
+{
+    return false;
+}
+
+void vehicle::predicitTraj()
+{
+
+}
+
+void vehicle::Getcontrol()
+{
+
+}
+
+void vehicle::Getlookaheadpoint()
+{
+
+}
+void vehicle::setsendsig(int order)
+{
+}
+
+void vehicle::to_steering(Eigen::MatrixXd &mat)
+{
+    Eigen::MatrixXd l_i;
+    l_i=vel_xy;
+    double uxi=vel_xy(0,0);
+    double uyi=vel_xy(0,0);
+    Eigen::MatrixXd linearspeed;
+    Eigen::MatrixXd orien=l_i;
+    orien(0,0)=cos(heading_angle);
+    orien(1,0)=sin(heading_angle);
+    linearspeed=orien.transpose()*(l_i+mat*0.03);//线速度控制量
+    linear=linearspeed(0,0);
+    double thetaHat=atan2(uyi,uxi);//rad
+    double dthetaHat=0;
+    if(uyi==uxi && uyi==0)
+    {
+        dthetaHat=0;
+    }
+    else
+    {
+        dthetaHat=uxi/(uxi*uxi+uyi*uyi)*mat(1,0)-uyi/(uxi*uxi+uyi*uyi)*mat(0,0);
+    }
+    double miu_1=2;
+    double miu_2=0.5;
+    //这里omega稍微优化一下，需要正向转向！
+    omega=miu_1*((thetaHat-heading_angle))+miu_2*(dthetaHat-omega);
+
+    //用最大限制一下:
+    double maxlinear=5;
+    double maxomega=2;
+    //    if(linear<0)
+    //    {
+    //        linear=0;
+    //    }
+    if(abs(linear)>maxlinear)
+    {
+        linear=linear/abs(linear)*maxlinear;
+    }
+
+    if(abs(omega)>maxomega)
+    {
+        omega=omega/abs(omega)*maxomega;
+    }
+    act_vector(0,0)=linear;
+    act_vector(1,0)=omega;
+}
+
+void vehicle::Get_sync_error(Eigen::MatrixXd &mat)
+{
+    Eigen::MatrixXd syncP,hmat_i,hmat_j,*xi;
+    syncP.resize(4,1);
+    syncP.setZero();
+    hmat_i=syncP;
+    hmat_j=syncP;
+    Eigen::MatrixXd *xj;
+    xi=ETM_sensor.value(ID);
+    hmat_i<<formationmat(ID-1,0),formationmat(ID-1,1),0,0;
+    for(int j=1;j<=neib_num+1;j++)
+    {
+        xj=ETM_sensor.value(j);
+        if(nearbyagentdistance.contains(j))
+        {
+            hmat_j<<formationmat(j-1,0),formationmat(j-1,1),0,0;
+            syncP=syncP+xi->block(0,0,4,1)-xj->block(0,0,4,1)-(hmat_i-hmat_j);
+
+        }
+
+    }
+    mat=syncP;
+}
+void vehicle::fault_set(int option)
+{
+    xmlreader= new xmlCore(config_file.toStdString());
+    xmlreader->xmlRead("agent_num",agentnum);
+    formationmat.resize(agentnum,2);
+    xmlreader->xmlRead("formation",formationmat);
+
+    Eigen::MatrixXd relationmatrix;
+    relationmatrix.resize(agentnum,agentnum);
+    xmlreader->xmlRead("relationmatrix",relationmatrix);
+
+    for(int k=0;k<agentnum;k++)
+    {
+        if(relationmatrix(ID-1,k)!=0)
+        {
+            nearbyagentdistance.insert(k+1,relationmatrix(ID-1,k));
+        }
+    }
+
+    //初始化容器
+    logger=swarm_ETMActivator::getService<Datalogservice>("Datalogservice");
+    this->logger=logger->cloneservice();
+    QString filename="./log/ETM_Agent_"+QString::number(ID)+".xls";
+    this->logger->createlogfile("./log/ETM_Agent_"+QString::number(ID)+".txt",6056+ID);
+    this->logger->DeleteFile(filename);
+    this->logger->createxlsfile(filename);
+
+
+}
+
+SwarmAgent *vehicle::clone_agent()
+{
+    vehicle *new_vehicle=new vehicle;
+    return new_vehicle;
+}
+
+Eigen::MatrixXd vehicle::state_space_equation()
+{
+    Eigen::MatrixXd d_state;
+    d_state.resize(4,1);
+    d_state.setZero();
+
+    d_state(0,0)=state_vector(2,0);
+    d_state(1,0)=state_vector(3,0);
+    d_state(2,0)=act_vector(0,0);
+    d_state(3,0)=act_vector(1,0);
+
+    return d_state;
+}
+
+void vehicle::Broadcastupdate(Eigen::MatrixXd e_t, Eigen::MatrixXd v_t, Eigen::MatrixXd v_n, Eigen::MatrixXd othersignal)
+{
+
+}

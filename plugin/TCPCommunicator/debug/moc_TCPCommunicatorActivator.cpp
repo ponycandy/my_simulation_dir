@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'TCPCommunicatorActivator.h'
 **
-** Created by: The Qt Meta Object Compiler version 68 (Qt 6.2.4)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.14.2)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -13,8 +13,8 @@
 #include <QtCore/qplugin.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'TCPCommunicatorActivator.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 68
-#error "This file was generated using the moc from 6.2.4. It"
+#elif Q_MOC_OUTPUT_REVISION != 67
+#error "This file was generated using the moc from 5.14.2. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -23,14 +23,17 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_TCPCommunicatorActivator_t {
-    const uint offsetsAndSize[2];
+    QByteArrayData data[1];
     char stringdata0[25];
 };
-#define QT_MOC_LITERAL(ofs, len) \
-    uint(offsetof(qt_meta_stringdata_TCPCommunicatorActivator_t, stringdata0) + ofs), len 
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_TCPCommunicatorActivator_t, stringdata0) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
 static const qt_meta_stringdata_TCPCommunicatorActivator_t qt_meta_stringdata_TCPCommunicatorActivator = {
     {
-QT_MOC_LITERAL(0, 24) // "TCPCommunicatorActivator"
+QT_MOC_LITERAL(0, 0, 24) // "TCPCommunicatorActivator"
 
     },
     "TCPCommunicatorActivator"
@@ -40,7 +43,7 @@ QT_MOC_LITERAL(0, 24) // "TCPCommunicatorActivator"
 static const uint qt_meta_data_TCPCommunicatorActivator[] = {
 
  // content:
-      10,       // revision
+       8,       // revision
        0,       // classname
        0,    0, // classinfo
        0,    0, // methods
@@ -55,24 +58,18 @@ static const uint qt_meta_data_TCPCommunicatorActivator[] = {
 
 void TCPCommunicatorActivator::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
-    (void)_o;
-    (void)_id;
-    (void)_c;
-    (void)_a;
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
 }
 
-const QMetaObject TCPCommunicatorActivator::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject TCPCommunicatorActivator::staticMetaObject = { {
     QMetaObject::SuperData::link<QObject::staticMetaObject>(),
-    qt_meta_stringdata_TCPCommunicatorActivator.offsetsAndSize,
+    qt_meta_stringdata_TCPCommunicatorActivator.data,
     qt_meta_data_TCPCommunicatorActivator,
     qt_static_metacall,
     nullptr,
-qt_incomplete_metaTypeArray<qt_meta_stringdata_TCPCommunicatorActivator_t
-, QtPrivate::TypeAndForceComplete<TCPCommunicatorActivator, std::true_type>
-
-
-
->,
     nullptr
 } };
 
@@ -101,7 +98,7 @@ int TCPCommunicatorActivator::qt_metacall(QMetaObject::Call _c, int _id, void **
 }
 
 QT_PLUGIN_METADATA_SECTION
-static constexpr unsigned char qt_pluginMetaData_TCPCommunicatorActivator[] = {
+static constexpr unsigned char qt_pluginMetaData[] = {
     'Q', 'T', 'M', 'E', 'T', 'A', 'D', 'A', 'T', 'A', ' ', '!',
     // metadata version, Qt version, architectural requirements
     0, QT_VERSION_MAJOR, QT_VERSION_MINOR, qPluginArchRequirements(),

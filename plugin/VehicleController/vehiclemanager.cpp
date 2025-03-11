@@ -2,7 +2,6 @@
 #include "VehicleControllerActivator.h"
 #include "event/eventype.h"
 #include "event/OcuEventContants.h"
-#include "jetsonnanoDATA/jetsonnanoDATA.h"
 #include "include/OSGIEVENT.h"
 
 VehicleManager::VehicleManager(QObject *parent) : QObject(parent)
@@ -44,10 +43,7 @@ void VehicleManager::EventTriggeres(XTLevent event)
         vehicle->cilentID_S="server"+event.m_dict.value("vehiclename").value<QString>();
         vehicle->host_S=event.m_dict.value("host(S)").value<QString>();
         vehicle->port_S=event.m_dict.value("port(S)").value<QString>();
-        vehicle->username_S=event.m_dict.value("username(S)").value<QString>();
-        vehicle->password_S=event.m_dict.value("password(S)").value<QString>();
         vehicle->vehiclename=event.m_dict.value("vehiclename").value<QString>();
-        vehicle->videoAddress=event.m_dict.value("videoAddress").value<QString>();
 
         vehicle->setupconnection();
 
@@ -179,12 +175,12 @@ void VehicleManager::initilizevideostatus(QWidget *wid, QString vehiclename)
 
 void VehicleManager::sendVehicleCommand(int ID, double linear, double omega)
 {
-    jetson::motioncommand mocmd;
-    mocmd.linear=linear;
-    mocmd.omega=omega;
-    std::string data=Autoserialization(mocmd);
-    QString vehiclename=car_ID_2_vehiclename.value(ID);
-    send(QByteArray::fromStdString(data),vehiclename,"motioncommand");
+//    jetson::motioncommand mocmd;
+//    mocmd.linear=linear;
+//    mocmd.omega=omega;
+//    std::string data=Autoserialization(mocmd);
+//    QString vehiclename=car_ID_2_vehiclename.value(ID);
+//    send(QByteArray::fromStdString(data),vehiclename,"motioncommand");
 }
 
 void VehicleManager::AddHUD_2_controler(QFrame *wid,double x,double y)
