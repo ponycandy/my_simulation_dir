@@ -8,8 +8,8 @@
 #include <QMap>
 #include "plugininterface.h"
 #include "plugincontext.h"
-
-class pluginmanager : public QObject
+#include "service/SystemDefaultservice.h"
+class pluginmanager : public QObject,SystemDefaultservice
 {
     Q_OBJECT
 public:
@@ -22,6 +22,10 @@ public:
     void ReadXMLFile(const QString sFileName);
     void ShowXMLDoc(QDomElement &docElem);
     void InitCONTEXT();
+    void unload_plugin(QString pluginname) override;
+    void load_plugin(QString path, QString pluginname) override;
+    QStringList getpluginlist() override;
+    QStringList getservicelist() override;
     int m_pluginnum;
     QMap<int, QString> m_pluginnamemap;
     QMap<int, PluginInterface*> m_pluginmap;
