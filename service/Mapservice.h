@@ -42,6 +42,13 @@ public:
      */
     virtual void Update_Object_Item(int ID, QGeoCoordinate cor,double direction)=0;
 
+    /**
+     * @brief 基础作图功能：绘制线条
+     * @param 无人车ID  坐标 方向角
+     * @return
+     */
+    virtual void draw_line(QGeoCoordinate start,QGeoCoordinate terminal,int direction,QColor color,double width)=0;
+
 };
 #define MapService_iid "MapService"
 
