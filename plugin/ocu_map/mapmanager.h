@@ -18,7 +18,9 @@
 #include "mapellipseitem.h"
 #include "QTime"
 #include "mapscutcheonitem.h"
+#include "roadmap.h"
 #include "mappolygonitem.h"
+#include "service/AIinterfaceservice.h"
 class MapWidget;
 
 struct positioninfo
@@ -28,6 +30,16 @@ struct positioninfo
     MapObjectItem *obj;
     MapSuctcheonItem *m_struct;
 };
+
+class map_data_collection:public JsonVar
+{
+public:
+    void Internel_2_member() override;
+    void member_2_internel() override;
+    QVector<Eigen::MatrixXd> coordinatelists;
+};
+
+
 class MapManager : public QObject, public MapService
 {
     Q_OBJECT
@@ -40,6 +52,8 @@ public:
     explicit MapManager(QObject *parent = nullptr);
     InteractiveMap* getMapwidget() override;
     void Add_List_Item(QString field_Name,MapSuctcheonItem *stru);
+    void ai_draw_line(QVector<JsonVar *> j);
+    void draw_line(QGeoCoordinate start, QGeoCoordinate terminal, int direction, QColor color, double width) override;
     void Add_Object_Item(int ID,QPixmap icon,QGeoCoordinate cor,double direction) override;
     void Update_Object_Item(int ID, QGeoCoordinate cor,double direction) override;
     void choosearea(QColor colour) override;
@@ -54,10 +68,11 @@ public:
     QTimer *timer;
     MapObjectItem *objitem;
     QMap<int, positioninfo> carIDlists;
+    roadmap *m_map;
+    map_data_collection *reg_ai_data;
     double lat;
     double lon;
-
-
+    AIinterfaceservice *aiservice;
 
 public slots:
     void slot_start_record_points();

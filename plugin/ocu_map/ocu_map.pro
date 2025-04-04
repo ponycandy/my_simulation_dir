@@ -17,18 +17,24 @@ INCLUDEPATH += ../../include
 INCLUDEPATH += ../../
 INCLUDEPATH += ../../3rdlib
 
+INCLUDEPATH += ../../3rdlib/Jsonreader
+
 
 SOURCES += \
     mapmanager.cpp \
     mapwidget.cpp \
-    ocu_mapActivator.cpp
+    node.cpp \
+    ocu_mapActivator.cpp \
+    roadmap.cpp
 
 
 
 HEADERS += \
     mapmanager.h \
     mapwidget.h \
-    ocu_mapActivator.h
+    node.h \
+    ocu_mapActivator.h \
+    roadmap.h
 
 FORMS += \
     mapwidget.ui

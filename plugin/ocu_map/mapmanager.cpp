@@ -1,6 +1,7 @@
 ﻿#include "mapmanager.h"
 #include "ocu_mapActivator.h"
 #include "defines/OcuDefines.h"
+#include "maplineitem.h"
 /**
  * @brief MapManager::MapManager
  * @param parent
@@ -15,13 +16,13 @@ MapManager::MapManager(QObject *parent)
 
 
     map = new InteractiveMap;
-    map->setTilePath("D:/QT/prjdir/OSGIMODULE/my_simulation_dir/build/Map/Njmap/map/map");
+    map->setTilePath("D:/Qt/prjspace/modulesystem/my_simulation_dir/build/googlemaps/hybrid");
     map->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
 
     //显示一个地图：
 
     map->setZoomLevel(15);
-    QGeoCoordinate cor(39.959,116.321);//北纬--东经
+    QGeoCoordinate cor(41.29732,119.40579);//北纬--东经
     map->centerOn(cor);
     //隐藏滚动条：
     map->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
@@ -33,6 +34,34 @@ MapManager::MapManager(QObject *parent)
 
     timer=new QTimer;
     connect(timer,SIGNAL(timeout()),this,SLOT(slot_Update_coord()));
+    //接下来绘制路网
+    m_map=new roadmap;
+    m_map->read_roadmap("D:/Qt/prjspace/modulesystem/my_simulation_dir/build/googlemaps/way_point.txt");
+    //功能测试
+
+
+    for(auto ed : m_map->edges)
+    {
+        int i=0;
+        EdgePoint start=ed[0];
+        for(auto ps : ed)
+        {
+            if(i==0)
+            {
+                i++;
+                continue;
+            }
+            else
+            {
+                EdgePoint terminal=ps;
+                QGeoCoordinate cor_1(start.wd,start.jd);
+                QGeoCoordinate cor_2(terminal.wd,terminal.jd);
+                draw_line(cor_1,cor_2,1,QColor(255,0,0,125),5);
+                start=terminal;
+            }
+
+        }
+    }
 }
 
 InteractiveMap *MapManager::getMapwidget()
@@ -54,8 +83,49 @@ void MapManager::Add_List_Item(QString field_Name, MapSuctcheonItem *stru)
     stru->setValueFont(field_Name,serifFont);
 }
 
+void MapManager::ai_draw_line(QVector<JsonVar *> j)
+{
+    //实例
+    //    {
+    //        "function_name": "draw_line",
+    //        "args": [
+    //            {"type": "value", "value": [矩阵描述]},点1，类型Eigen::matrixXd，内容为经纬度
+    //            {"type": "value", "value": [矩阵描述]},点2，类型Eigen::matrixXd，内容为经纬度
+    //            {"type": "value", "value": ["direction":??,"color":??(四元组，rgba),"width":"??"]},线的类型（双向，正向，无箭头）
+    //        ]
+    //    }
+    Eigen::MatrixXd p1;
+    Eigen::MatrixXd p2;
+    int direction;
+    Eigen::MatrixXd color;
+    double width;
+    from_json(j[0]->get(),p1);
+    from_json(j[1]->get(),p2);
+    direction=(j[3]->get())["direction"].get<int>();
+    from_json((j[3]->get())["color"],color);
+    from_json((j[3]->get())["width"],width);
+    QGeoCoordinate start(p1(0,0),p1(1,0));
+    QGeoCoordinate terminal(p2(0,0),p2(1,0));
+    QColor qcolor;
+    qcolor.setRgb(color(0,0),color(1,0),color(2,0),color(3,0));
+    draw_line(start,terminal,direction,qcolor,width);
+}
+
+void MapManager::draw_line(QGeoCoordinate start, QGeoCoordinate terminal, int direction, QColor color, double width)
+{
+    MapLineItem *lineitem=new MapLineItem;
+    lineitem->setStartPoint(start);
+    lineitem->setEndPoint(terminal);
+    lineitem->setLineWidth(width);
+    lineitem->setLinecolor(color);
+    map->scene()->addItem(lineitem);
+}
+
 void MapManager::Add_Object_Item(int ID, QPixmap icon, QGeoCoordinate cor, double direction)
 {
+    //地图的通用绘制流程（不使用操作器）
+    //创建绘图对象MAP_XXX_ITEM obj
+    //直接添加绘图对象到地图上map->scene->additem(obj)
     MapObjectItem *obj=new MapObjectItem;
     obj->setText(QString::number(ID));
     positioninfo pos;
@@ -72,17 +142,17 @@ void MapManager::Add_Object_Item(int ID, QPixmap icon, QGeoCoordinate cor, doubl
     delete mstruct;
     MapSuctcheonItem *m_new_struct=new MapSuctcheonItem(obj);
     pos.m_struct=m_new_struct;
-    Add_List_Item("标号",m_new_struct);
+    Add_List_Item("icon",m_new_struct);
     m_new_struct->setBackBrush(QColor(30,144,255, 200));
-    m_new_struct->addField(u8"标号",true);
-    m_new_struct->setValue(u8"标号","      "+QString::number(ID));
+    m_new_struct->addField(u8"icon",true);
+    m_new_struct->setValue(u8"icon","      "+QString::number(ID));
     QPen pen;
     pen.setColor(QColor(255, 0, 0));
     QFont serifFont("Times", 20, QFont::Bold);
-    m_new_struct->setFieldPen(u8"标号", pen);
-    m_new_struct->setValuePen(u8"标号", pen);
-    m_new_struct->setFieldFont(u8"标号",serifFont);
-    m_new_struct->setValueFont(u8"标号",serifFont);
+    m_new_struct->setFieldPen(u8"icon", pen);
+    m_new_struct->setValuePen(u8"icon", pen);
+    m_new_struct->setFieldFont(u8"icon",serifFont);
+    m_new_struct->setValueFont(u8"icon",serifFont);
 
 
     carIDlists.insert(ID,pos);
@@ -98,6 +168,12 @@ void MapManager::Update_Object_Item(int ID, QGeoCoordinate cor, double direction
 
 void MapManager::choosearea(QColor colour)
 {
+    //地图的通用绘制流程（使用操作器）
+    //创建绘图对象MAP_XXX_item
+    //创建操作器Map_XXX_Operator
+    //绑定操作器到地图里面pushOperator
+    //绑定绘图对象到操作器上takeOver
+    //通过操作器添加绘图对象到地图上->scene->additem
     area_selector=new MapPolygonOperator;
     map->pushOperator(area_selector);
 
@@ -129,7 +205,7 @@ MapManager::~MapManager()
 
 void MapManager::slot_start_record_points()
 {
-    qDebug()<<"开始选点";
+    qDebug()<<"starting picking points";
     // rout_selector
     rout_selector=new MapRouteOperator;
     map->pushOperator(rout_selector);
@@ -139,12 +215,13 @@ void MapManager::slot_start_record_points()
     route_item->setMoveable(true);
     route_item->setExclusive(true);
     route_item->setCheckable(true);
+
     // map->setOperator(new MapRouteOperator);
 }
 
 void MapManager::slot_stop_record_points()
 {
-    qDebug()<<"停止选点";
+    qDebug()<<"stop picking points";
 
     QVector<MapObjectItem*> pointsmap;
     QVector<QGeoCoordinate> pointsmap_2_launch;
@@ -155,7 +232,7 @@ void MapManager::slot_stop_record_points()
     for (iter_pointsmap=pointsmap.begin();iter_pointsmap!=pointsmap.end();iter_pointsmap++)
     {
         QGeoCoordinate corrdinate=(*iter_pointsmap)->coordinate();
-        qDebug()<<"标号"<<QString::number(i)<<" 纬度："<<corrdinate.latitude()<<" 经度："<<corrdinate.longitude();
+        qDebug()<<"beacon"<<QString::number(i)<<" lat:"<<corrdinate.latitude()<<" lon:"<<corrdinate.longitude();
         i++;
         pointsmap_2_launch.push_back(corrdinate);
     }
@@ -165,7 +242,7 @@ void MapManager::slot_stop_record_points()
 
 void MapManager::slot_Autonavi_points()
 {
-    qDebug()<<"开始导航";
+    qDebug()<<"Nvigation";
     //假设位置为00，然后平移中心到最近的位置，接下来将所有的二维点格转为经纬度
     // map->pushOperator(new MapPolygonOperator);
     // MapObjectOperator *mapobj=new MapObjectOperator;
@@ -205,13 +282,23 @@ void MapManager::slot_Autonavi_points()
 
 void MapManager::slot_Update_coord()
 {
-    //这个是不可能精准的
-    //因为地面本然就不是球面，所以，直接将角速度、线速度、方向角
-    //都转化为经纬度的转化就好了
-    //精度1度85.39km，1m/s向东对应 1.1710973181871413514463051879611e-5
-    //纬度1度111km 1m/s向北对应 9.009009009009009009009009009009e-6
-    lat+=9.009009009009009009009009009009e-6 /(1000/30);//向北1m/s，算上30ms的时间update
-    lon+=1.1710973181871413514463051879611e-5 / (1000/30);//向东1m/s
-    objitem->setCoordinate({lat,lon});
+//    //这个是不可能精准的
+//    //因为地面本然就不是球面，所以，直接将角速度、线速度、方向角
+//    //都转化为经纬度的转化就好了
+//    //精度1度85.39km，1m/s向东对应 1.1710973181871413514463051879611e-5
+//    //纬度1度111km 1m/s向北对应 9.009009009009009009009009009009e-6
+//    lat+=9.009009009009009009009009009009e-6 /(1000/30);//向北1m/s，算上30ms的时间update
+//    lon+=1.1710973181871413514463051879611e-5 / (1000/30);//向东1m/s
+//    objitem->setCoordinate({lat,lon});
 }
 
+
+void map_data_collection::Internel_2_member()
+{
+
+}
+
+void map_data_collection::member_2_internel()
+{
+
+}
