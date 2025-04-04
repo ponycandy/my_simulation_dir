@@ -1,32 +1,31 @@
-﻿#ifndef MAPROUTEITEM_H
-#define MAPROUTEITEM_H
+﻿#ifndef MAPPATHITEM_H
+#define MAPPATHITEM_H
 
 #include "GraphicsMapLib_global.h"
 #include <QGraphicsPathItem>
 #include <QGeoCoordinate>
 #include <QPen>
-
+#include <QVector>
+#include <QSet>
 class MapObjectItem;
 
 /*!
  * \brief 航路
  * \note 航路类将负责航点的生命周期
  */
-class GRAPHICSMAPLIB_EXPORT MapRouteItem : public QObject, public QGraphicsPathItem
+class GRAPHICSMAPLIB_EXPORT MapPathItem : public QObject, public QGraphicsPathItem
 {
     Q_OBJECT
 public:
     using QGraphicsPathItem::setPen;
     using QGraphicsPathItem::pen;
 
-    MapRouteItem();
-    ~MapRouteItem();
-    /// 设置鼠标可移动航点
-    void setMoveable(bool movable);
+    MapPathItem();
+    ~MapPathItem();
     /// 设置路径绑定的路网
     void AddRoadMapEdge( int real_id,double jd,double wd,int Id,QString type);
-    /// 判定路点所在路网片段
-    int getPathId(double jd,double wd);
+    /// 设置鼠标可移动航点
+    void setMoveable(bool movable);
     /// 设置航点可选中
     void setCheckable(bool checkable);
     /// 设置航点被选中
@@ -66,7 +65,7 @@ public:
 
 public:
     /// 获取所有的实例
-    static const QSet<MapRouteItem*> &items();
+    static const QSet<MapPathItem*> &items();
 
 signals:
     void added(const int &index, const MapObjectItem *point);
@@ -75,7 +74,7 @@ signals:
     void changed();
 
 private:
-    static QSet<MapRouteItem*> m_items;         ///< 所有实例
+    static QSet<MapPathItem*> m_items;         ///< 所有实例
 
 private:
     void updatePolyline();

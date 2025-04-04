@@ -141,6 +141,8 @@ QPoint GraphicsMap::toPoint(const QGeoCoordinate &coord) const
 /// R = SCENE_LEN / 2PI
 QGeoCoordinate GraphicsMap::toCoordinate(const QPointF &point)
 {
+    //这个计算逻辑可能需要改，简单墨卡托投影在不同区域有误差
+    //但是更高精度的地图计算需要UTM投影（Universal Transverse Mercatol Projection，通用横轴墨卡托投影），这里暂时就先空着了
     auto radLon = point.x() * 2 * M_PI/ SCENE_LEN;
     auto radLat = 2 * qAtan(qPow(M_E, 2*M_PI*point.y()/SCENE_LEN)) - M_PI_2;
     // NOTO: as for Qt, it's y asscending from up to bottom
@@ -158,6 +160,9 @@ QPointF GraphicsMap::toScene(const QGeoCoordinate &coord)
     double y = SCENE_LEN / 2.0 / M_PI * qLn( qTan(M_PI_4+radLat/2.0) );
     // NOTO: as for Qt, it's y asscending from up to bottom
     return {x, -y};
+
+
+
 }
 
 /// 从1编号

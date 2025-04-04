@@ -1,10 +1,9 @@
-﻿#include "maprouteitem.h"
+﻿#include <mappathitem.h>
+#include <mapobjectitem.h>
 #include "graphicsmap.h"
-#include "mapobjectitem.h"
-#include "mapscutcheonitem.h"
-QSet<MapRouteItem*> MapRouteItem::m_items;
+QSet<MapPathItem*> MapPathItem::m_items ;
 
-MapRouteItem::MapRouteItem() :
+MapPathItem::MapPathItem():
     m_moveable(false),
     m_checkable(false),
     m_exclusive(true)
@@ -23,12 +22,18 @@ MapRouteItem::MapRouteItem() :
     m_items.insert(this);
 }
 
-MapRouteItem::~MapRouteItem()
+MapPathItem::~MapPathItem()
 {
-    m_items.remove(this);
+m_items.remove(this);
 }
 
-void MapRouteItem::setMoveable(bool movable)
+void MapPathItem::AddRoadMapEdge(int real_id, double jd, double wd, int Id, QString type)
+{
+    auto b = std::make_tuple(real_id, jd, wd, Id,type);
+    road_edges.push_back(b);
+}
+
+void MapPathItem::setMoveable(bool movable)
 {
     if(m_moveable == movable)
         return;
@@ -39,18 +44,7 @@ void MapRouteItem::setMoveable(bool movable)
     this->setPen(m_moveable ? m_moveablePen : m_normalPen);
 }
 
-void MapRouteItem::AddRoadMapEdge(int real_id, double jd, double wd, int Id, QString type)
-{
-    auto b = std::make_tuple(real_id, jd, wd, Id,type);
-    road_edges.push_back(b);
-}
-
-int MapRouteItem::getPathId(double jd, double wd)
-{
-    return 0;
-}
-
-void MapRouteItem::setCheckable(bool checkable)
+void MapPathItem::setCheckable(bool checkable)
 {
     // make sure call setChecked before operator=
     if(m_checkable == checkable)
@@ -62,7 +56,7 @@ void MapRouteItem::setCheckable(bool checkable)
     }
 }
 
-void MapRouteItem::setChecked(int index, bool checked)
+void MapPathItem::setChecked(int index, bool checked)
 {
     if(!m_checkable)
         return;
@@ -74,25 +68,25 @@ void MapRouteItem::setChecked(int index, bool checked)
     m_points.at(index)->setChecked(checked);
 }
 
-void MapRouteItem::setChecked(MapObjectItem *point, bool checked)
+void MapPathItem::setChecked(MapObjectItem *point, bool checked)
 {
     auto index = m_points.indexOf(point);
     setChecked(index, checked);
 }
 
-void MapRouteItem::toggle(int index)
+void MapPathItem::toggle(int index)
 {
     auto state = m_points.at(index)->isChecked();
     setChecked(index, !state);
 }
 
-void MapRouteItem::toggle(MapObjectItem *point)
+void MapPathItem::toggle(MapObjectItem *point)
 {
     auto index = m_points.indexOf(point);
     toggle(index);
 }
 
-void MapRouteItem::setExclusive(bool exclusive)
+void MapPathItem::setExclusive(bool exclusive)
 {
     if(m_exclusive == exclusive)
         return;
@@ -104,7 +98,7 @@ void MapRouteItem::setExclusive(bool exclusive)
     }
 }
 
-MapObjectItem* MapRouteItem::append(MapObjectItem *point)
+MapObjectItem *MapPathItem::append(MapObjectItem *point)
 {
     bindPoint(point);
     m_points.append(point);
@@ -116,19 +110,15 @@ MapObjectItem* MapRouteItem::append(MapObjectItem *point)
     return point;
 }
 
-MapObjectItem *MapRouteItem::append(const QGeoCoordinate &coord)
+MapObjectItem *MapPathItem::append(const QGeoCoordinate &coord)
 {
     auto point = new MapObjectItem(coord);
     append(point);
     return point;
 }
 
-MapObjectItem *MapRouteItem::insert(const int &index, MapObjectItem *point)
+MapObjectItem *MapPathItem::insert(const int &index, MapObjectItem *point)
 {
-    point->getMapTabel()->setValue(u8"编号：",QString("         ").append(QString::number(index)));
-
-    int pathid=getPathId(point->coordinate().longitude(),point->coordinate().latitude());
-
     bindPoint(point);
     m_points.insert(index, point);
     //
@@ -138,14 +128,14 @@ MapObjectItem *MapRouteItem::insert(const int &index, MapObjectItem *point)
     return point;
 }
 
-MapObjectItem *MapRouteItem::insert(const int &index, const QGeoCoordinate &coord)
+MapObjectItem *MapPathItem::insert(const int &index, const QGeoCoordinate &coord)
 {
     auto point = new MapObjectItem(coord);
     insert(index, point);
     return point;
 }
 
-MapObjectItem *MapRouteItem::replace(const int &index, MapObjectItem *point)
+MapObjectItem *MapPathItem::replace(const int &index, MapObjectItem *point)
 {
     if(m_points.value(index) == point)
         return m_points.value(index);
@@ -160,14 +150,14 @@ MapObjectItem *MapRouteItem::replace(const int &index, MapObjectItem *point)
     return point;
 }
 
-MapObjectItem *MapRouteItem::replace(const int &index, const QGeoCoordinate &coord)
+MapObjectItem *MapPathItem::replace(const int &index, const QGeoCoordinate &coord)
 {
     auto point = new MapObjectItem(coord);
     replace(index, point);
     return point;
 }
 
-void MapRouteItem::remove(int index)
+void MapPathItem::remove(int index)
 {
     if(index <0 || index >= m_points.size())
         return;
@@ -178,13 +168,13 @@ void MapRouteItem::remove(int index)
     emit removed(index);
 }
 
-void MapRouteItem::remove(MapObjectItem *point)
+void MapPathItem::remove(MapObjectItem *point)
 {
     auto index = m_points.indexOf(point);
     remove(index);
 }
 
-const QVector<MapObjectItem*> &MapRouteItem::setPoints(const QVector<MapObjectItem *> &points)
+const QVector<MapObjectItem *> &MapPathItem::setPoints(const QVector<MapObjectItem *> &points)
 {
     if(points == m_points)
         return m_points;
@@ -201,12 +191,12 @@ const QVector<MapObjectItem*> &MapRouteItem::setPoints(const QVector<MapObjectIt
     return m_points;
 }
 
-const QVector<MapObjectItem *> &MapRouteItem::points() const
+const QVector<MapObjectItem *> &MapPathItem::points() const
 {
     return m_points;
 }
 
-QVector<MapObjectItem *> MapRouteItem::checked() const
+QVector<MapObjectItem *> MapPathItem::checked() const
 {
     QVector<MapObjectItem*> checked;
     for(auto point : m_points) {
@@ -216,7 +206,7 @@ QVector<MapObjectItem *> MapRouteItem::checked() const
     return checked;
 }
 
-QVector<int> MapRouteItem::checkedIndex() const
+QVector<int> MapPathItem::checkedIndex() const
 {
     QVector<int> checked;
     for(int i = 0; i < m_points.size(); ++i) {
@@ -228,19 +218,17 @@ QVector<int> MapRouteItem::checkedIndex() const
     return checked;
 }
 
-int MapRouteItem::indexOf(MapObjectItem *point)
+int MapPathItem::indexOf(MapObjectItem *point)
 {
     return m_points.indexOf(point);
 }
 
-const QSet<MapRouteItem *> &MapRouteItem::items()
+const QSet<MapPathItem *> &MapPathItem::items()
 {
     return m_items;
 }
 
-/// 更新QPainterPath的路径
-/// 更新从beginIndex和endIndex之间多个航点的文字
-void MapRouteItem::updatePolyline()
+void MapPathItem::updatePolyline()
 {
     // update path
     if(m_points.isEmpty()) {
@@ -258,7 +246,7 @@ void MapRouteItem::updatePolyline()
     setPath(path);
 }
 
-void MapRouteItem::updatePointMoved()
+void MapPathItem::updatePointMoved()
 {
     auto ctrlItem = dynamic_cast<MapObjectItem*>(sender());
     auto index = m_points.indexOf(ctrlItem);
@@ -268,12 +256,12 @@ void MapRouteItem::updatePointMoved()
     emit updated(index, point);
 }
 
-void MapRouteItem::updatePointPressed()
+void MapPathItem::updatePointPressed()
 {
     m_lastPointIsChecked = dynamic_cast<MapObjectItem*>(sender())->isChecked();
 }
 
-void MapRouteItem::updatePointReleased()
+void MapPathItem::updatePointReleased()
 {
     auto point = dynamic_cast<MapObjectItem*>(sender());
     bool isChecekd = point->isChecked();
@@ -281,13 +269,15 @@ void MapRouteItem::updatePointReleased()
         setChecked(point, true);
 }
 
-void MapRouteItem::bindPoint(MapObjectItem *point)
+void MapPathItem::bindPoint(MapObjectItem *point)
 {
     point->setParentItem(this);
     point->setMoveable(m_moveable);
     point->setCheckable(m_checkable);
     point->setAllowMouseEvent(true);
-    connect(point, &MapObjectItem::pressed, this, &MapRouteItem::updatePointPressed);
-    connect(point, &MapObjectItem::released, this, &MapRouteItem::updatePointReleased);
-    connect(point, &MapObjectItem::coordinateDragged, this, &MapRouteItem::updatePointMoved);
+    connect(point, &MapObjectItem::pressed, this, &MapPathItem::updatePointPressed);
+    connect(point, &MapObjectItem::released, this, &MapPathItem::updatePointReleased);
+    connect(point, &MapObjectItem::coordinateDragged, this, &MapPathItem::updatePointMoved);
+
 }
+

@@ -18,6 +18,7 @@ SOURCES += \
         ../../3rdlib/GraphicsMapLib/src/maprectitem.cpp \
          ../../3rdlib/GraphicsMapLib/src/maptableitem.cpp \
          ../../3rdlib/GraphicsMapLib/src/mapscutcheonitem.cpp\
+         ../../3rdlib/GraphicsMapLib/src/mappathitem.cpp\
 
 HEADERS += \
 ../../3rdlib/GraphicsMapLib/src/interactivemap.h \
@@ -36,4 +37,5 @@ HEADERS += \
     ../../3rdlib/GraphicsMapLib/src/mapobjectitem.h \
     ../../3rdlib/GraphicsMapLib/src/graphicsmap.h \
     ../../3rdlib/GraphicsMapLib/src/GraphicsMapLib_global.h \
+         ../../3rdlib/GraphicsMapLib/src/mappathitem.h \
 

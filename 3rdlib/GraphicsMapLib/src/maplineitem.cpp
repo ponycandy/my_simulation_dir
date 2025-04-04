@@ -165,6 +165,13 @@ void MapLineItem::setEndIcon(const QPixmap &pixmap, Qt::Alignment align)
     updateEndings();
 }
 
+void MapLineItem::setLinecolor(const QColor &color)
+{
+    auto pen = this->pen();
+    pen.setColor(color);
+    this->setPen(pen);
+}
+
 const QPair<QGeoCoordinate, QGeoCoordinate> &MapLineItem::endings()
 {
     return m_endings;

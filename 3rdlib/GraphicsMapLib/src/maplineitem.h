@@ -35,6 +35,8 @@ public:
     void setStartIcon(const QPixmap &pixmap, Qt::Alignment align = Qt::AlignCenter);
 	/// 设置线段末端图标
     void setEndIcon(const QPixmap &pixmap, Qt::Alignment align = Qt::AlignCenter);
+    /// 设置线段颜色
+    void setLinecolor(const QColor &color);
 	/// 获取线段两点位置
     const QPair<QGeoCoordinate, QGeoCoordinate> &endings();
     /// 依附到地图对象和标签对象，将会自动更新位置
